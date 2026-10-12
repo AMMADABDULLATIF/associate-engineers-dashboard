@@ -672,6 +672,33 @@
 
 
 
+                <!-- Site Images Upload Section -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="font-bold text-amber-400 text-sm sm:text-base flex items-center gap-2">
+                                <i class="fa-solid fa-camera text-white"></i>
+                                Site Images / Photos Upload
+                            </h3>
+                            <p class="text-xs text-slate-400">
+                                Capture or attach site progress photos
+                            </p>
+                        </div>
+
+                        <label class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/40 text-xs px-3 py-1.5 rounded-lg font-medium transition cursor-pointer flex items-center gap-1">
+                            <i class="fa-solid fa-upload text-white"></i>
+                            Select Photos
+                            <input type="file" id="site-images-input" accept="image/*" multiple class="hidden" onchange="handleImageUpload(event)">
+                        </label>
+                    </div>
+
+                    <div id="site-images-preview" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        <!-- Uploaded image previews will appear here -->
+                    </div>
+                </div>
+
+
+
                 <!-- Save & Submit Controls -->
                 <div class="flex flex-wrap justify-between items-center gap-3 pt-2">
 
@@ -1024,6 +1051,9 @@
     let cloudWriteInFlight = false;
 
     let lastCloudSnapshotAt = 0;
+    
+    // Array to store uploaded site images for current log entry/edit
+    let currentUploadedImages = [];
 
 
 
@@ -2185,35 +2215,6 @@
 
 
 
-        currentLaborTrades.forEach(
-            trade => {
-
-                const existingInput =
-                    document.querySelector(
-                        `[data-trade-id="${trade.id}"]`
-                    );
-
-                const existingShift =
-                    document.querySelector(
-                        `[data-trade-shift="${trade.id}"]`
-                    );
-
-
-
-                if (existingInput) {
-
-                    currentValues[trade.label] = {
-                        count: existingInput.value,
-                        shift: existingShift ? existingShift.value : 'Day'
-                    };
-
-                }
-
-            }
-        );
-
-
-
         container.innerHTML = '';
 
 
@@ -2230,7 +2231,7 @@
                     currentValues[trade.label] !== undefined
                 ) {
                     if (typeof currentValues[trade.label] === 'object' && currentValues[trade.label] !== null) {
-                        val = currentValues[trade.label].count || '';
+                        val = currentValues[trade.label].count !== undefined ? currentValues[trade.label].count : '';
                         shiftVal = currentValues[trade.label].shift || 'Day';
                     } else {
                         val = currentValues[trade.label];
@@ -2399,6 +2400,19 @@
 
         }
 
+        // Capture current active input values and shifts before re-rendering
+        const currentActiveValues = {};
+        currentLaborTrades.forEach(trade => {
+            const qtyInput = document.querySelector(`[data-trade-id="${trade.id}"]`);
+            const shiftSelect = document.querySelector(`[data-trade-shift="${trade.id}"]`);
+            if (qtyInput || shiftSelect) {
+                currentActiveValues[trade.label] = {
+                    count: qtyInput ? qtyInput.value : '',
+                    shift: shiftSelect ? shiftSelect.value : 'Day'
+                };
+            }
+        });
+
 
 
         const newId =
@@ -2418,7 +2432,7 @@
 
 
 
-        renderLaborFields();
+        renderLaborFields(currentActiveValues);
 
 
 
@@ -2456,6 +2470,21 @@
 
         if (!confirmed) return;
 
+        // Capture current active input values and shifts before re-rendering
+        const currentActiveValues = {};
+        currentLaborTrades.forEach(t => {
+            if (t.id !== tradeId) {
+                const qtyInput = document.querySelector(`[data-trade-id="${t.id}"]`);
+                const shiftSelect = document.querySelector(`[data-trade-shift="${t.id}"]`);
+                if (qtyInput || shiftSelect) {
+                    currentActiveValues[t.label] = {
+                        count: qtyInput ? qtyInput.value : '',
+                        shift: shiftSelect ? shiftSelect.value : 'Day'
+                    };
+                }
+            }
+        });
+
 
 
         currentLaborTrades =
@@ -2467,7 +2496,7 @@
 
 
 
-        renderLaborFields();
+        renderLaborFields(currentActiveValues);
 
 
 
@@ -2510,6 +2539,9 @@
                 'delay-tasks-container'
             )
             .innerHTML = '';
+            
+        currentUploadedImages = [];
+        renderImagePreviews();
 
 
 
@@ -2519,6 +2551,54 @@
 
         addPendingRow();
 
+    }
+
+
+
+    // Image Upload Handling
+    function handleImageUpload(e) {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            reader.onload = function(uploadEvent) {
+                currentUploadedImages.push(uploadEvent.target.result);
+                renderImagePreviews();
+            };
+            reader.readAsDataURL(file);
+        }
+        e.target.value = '';
+    }
+
+    function renderImagePreviews() {
+        const container = document.getElementById('site-images-preview');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        if (currentUploadedImages.length === 0) {
+            container.innerHTML = `<p class="text-xs text-slate-500 col-span-full py-2">No site photos attached yet.</p>`;
+            return;
+        }
+
+        currentUploadedImages.forEach((imgSrc, index) => {
+            const div = document.createElement('div');
+            div.className = "relative group bg-slate-800 border border-slate-700 rounded-xl overflow-hidden h-24";
+            div.innerHTML = `
+                <img src="${imgSrc}" class="w-full h-full object-cover">
+                <button type="button" onclick="removeUploadedImage(${index})" class="absolute top-1 right-1 bg-rose-600 hover:bg-rose-700 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center shadow transition" title="Remove Photo">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function removeUploadedImage(index) {
+        currentUploadedImages.splice(index, 1);
+        renderImagePreviews();
     }
 
 
@@ -3291,6 +3371,9 @@
 
             delays:
                 delays,
+                
+            images:
+                currentUploadedImages,
 
             updatedAt:
                 new Date().toISOString()
@@ -3606,11 +3689,6 @@
         currentLaborTrades = [...DEFAULT_TRADES];
         renderLaborFields({});
         
-        document.querySelectorAll('#labour-fields-container input[type="number"]').forEach(input => {
-            input.value = '';
-        });
-        updateTotalLabor();
-
         resetFormRows();
 
         loadLogForSelectedDate();
@@ -3880,6 +3958,8 @@
                             <i class="fa-solid fa-circle-check text-white"></i>
                             No Delays
                            </span>`;
+                           
+                const imagesCount = log.images && log.images.length > 0 ? `<span class="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-md text-[11px] font-semibold"><i class="fa-solid fa-camera"></i> ${log.images.length} Photos</span>` : '';
 
 
 
@@ -3902,6 +3982,8 @@
 
 
                         <div class="flex items-center gap-2">
+
+                            ${imagesCount}
 
                             ${laborBadge}
 
@@ -4292,71 +4374,21 @@
 
 
 
+        // Restore all trade categories (including custom ones if any existed)
+        currentLaborTrades = [...DEFAULT_TRADES];
+        
         if (log.laborBreakdown) {
-
-            currentLaborTrades =
-                [...DEFAULT_TRADES];
-
-
-
-            Object.entries(
-                log.laborBreakdown
-            ).forEach(
-                ([label, data]) => {
-
-                    let trade =
-                        currentLaborTrades.find(
-                            t =>
-                                t.label ===
-                                label
-                        );
-
-
-
-                    if (!trade) {
-
-                        const customId =
-                            'trade_' +
-                            Date.now() +
-                            Math.random()
-                                .toString(
-                                    36
-                                )
-                                .substr(
-                                    2,
-                                    4
-                                );
-
-
-
-                        trade = {
-                            id:
-                                customId,
-                            label:
-                                label
-                        };
-
-
-
-                        currentLaborTrades.push(
-                            trade
-                        );
-
-                    }
-
+            Object.keys(log.laborBreakdown).forEach(label => {
+                if (!currentLaborTrades.some(t => t.label === label)) {
+                    currentLaborTrades.push({
+                        id: 'trade_' + Date.now() + Math.random().toString(36).substr(2, 4),
+                        label: label
+                    });
                 }
-            );
-
-
-
-            renderLaborFields(
-                log.laborBreakdown
-            );
-
-
-
-            updateTotalLabor();
-
+            });
+            renderLaborFields(log.laborBreakdown);
+        } else {
+            renderLaborFields({});
         }
 
 
@@ -4458,6 +4490,10 @@
             );
 
         }
+        
+        // Restore uploaded images
+        currentUploadedImages = log.images ? [...log.images] : [];
+        renderImagePreviews();
 
 
 
@@ -4559,6 +4595,17 @@
                 }
             );
 
+        }
+        
+        let imagesHtml = '';
+        if (log.images && log.images.length > 0) {
+            let imgItems = log.images.map(src => `<img src="${src}" class="w-20 h-20 object-cover rounded-lg border border-slate-700">`).join('');
+            imagesHtml = `
+                <div class="space-y-1.5">
+                    <strong class="text-blue-400 block border-b border-slate-800 pb-1">SITE PROGRESS PHOTOS (${log.images.length})</strong>
+                    <div class="flex flex-wrap gap-2 pt-1">${imgItems}</div>
+                </div>
+            `;
         }
 
 
@@ -4779,6 +4826,8 @@
                 }
 
             </div>
+            
+            ${imagesHtml}
 
         `;
 
