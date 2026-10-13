@@ -336,6 +336,15 @@
                     History & Logs Archive
                 </button>
 
+                <button
+                    onclick="switchTab('machinery')"
+                    id="tab-btn-machinery"
+                    class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800"
+                >
+                    <i class="fa-solid fa-tractor text-white"></i>
+                    Machinery & Fuel Log
+                </button>
+
             </div>
 
 
@@ -828,9 +837,141 @@
 
         </div>
 
+
+
+        <!-- TAB 3: MACHINERY & FUEL LOG SCREEN -->
+        <div id="tab-content-machinery" class="hidden space-y-6">
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+                <div class="flex flex-wrap justify-between items-center mb-4 border-b border-slate-800 pb-3 gap-2">
+                    <div>
+                        <h3 class="font-bold text-amber-400 text-sm sm:text-base flex items-center gap-2">
+                            <i class="fa-solid fa-tractor text-white"></i>
+                            Machinery & Heavy Equipment Log
+                        </h3>
+                        <p class="text-xs text-slate-400">
+                            Track working hours and fuel consumption synced live with Firebase
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        onclick="openMachineryModal()"
+                        class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs px-4 py-2 rounded-xl shadow-md transition flex items-center gap-1.5"
+                    >
+                        <i class="fa-solid fa-plus text-slate-950"></i>
+                        Add Machinery Entry
+                    </button>
+                </div>
+
+                <div id="machinery-records-list" class="space-y-3">
+                    <!-- Dynamic Machinery Cards -->
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
 </main>
+
+
+
+<!-- MACHINERY ENTRY MODAL -->
+<div
+    id="modal-machinery"
+    class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 custom-scrollbar overflow-y-auto"
+>
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative my-6">
+        <button
+            onclick="closeMachineryModal()"
+            class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg"
+        >
+            <i class="fa-solid fa-xmark text-white"></i>
+        </button>
+
+        <h3 class="font-bold text-amber-400 text-base mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-tractor text-white"></i>
+            <span id="machinery-modal-title">Add Machinery & Fuel Log</span>
+        </h3>
+
+        <form id="machinery-form" onsubmit="saveMachineryEntry(event)" class="space-y-4">
+            <input type="hidden" id="machinery-entry-id">
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Date *</label>
+                <input
+                    type="date"
+                    id="mach-date"
+                    required
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500"
+                >
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Equipment Name / Type *</label>
+                <input
+                    type="text"
+                    id="mach-name"
+                    required
+                    placeholder="e.g., Excavator / Crane / Concrete Mixer / Generator"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500"
+                >
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Working Hours (Hrs)</label>
+                    <input
+                        type="number"
+                        step="0.5"
+                        min="0"
+                        id="mach-hours"
+                        placeholder="e.g., 8"
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500"
+                    >
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Fuel Consumed (Liters)</label>
+                    <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        id="mach-fuel"
+                        placeholder="e.g., 45"
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500"
+                    >
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Operator Name & Remarks</label>
+                <input
+                    type="text"
+                    id="mach-remarks"
+                    placeholder="e.g., Operator Ahmed / Main foundation digging"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500"
+                >
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button
+                    type="button"
+                    onclick="closeMachineryModal()"
+                    class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2.5 rounded-xl"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="submit"
+                    class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs px-6 py-2.5 rounded-xl shadow-md transition"
+                >
+                    Save Entry
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 
 
@@ -942,7 +1083,7 @@
 <script>
 
     // ============================================================
-    // PWA MANIFEST INITIALIZATION
+    // PWA MANIFEST & SERVICE WORKER AUTO-UPDATE INITIALIZATION
     // ============================================================
 
     (function initPWA() {
@@ -974,7 +1115,48 @@
 
         document.head.appendChild(link);
 
+        // Register Service Worker for auto-updates
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', (e) => {
+                    self.skipWaiting();
+                });
+                self.addEventListener('activate', (e) => {
+                    e.waitUntil(clients.claim());
+                });
+                self.addEventListener('fetch', (e) => {
+                    e.respondWith(
+                        fetch(e.request).catch(() => caches.match(e.request))
+                    );
+                });
+            `;
+            const swBlob = new Blob([swCode], { type: 'text/javascript' });
+            const swUrl = URL.createObjectURL(swBlob);
+
+            navigator.serviceWorker.register(swUrl).then((registration) => {
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            showUpdateNotification();
+                        }
+                    });
+                });
+            }).catch(err => console.log('SW registration failed:', err));
+        }
+
     })();
+
+    function showUpdateNotification() {
+        const toast = document.getElementById('toast');
+        const msgSpan = document.getElementById('toast-msg');
+        toast.className = "fixed bottom-5 right-5 z-50 bg-amber-500 text-slate-950 px-4 py-3 rounded-xl shadow-2xl font-bold text-xs flex items-center gap-2 transform transition-all duration-300 cursor-pointer";
+        msgSpan.innerHTML = `New Update Available! Click to Refresh`;
+        toast.onclick = function() {
+            window.location.reload();
+        };
+        toast.classList.remove('hidden');
+    }
 
 
 
@@ -1054,6 +1236,10 @@
     
     // Array to store uploaded site images for current log entry/edit
     let currentUploadedImages = [];
+    
+    // Cache for machinery logs
+    let siteMachineryCache = [];
+    let machineryUnsubscribe = null;
 
 
 
@@ -1246,6 +1432,7 @@
                 );
 
                 setupFirestoreRealtimeListener();
+                setupMachineryListener();
 
             }
 
@@ -1443,6 +1630,10 @@
 
     }
 
+    function getSiteMachineryKey(siteId) {
+        return 'AE_MACHINERY_' + siteId;
+    }
+
 
 
     function setTodayDateDefault() {
@@ -1469,6 +1660,8 @@
             document.getElementById(
                 'log-date'
             );
+            
+        const machDateInput = document.getElementById('mach-date');
 
 
 
@@ -1477,6 +1670,10 @@
             logDateInput.value =
                 localDate;
 
+        }
+        
+        if (machDateInput) {
+            machDateInput.value = localDate;
         }
 
     }
@@ -1926,6 +2123,7 @@
 
 
         setupFirestoreRealtimeListener();
+        setupMachineryListener();
 
 
 
@@ -2128,6 +2326,37 @@
 
     }
 
+    function setupMachineryListener() {
+        if (!firebaseInitialized || !db || !activeSite) return;
+
+        if (machineryUnsubscribe) {
+            machineryUnsubscribe();
+            machineryUnsubscribe = null;
+        }
+
+        try {
+            machineryUnsubscribe = db.collection('sites')
+                .doc(activeSite.id)
+                .collection('machinery')
+                .onSnapshot(snapshot => {
+                    const list = [];
+                    snapshot.forEach(doc => {
+                        list.push({ id: doc.id, ...doc.data() });
+                    });
+                    siteMachineryCache = list;
+                    localStorage.setItem(getSiteMachineryKey(activeSite.id), JSON.stringify(list));
+
+                    if (!document.getElementById('tab-content-machinery').classList.contains('hidden')) {
+                        renderMachineryLogs();
+                    }
+                }, err => {
+                    console.error("Machinery listener error:", err);
+                });
+        } catch (err) {
+            console.error("Machinery listener init error:", err);
+        }
+    }
+
 
 
     function logout() {
@@ -2136,6 +2365,10 @@
 
             firestoreUnsubscribe();
 
+        }
+        
+        if (machineryUnsubscribe) {
+            machineryUnsubscribe();
         }
 
 
@@ -2147,6 +2380,7 @@
         editingLogId = null;
 
         siteLogsCache = [];
+        siteMachineryCache = [];
 
 
 
@@ -2400,7 +2634,6 @@
 
         }
 
-        // Capture current active input values and shifts before re-rendering
         const currentActiveValues = {};
         currentLaborTrades.forEach(trade => {
             const qtyInput = document.querySelector(`[data-trade-id="${trade.id}"]`);
@@ -2437,7 +2670,7 @@
 
 
         showToast(
-            `Trade "${val}" added!`
+            `Trade "${val}" added successfully!`
         );
 
     }
@@ -2463,14 +2696,13 @@
 
         const confirmed =
             confirm(
-                `Delete the "${trade.label}" trade category from this form?`
+                `Are you sure you want to delete the "${trade.label}" trade category from this form?`
             );
 
 
 
         if (!confirmed) return;
 
-        // Capture current active input values and shifts before re-rendering
         const currentActiveValues = {};
         currentLaborTrades.forEach(t => {
             if (t.id !== tradeId) {
@@ -2501,7 +2733,7 @@
 
 
         showToast(
-            `"${trade.label}" trade category removed.`
+            `Trade "${trade.label}" removed successfully.`
         );
 
     }
@@ -2962,6 +3194,15 @@
             )
         ) || [];
 
+    }
+
+    function getActiveSiteMachinery() {
+        if (!activeSite) return [];
+        if (siteMachineryCache && siteMachineryCache.length > 0) {
+            return siteMachineryCache;
+        }
+        const key = getSiteMachineryKey(activeSite.id);
+        return JSON.parse(localStorage.getItem(key)) || [];
     }
 
 
@@ -3710,6 +3951,8 @@
             document.getElementById(
                 'tab-btn-history'
             );
+            
+        const machineryBtn = document.getElementById('tab-btn-machinery');
 
 
 
@@ -3724,6 +3967,8 @@
             document.getElementById(
                 'tab-content-history'
             );
+            
+        const machineryContent = document.getElementById('tab-content-machinery');
 
 
 
@@ -3732,49 +3977,54 @@
             entryBtn.className =
                 "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
 
-
-
             historyBtn.className =
+                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
+                
+            machineryBtn.className =
                 "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
 
 
 
-            entryContent.classList.remove(
-                'hidden'
-            );
+            entryContent.classList.remove('hidden');
+            historyContent.classList.add('hidden');
+            machineryContent.classList.add('hidden');
 
-
-
-            historyContent.classList.add(
-                'hidden'
-            );
-
-        } else {
+        } else if (tab === 'history') {
 
             historyBtn.className =
                 "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
 
-
-
             entryBtn.className =
+                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
+                
+            machineryBtn.className =
                 "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
 
 
 
-            historyContent.classList.remove(
-                'hidden'
-            );
-
-
-
-            entryContent.classList.add(
-                'hidden'
-            );
+            historyContent.classList.remove('hidden');
+            entryContent.classList.add('hidden');
+            machineryContent.classList.add('hidden');
 
 
 
             renderHistoryLogs();
 
+        } else if (tab === 'machinery') {
+            machineryBtn.className =
+                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
+
+            entryBtn.className =
+                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
+                
+            historyBtn.className =
+                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
+
+            machineryContent.classList.remove('hidden');
+            entryContent.classList.add('hidden');
+            historyContent.classList.add('hidden');
+
+            renderMachineryLogs();
         }
 
     }
@@ -3806,7 +4056,7 @@
         if (!log) return;
 
         const confirmed = confirm(
-            `Kya aap wakayi ${log.date} ke log ko delete karna chahte hain?\n\nYeh log Firebase Cloud Database aur local storage dono se permanently delete ho jayega.`
+            `Are you sure you want to delete the log for ${log.date}?\n\nThis log will be permanently deleted from both Firebase Cloud Database and local storage.`
         );
 
         if (!confirmed) return;
@@ -3837,7 +4087,7 @@
         renderHistoryLogs();
         loadLogForSelectedDate();
 
-        showToast(`Log ${log.date} successfully deleted from database!`);
+        showToast(`Log for ${log.date} successfully deleted from database!`);
     }
 
 
@@ -4374,7 +4624,6 @@
 
 
 
-        // Restore all trade categories (including custom ones if any existed)
         currentLaborTrades = [...DEFAULT_TRADES];
         
         if (log.laborBreakdown) {
@@ -4491,7 +4740,6 @@
 
         }
         
-        // Restore uploaded images
         currentUploadedImages = log.images ? [...log.images] : [];
         renderImagePreviews();
 
@@ -4857,6 +5105,158 @@
 
     }
 
+    function openMachineryModal(id = null) {
+        document.getElementById('machinery-form').reset();
+        document.getElementById('machinery-entry-id').value = '';
+        document.getElementById('machinery-modal-title').textContent = "Add Machinery & Fuel Log";
+        setTodayDateDefault();
+
+        if (id) {
+            const list = getActiveSiteMachinery();
+            const item = list.find(m => m.id === id);
+            if (item) {
+                document.getElementById('machinery-entry-id').value = item.id;
+                document.getElementById('mach-date').value = item.date;
+                document.getElementById('mach-name').value = item.name;
+                document.getElementById('mach-hours').value = item.hours;
+                document.getElementById('mach-fuel').value = item.fuel;
+                document.getElementById('mach-remarks').value = item.remarks || '';
+                document.getElementById('machinery-modal-title').textContent = "Edit Machinery & Fuel Log";
+            }
+        }
+
+        document.getElementById('modal-machinery').classList.remove('hidden');
+    }
+
+    function closeMachineryModal() {
+        document.getElementById('modal-machinery').classList.add('hidden');
+    }
+
+    async function saveMachineryEntry(e) {
+        e.preventDefault();
+        if (!activeSite) return;
+
+        const entryId = document.getElementById('machinery-entry-id').value;
+        const dateVal = document.getElementById('mach-date').value;
+        const nameVal = document.getElementById('mach-name').value.trim();
+        const hoursVal = parseFloat(document.getElementById('mach-hours').value) || 0;
+        const fuelVal = parseFloat(document.getElementById('mach-fuel').value) || 0;
+        const remarksVal = document.getElementById('mach-remarks').value.trim();
+
+        const docId = entryId || ('mach_' + Date.now());
+
+        const payload = {
+            date: dateVal,
+            name: nameVal,
+            hours: hoursVal,
+            fuel: fuelVal,
+            remarks: remarksVal,
+            supervisor: currentUser,
+            updatedAt: new Date().toISOString()
+        };
+
+        if (isCloudMode && db && firebaseInitialized) {
+            setSyncStatus("Saving Machinery to Firebase...", "syncing");
+            try {
+                await db.collection('sites').doc(activeSite.id).collection('machinery').doc(docId).set(payload, { merge: true });
+                setSyncStatus("Firebase Synced", "cloud");
+                showToast("Machinery log successfully saved to Firebase!");
+            } catch (err) {
+                console.error("Machinery save failed:", err);
+                setSyncStatus("Firebase Save Failed", "error");
+                showToast("Firebase save failed, local backup kept.");
+            }
+        }
+
+        const list = getActiveSiteMachinery();
+        const idx = list.findIndex(m => m.id === docId);
+        if (idx >= 0) {
+            list[idx] = { id: docId, ...payload };
+        } else {
+            list.push({ id: docId, ...payload });
+        }
+
+        localStorage.setItem(getSiteMachineryKey(activeSite.id), JSON.stringify(list));
+        siteMachineryCache = list;
+
+        closeMachineryModal();
+        renderMachineryLogs();
+    }
+
+    async function deleteMachineryEntry(id) {
+        if (!activeSite || !id) return;
+        const confirmed = confirm("Are you sure you want to delete this machinery entry?");
+        if (!confirmed) return;
+
+        if (isCloudMode && db && firebaseInitialized) {
+            setSyncStatus("Deleting from Firebase...", "syncing");
+            try {
+                await db.collection('sites').doc(activeSite.id).collection('machinery').doc(id).delete();
+                setSyncStatus("Firebase Synced", "cloud");
+            } catch (err) {
+                console.error("Machinery delete failed:", err);
+                setSyncStatus("Firebase Delete Failed", "error");
+            }
+        }
+
+        const list = getActiveSiteMachinery();
+        const updated = list.filter(m => m.id !== id);
+        localStorage.setItem(getSiteMachineryKey(activeSite.id), JSON.stringify(updated));
+        siteMachineryCache = updated;
+
+        renderMachineryLogs();
+        showToast("Machinery entry deleted successfully!");
+    }
+
+    function renderMachineryLogs() {
+        if (!activeSite) return;
+        const list = getActiveSiteMachinery();
+        list.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        const container = document.getElementById('machinery-records-list');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (list.length === 0) {
+            container.innerHTML = `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
+                    <i class="fa-solid fa-tractor text-4xl mb-3 text-slate-600"></i>
+                    <p class="font-medium text-sm">No machinery logs found.</p>
+                    <p class="text-xs text-slate-500 mt-1">Click "Add Machinery Entry" to track equipment and fuel consumption.</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.forEach(item => {
+            const card = document.createElement('div');
+            card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-wrap justify-between items-center gap-3";
+            card.innerHTML = `
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-white">${item.name}</span>
+                        <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">${item.date}</span>
+                    </div>
+                    <div class="text-xs text-slate-300 flex flex-wrap gap-3">
+                        <span><strong class="text-amber-400">${item.hours || 0}</strong> Working Hours</span>
+                        <span>•</span>
+                        <span><strong class="text-amber-400">${item.fuel || 0}</strong> Liters Fuel</span>
+                        ${item.remarks ? `<span>•</span><span class="text-slate-400">Note: ${item.remarks}</span>` : ''}
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openMachineryModal('${item.id}')" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                    </button>
+                    <button onclick="deleteMachineryEntry('${item.id}')" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1">
+                        <i class="fa-solid fa-trash-can"></i> Delete
+                    </button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
 
 
     function printLogModal() {
@@ -4920,7 +5320,7 @@
 
 
         showToast(
-            "Local device memory cleared!"
+            "Local device memory cleared successfully!"
         );
 
     }
