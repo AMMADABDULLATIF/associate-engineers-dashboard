@@ -95,6 +95,23 @@
         -moz-appearance: textfield;
     }
 
+    /* Full-screen site photo viewer */
+    #site-image-viewer { touch-action: pan-y; }
+    #site-image-viewer-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transform-origin: center center;
+        transition: transform 0.12s ease-out;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+    .image-viewer-control {
+        display: inline-flex; align-items: center; justify-content: center;
+        min-width: 40px; min-height: 40px; border-radius: 12px;
+        background: rgba(30,41,59,.92); border: 1px solid rgba(148,163,184,.25);
+        color: #f8fafc; padding: 8px 12px;
+    }
     /* Mobile standalone app padding support */
     @supports (padding-top: env(safe-area-inset-top)) {
         header {
@@ -107,10 +124,23 @@
         .print-only { display: block !important; }
         body { background: white !important; color: black !important; }
         .print-card {
-            border: 1px solid #ccc !important;
+            border: none !important;
             background: white !important;
             color: black !important;
             box-shadow: none !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        #modal-log-detail {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            background: white !important;
+            display: block !important;
+            padding: 0 !important;
         }
     }
 </style>
@@ -316,12 +346,12 @@
 
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 flex flex-wrap justify-between items-center gap-2 no-print shadow-lg">
 
-            <div class="flex items-center gap-2 w-full sm:w-auto">
+            <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto custom-scrollbar pb-1">
 
                 <button
                     onclick="switchTab('entry')"
                     id="tab-btn-entry"
-                    class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md"
+                    class="flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md"
                 >
                     <i class="fa-solid fa-pen-to-square text-slate-950"></i>
                     Daily Log Entry Form
@@ -330,7 +360,7 @@
                 <button
                     onclick="switchTab('history')"
                     id="tab-btn-history"
-                    class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800"
+                    class="flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800"
                 >
                     <i class="fa-solid fa-clock-rotate-left text-white"></i>
                     History & Logs Archive
@@ -339,10 +369,19 @@
                 <button
                     onclick="switchTab('machinery')"
                     id="tab-btn-machinery"
-                    class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800"
+                    class="flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800"
                 >
                     <i class="fa-solid fa-tractor text-white"></i>
                     Machinery & Fuel Log
+                </button>
+
+                <button
+                    onclick="switchTab('analytics')"
+                    id="tab-btn-analytics"
+                    class="flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800"
+                >
+                    <i class="fa-solid fa-chart-pie text-white"></i>
+                    Analytics & Summary
                 </button>
 
             </div>
@@ -871,6 +910,85 @@
 
         </div>
 
+
+
+        <!-- TAB 4: ANALYTICS & SUMMARY DASHBOARD -->
+        <div id="tab-content-analytics" class="hidden space-y-6">
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-6">
+                <div class="flex flex-wrap justify-between items-center border-b border-slate-800 pb-4 gap-2">
+                    <div>
+                        <h3 class="font-bold text-amber-400 text-base sm:text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-white"></i>
+                            Site Analytics & Performance Summary
+                        </h3>
+                        <p class="text-xs text-slate-400">
+                            Real-time calculated totals for labour deployment, material consumption, and project delays
+                        </p>
+                    </div>
+                    <button
+                        onclick="renderAnalyticsDashboard()"
+                        class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5"
+                    >
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh Analytics
+                    </button>
+                </div>
+
+                <!-- Top Summary Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+                        <span class="text-xs text-slate-400 font-medium block">Total Recorded Logs</span>
+                        <h4 id="stat-total-logs" class="text-2xl font-extrabold text-white">0</h4>
+                        <span class="text-[11px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Synced with Cloud</span>
+                    </div>
+
+                    <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+                        <span class="text-xs text-slate-400 font-medium block">Total Labour Deployed</span>
+                        <h4 id="stat-total-labour" class="text-2xl font-extrabold text-amber-400">0</h4>
+                        <span class="text-[11px] text-slate-400">Cumulative worker count</span>
+                    </div>
+
+                    <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+                        <span class="text-xs text-slate-400 font-medium block">Total Delays / Issues</span>
+                        <h4 id="stat-total-delays" class="text-2xl font-extrabold text-rose-400">0</h4>
+                        <span class="text-[11px] text-rose-300">Bottlenecks recorded</span>
+                    </div>
+
+                    <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+                        <span class="text-xs text-slate-400 font-medium block">Machinery Hours Logged</span>
+                        <h4 id="stat-total-machinery-hrs" class="text-2xl font-extrabold text-indigo-400">0 Hrs</h4>
+                        <span class="text-[11px] text-slate-400">Total equipment run time</span>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdown Sections -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+                    <!-- Top Consumed Materials -->
+                    <div class="bg-slate-800/50 border border-slate-800 p-4 sm:p-5 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-amber-400 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-boxes-stacked text-white"></i>
+                            Top Consumed Materials Summary
+                        </h4>
+                        <div id="analytics-materials-list" class="space-y-2">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Labour Trade Breakdown -->
+                    <div class="bg-slate-800/50 border border-slate-800 p-4 sm:p-5 rounded-2xl space-y-3">
+                        <h4 class="font-bold text-amber-400 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-users text-white"></i>
+                            Labour Distribution by Trade
+                        </h4>
+                        <div id="analytics-trades-list" class="space-y-2">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
 </main>
@@ -978,21 +1096,21 @@
 <!-- LOG DETAIL & PRINT VIEW MODAL -->
 <div
     id="modal-log-detail"
-    class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 custom-scrollbar overflow-y-auto"
+    class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex items-center justify-center p-2 sm:p-4 custom-scrollbar overflow-y-auto"
 >
 
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-5 sm:p-6 shadow-2xl relative my-6 print-card">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-4 sm:p-6 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto custom-scrollbar print-card">
 
         <button
             onclick="closeLogDetailModal()"
-            class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg no-print"
+            class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg no-print z-10"
         >
-            <i class="fa-solid fa-xmark text-white"></i>
+            <i class="fa-solid fa-xmark text-white text-xl"></i>
         </button>
 
 
 
-        <div class="border-b border-slate-800 pb-4 mb-4 flex justify-between items-start">
+        <div class="border-b border-slate-800 pb-4 mb-4 flex flex-wrap justify-between items-start gap-2">
 
             <div>
                 <span class="text-xs text-amber-500 uppercase tracking-widest font-bold">
@@ -1000,14 +1118,14 @@
                 </span>
 
                 <h2
-                    class="text-lg sm:text-xl font-extrabold text-white"
+                    class="text-base sm:text-xl font-extrabold text-white mt-0.5"
                     id="modal-site-title"
                 >
                     --
                 </h2>
 
                 <p class="text-xs text-slate-400">
-                    Daily Construction Site Activity Report
+                    Daily Construction Site Activity & Machinery Report
                 </p>
             </div>
 
@@ -1032,15 +1150,15 @@
 
 
 
-        <div id="modal-detail-content" class="space-y-5 text-xs text-slate-200">
+        <div id="modal-detail-content" class="space-y-4 text-xs text-slate-200">
             <!-- Dynamic Content injected here -->
         </div>
 
 
 
-        <div class="mt-6 pt-4 border-t border-slate-800 flex justify-between items-center no-print">
+        <div class="mt-6 pt-4 border-t border-slate-800 flex flex-wrap justify-between items-center gap-2 no-print">
 
-            <span class="text-xs text-slate-500" id="modal-log-author">
+            <span class="text-xs text-slate-400" id="modal-log-author">
                 --
             </span>
 
@@ -1048,15 +1166,15 @@
 
                 <button
                     onclick="printLogModal()"
-                    class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 text-xs px-4 py-2 rounded-lg font-medium transition flex items-center gap-1.5"
+                    class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-md"
                 >
-                    <i class="fa-solid fa-print text-white"></i>
+                    <i class="fa-solid fa-print text-slate-950"></i>
                     Print / PDF
                 </button>
 
                 <button
                     onclick="closeLogDetailModal()"
-                    class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2 rounded-lg"
+                    class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2.5 rounded-xl border border-slate-700"
                 >
                     Close
                 </button>
@@ -1068,6 +1186,26 @@
 </div>
 
 
+
+<!-- SITE IMAGE LIGHTBOX / GALLERY -->
+<div id="site-image-viewer" class="fixed inset-0 z-[70] hidden bg-slate-950/95 backdrop-blur-md flex flex-col" role="dialog" aria-modal="true" aria-label="Site photo viewer">
+    <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-800">
+        <div class="text-sm font-semibold text-white"><i class="fa-solid fa-images text-amber-400 mr-2"></i><span id="site-image-viewer-counter">Photo 1 of 1</span></div>
+        <div class="flex items-center gap-2">
+            <button type="button" class="image-viewer-control" onclick="changeViewerZoom(-0.25)" title="Zoom out" aria-label="Zoom out"><i class="fa-solid fa-minus"></i></button>
+            <button type="button" class="image-viewer-control" onclick="resetViewerZoom()" title="Reset zoom" aria-label="Reset zoom"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <button type="button" class="image-viewer-control" onclick="changeViewerZoom(0.25)" title="Zoom in" aria-label="Zoom in"><i class="fa-solid fa-plus"></i></button>
+            <button type="button" class="image-viewer-control" onclick="closeImageViewer()" title="Close" aria-label="Close photo viewer"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+    <div id="site-image-viewer-stage" class="relative flex-1 min-h-0 flex items-center justify-center overflow-hidden p-3 sm:p-6"
+         ontouchstart="imageViewerTouchStart(event)" ontouchend="imageViewerTouchEnd(event)" onwheel="imageViewerWheel(event)" ondblclick="toggleViewerZoom(event)">
+        <button type="button" class="image-viewer-control absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-10" onclick="stepImageViewer(-1)" title="Previous photo" aria-label="Previous photo"><i class="fa-solid fa-chevron-left"></i></button>
+        <img id="site-image-viewer-image" src="" alt="Site progress photo" class="max-w-full max-h-full rounded-lg shadow-2xl">
+        <button type="button" class="image-viewer-control absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-10" onclick="stepImageViewer(1)" title="Next photo" aria-label="Next photo"><i class="fa-solid fa-chevron-right"></i></button>
+        <p class="absolute bottom-3 left-0 right-0 text-center text-xs text-slate-400 pointer-events-none">Swipe left/right to change photo · Pinch or use +/− to zoom · Double-click to zoom</p>
+    </div>
+</div>
 
 <!-- Toast Box -->
 <div
@@ -2273,6 +2411,21 @@
 
                             }
 
+                            if (
+                                !document
+                                    .getElementById(
+                                        'tab-content-analytics'
+                                    )
+                                    .classList
+                                    .contains(
+                                        'hidden'
+                                    )
+                            ) {
+
+                                renderAnalyticsDashboard();
+
+                            }
+
                         },
 
                         error => {
@@ -2348,6 +2501,9 @@
 
                     if (!document.getElementById('tab-content-machinery').classList.contains('hidden')) {
                         renderMachineryLogs();
+                    }
+                    if (!document.getElementById('tab-content-analytics').classList.contains('hidden')) {
+                        renderAnalyticsDashboard();
                     }
                 }, err => {
                     console.error("Machinery listener error:", err);
@@ -2819,8 +2975,8 @@
             const div = document.createElement('div');
             div.className = "relative group bg-slate-800 border border-slate-700 rounded-xl overflow-hidden h-24";
             div.innerHTML = `
-                <img src="${imgSrc}" class="w-full h-full object-cover">
-                <button type="button" onclick="removeUploadedImage(${index})" class="absolute top-1 right-1 bg-rose-600 hover:bg-rose-700 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center shadow transition" title="Remove Photo">
+                <img src="${imgSrc}" class="w-full h-full object-cover cursor-zoom-in" role="button" tabindex="0" aria-label="Open photo ${index + 1}" onclick="openImageViewer(${index})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openImageViewer(${index})}">
+                <button type="button" onclick="event.stopPropagation(); removeUploadedImage(${index})" class="absolute top-1 right-1 bg-rose-600 hover:bg-rose-700 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center shadow transition" title="Remove Photo">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             `;
@@ -2828,8 +2984,143 @@
         });
     }
 
+    // Full-screen image gallery: swipe navigation, wheel/pinch zoom and zoom controls.
+    let imageViewerIndex = 0;
+    let imageViewerZoom = 1;
+    let imageViewerTouchX = 0;
+    let imageViewerTouchY = 0;
+    let imageViewerPinchStartDistance = 0;
+    let imageViewerPinchStartZoom = 1;
+
+    function openImageViewer(index) {
+        if (!currentUploadedImages.length) return;
+        imageViewerIndex = Math.max(0, Math.min(index, currentUploadedImages.length - 1));
+        imageViewerZoom = 1;
+        const viewer = document.getElementById('site-image-viewer');
+        viewer.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        renderImageViewer();
+    }
+
+    function renderImageViewer() {
+        const images = currentUploadedImages;
+        if (!images.length) { closeImageViewer(); return; }
+        imageViewerIndex = (imageViewerIndex + images.length) % images.length;
+        const image = document.getElementById('site-image-viewer-image');
+        image.src = images[imageViewerIndex];
+        image.style.transform = `scale(${imageViewerZoom})`;
+        document.getElementById('site-image-viewer-counter').textContent =
+            `Photo ${imageViewerIndex + 1} of ${images.length}`;
+        const stage = document.getElementById('site-image-viewer-stage');
+        stage.querySelectorAll('button').forEach(btn => {
+            btn.disabled = images.length < 2;
+            btn.style.opacity = images.length < 2 ? '.35' : '1';
+        });
+    }
+
+    function closeImageViewer() {
+        document.getElementById('site-image-viewer').classList.add('hidden');
+        document.body.style.overflow = '';
+        const image = document.getElementById('site-image-viewer-image');
+        if (image) image.src = '';
+        imageViewerZoom = 1;
+    }
+
+    function stepImageViewer(direction) {
+        if (currentUploadedImages.length < 2) return;
+        imageViewerIndex = (imageViewerIndex + direction + currentUploadedImages.length) % currentUploadedImages.length;
+        imageViewerZoom = 1;
+        renderImageViewer();
+    }
+
+    function changeViewerZoom(amount) {
+        imageViewerZoom = Math.max(1, Math.min(4, imageViewerZoom + amount));
+        document.getElementById('site-image-viewer-image').style.transform = `scale(${imageViewerZoom})`;
+    }
+
+    function resetViewerZoom() {
+        imageViewerZoom = 1;
+        document.getElementById('site-image-viewer-image').style.transform = 'scale(1)';
+    }
+
+    function toggleViewerZoom(event) {
+        if (event.target.id !== 'site-image-viewer-image') return;
+        imageViewerZoom = imageViewerZoom > 1 ? 1 : 2;
+        event.target.style.transform = `scale(${imageViewerZoom})`;
+    }
+
+    function imageViewerWheel(event) {
+        if (event.ctrlKey || event.metaKey) {
+            event.preventDefault();
+            changeViewerZoom(event.deltaY < 0 ? 0.15 : -0.15);
+        }
+    }
+
+    function imageViewerTouchStart(event) {
+        if (event.touches.length === 1) {
+            imageViewerTouchX = event.touches[0].clientX;
+            imageViewerTouchY = event.touches[0].clientY;
+        } else if (event.touches.length === 2) {
+            const dx = event.touches[0].clientX - event.touches[1].clientX;
+            const dy = event.touches[0].clientY - event.touches[1].clientY;
+            imageViewerPinchStartDistance = Math.hypot(dx, dy);
+            imageViewerPinchStartZoom = imageViewerZoom;
+        }
+    }
+
+    function imageViewerTouchEnd(event) {
+        if (event.changedTouches.length && imageViewerPinchStartDistance) {
+            imageViewerPinchStartDistance = 0;
+            return;
+        }
+        if (!event.changedTouches.length) return;
+        const dx = event.changedTouches[0].clientX - imageViewerTouchX;
+        const dy = event.changedTouches[0].clientY - imageViewerTouchY;
+        if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) && imageViewerZoom <= 1.05) {
+            stepImageViewer(dx < 0 ? 1 : -1);
+        }
+    }
+
+    // Pinch zoom is handled during touch movement on the gallery stage.
+    document.addEventListener('touchmove', function(event) {
+        const viewer = document.getElementById('site-image-viewer');
+        if (viewer.classList.contains('hidden') || event.touches.length !== 2 || !imageViewerPinchStartDistance) return;
+        const dx = event.touches[0].clientX - event.touches[1].clientX;
+        const dy = event.touches[0].clientY - event.touches[1].clientY;
+        const distance = Math.hypot(dx, dy);
+        imageViewerZoom = Math.max(1, Math.min(4, imageViewerPinchStartZoom * distance / imageViewerPinchStartDistance));
+        document.getElementById('site-image-viewer-image').style.transform = `scale(${imageViewerZoom})`;
+        event.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('keydown', function(event) {
+        const viewer = document.getElementById('site-image-viewer');
+        if (viewer.classList.contains('hidden')) return;
+        if (event.key === 'Escape') closeImageViewer();
+        if (event.key === 'ArrowLeft') stepImageViewer(-1);
+        if (event.key === 'ArrowRight') stepImageViewer(1);
+        if (event.key === '+' || event.key === '=') changeViewerZoom(0.25);
+        if (event.key === '-' || event.key === '_') changeViewerZoom(-0.25);
+    });
+
     function removeUploadedImage(index) {
-        currentUploadedImages.splice(index, 1);
+        const viewer = document.getElementById('site-image-viewer');
+        if (!viewer.classList.contains('hidden')) {
+            if (index === imageViewerIndex) {
+                currentUploadedImages.splice(index, 1);
+                if (!currentUploadedImages.length) closeImageViewer();
+                else {
+                    if (imageViewerIndex >= currentUploadedImages.length) imageViewerIndex = currentUploadedImages.length - 1;
+                    renderImageViewer();
+                }
+            } else {
+                currentUploadedImages.splice(index, 1);
+                if (index < imageViewerIndex) imageViewerIndex--;
+                renderImageViewer();
+            }
+        } else {
+            currentUploadedImages.splice(index, 1);
+        }
         renderImagePreviews();
     }
 
@@ -3586,6 +3877,11 @@
 
 
 
+        // Automatically attach machinery logs matching this date for separate archive & viewing
+        const dayMachineryLogs = getActiveSiteMachinery().filter(m => m.date === dateVal);
+
+
+
         const logPayload = {
 
             date: dateVal,
@@ -3612,6 +3908,9 @@
 
             delays:
                 delays,
+                
+            machineryLogs:
+                dayMachineryLogs,
                 
             images:
                 currentUploadedImages,
@@ -3721,12 +4020,10 @@
 
 
 
-                await docRef.set(
-                    cloudPayload,
-                    {
-                        merge: true
-                    }
-                );
+                // Replace the complete daily-log document. Using merge:true here would
+                // keep removed laborBreakdown map keys in Firestore, causing stale trade
+                // counts in the labour summary and analytics.
+                await docRef.set(cloudPayload);
 
 
 
@@ -3953,6 +4250,7 @@
             );
             
         const machineryBtn = document.getElementById('tab-btn-machinery');
+        const analyticsBtn = document.getElementById('tab-btn-analytics');
 
 
 
@@ -3969,62 +4267,35 @@
             );
             
         const machineryContent = document.getElementById('tab-content-machinery');
+        const analyticsContent = document.getElementById('tab-content-analytics');
 
 
+
+        // Reset all buttons
+        [entryBtn, historyBtn, machineryBtn, analyticsBtn].forEach(btn => {
+            if (btn) btn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
+        });
+
+        // Hide all contents
+        [entryContent, historyContent, machineryContent, analyticsContent].forEach(content => {
+            if (content) content.classList.add('hidden');
+        });
 
         if (tab === 'entry') {
-
-            entryBtn.className =
-                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
-
-            historyBtn.className =
-                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
-                
-            machineryBtn.className =
-                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
-
-
-
+            entryBtn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
             entryContent.classList.remove('hidden');
-            historyContent.classList.add('hidden');
-            machineryContent.classList.add('hidden');
-
         } else if (tab === 'history') {
-
-            historyBtn.className =
-                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
-
-            entryBtn.className =
-                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
-                
-            machineryBtn.className =
-                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
-
-
-
+            historyBtn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
             historyContent.classList.remove('hidden');
-            entryContent.classList.add('hidden');
-            machineryContent.classList.add('hidden');
-
-
-
             renderHistoryLogs();
-
         } else if (tab === 'machinery') {
-            machineryBtn.className =
-                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
-
-            entryBtn.className =
-                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
-                
-            historyBtn.className =
-                "flex-1 sm:flex-none px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
-
+            machineryBtn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
             machineryContent.classList.remove('hidden');
-            entryContent.classList.add('hidden');
-            historyContent.classList.add('hidden');
-
             renderMachineryLogs();
+        } else if (tab === 'analytics') {
+            analyticsBtn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
+            analyticsContent.classList.remove('hidden');
+            renderAnalyticsDashboard();
         }
 
     }
@@ -4191,6 +4462,9 @@
                         <i class="fa-solid fa-users text-white"></i>
                         ${log.totalLabor} Workers
                     </span>`;
+                    
+                const machCount = (log.machineryLogs && log.machineryLogs.length > 0) ? log.machineryLogs.length : getActiveSiteMachinery().filter(m => m.date === log.date).length;
+                const machBadge = machCount > 0 ? `<span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-tractor text-white"></i> ${machCount} Machines</span>` : '';
 
 
 
@@ -4231,11 +4505,13 @@
 
 
 
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
 
                             ${imagesCount}
 
                             ${laborBadge}
+
+                            ${machBadge}
 
                             ${delayBadge}
 
@@ -4845,6 +5121,28 @@
 
         }
         
+        // Retrieve machinery logs for this specific date (fallback to live site cache if older log didn't store it)
+        const dayMachinery = (log.machineryLogs && log.machineryLogs.length > 0) ? log.machineryLogs : getActiveSiteMachinery().filter(m => m.date === log.date);
+        
+        let machineryRows = '';
+        if (dayMachinery && dayMachinery.length > 0) {
+            dayMachinery.forEach(mach => {
+                machineryRows += `
+                    <div class="bg-slate-800/60 border border-slate-700/60 p-2.5 rounded-lg mb-1.5 flex flex-wrap justify-between items-center gap-2">
+                        <div>
+                            <strong class="text-white">${mach.name}</strong>
+                            ${mach.remarks ? `<span class="text-slate-400 text-[11px] block">Operator/Note: ${mach.remarks}</span>` : ''}
+                        </div>
+                        <div class="flex gap-3 text-amber-400 font-semibold">
+                            <span>${mach.hours || 0} Hrs</span>
+                            <span>•</span>
+                            <span>${mach.fuel || 0} Ltr Fuel</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
         let imagesHtml = '';
         if (log.images && log.images.length > 0) {
             let imgItems = log.images.map(src => `<img src="${src}" class="w-20 h-20 object-cover rounded-lg border border-slate-700">`).join('');
@@ -4929,6 +5227,20 @@
                         `
 
                         : '<p class="text-slate-500">No materials delivered today.</p>'
+                }
+
+            </div>
+
+
+
+            <div class="space-y-1.5">
+
+                <strong class="text-indigo-400 block border-b border-slate-800 pb-1">
+                    MACHINERY & HEAVY EQUIPMENT LOG (${dayMachinery.length})
+                </strong>
+
+                ${
+                    machineryRows || '<p class="text-slate-500">No machinery logged for this date.</p>'
                 }
 
             </div>
@@ -5255,6 +5567,114 @@
             `;
             container.appendChild(card);
         });
+    }
+
+
+
+    // ============================================================
+    // ANALYTICS & SUMMARY DASHBOARD CALCULATIONS
+    // ============================================================
+    function renderAnalyticsDashboard() {
+        if (!activeSite) return;
+
+        const logs = getActiveSiteLogs();
+        const machinery = getActiveSiteMachinery();
+
+        // 1. Total Logs
+        document.getElementById('stat-total-logs').textContent = logs.length;
+
+        // 2. Total Labour Deployed
+        let totalLaborCount = 0;
+        let totalDelaysCount = 0;
+        const materialTotals = {};
+        const tradeTotals = {};
+
+        // Pre-populate all available/defined trades so they display even if count is 0
+        currentLaborTrades.forEach(t => {
+            tradeTotals[t.label] = 0;
+        });
+
+        logs.forEach(log => {
+            totalLaborCount += log.totalLabor || 0;
+            if (log.delays && Array.isArray(log.delays)) {
+                totalDelaysCount += log.delays.length;
+            }
+
+            // Material Totals
+            if (log.materials && Array.isArray(log.materials)) {
+                log.materials.forEach(mat => {
+                    const itemName = mat.item.trim();
+                    const qty = parseFloat(mat.qty) || 0;
+                    if (!materialTotals[itemName]) {
+                        materialTotals[itemName] = { totalQty: 0, unit: mat.unit || '' };
+                    }
+                    materialTotals[itemName].totalQty += qty;
+                });
+            }
+
+            // Trade Totals
+            if (log.laborBreakdown) {
+                Object.entries(log.laborBreakdown).forEach(([tradeName, data]) => {
+                    const count = (typeof data === 'object' && data !== null) ? (parseInt(data.count) || 0) : (parseInt(data) || 0);
+                    if (tradeTotals[tradeName] === undefined) {
+                        tradeTotals[tradeName] = 0;
+                    }
+                    tradeTotals[tradeName] += count;
+                });
+            }
+        });
+
+        document.getElementById('stat-total-labour').textContent = totalLaborCount;
+        document.getElementById('stat-total-delays').textContent = totalDelaysCount;
+
+        // 3. Machinery Hours Total
+        let totalMachHours = 0;
+        machinery.forEach(m => {
+            totalMachHours += parseFloat(m.hours) || 0;
+        });
+        document.getElementById('stat-total-machinery-hrs').textContent = totalMachHours + " Hrs";
+
+        // Render Top Materials List
+        const matContainer = document.getElementById('analytics-materials-list');
+        matContainer.innerHTML = '';
+        const sortedMaterials = Object.entries(materialTotals).sort((a, b) => b[1].totalQty - a[1].totalQty);
+
+        if (sortedMaterials.length === 0) {
+            matContainer.innerHTML = `<p class="text-xs text-slate-500 py-2">No material delivery logs recorded yet.</p>`;
+        } else {
+            sortedMaterials.forEach(([name, data]) => {
+                matContainer.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-700/60 p-2.5 rounded-xl flex justify-between items-center text-xs">
+                        <span class="font-medium text-white">${name}</span>
+                        <span class="text-amber-400 font-bold">${data.totalQty} ${data.unit}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // Render Labour Trade Distribution
+        const tradeContainer = document.getElementById('analytics-trades-list');
+        tradeContainer.innerHTML = '';
+        
+        // Sort trades by total worker count descending
+        const sortedTrades = Object.entries(tradeTotals).sort((a, b) => b[1] - a[1]);
+
+        if (sortedTrades.length === 0) {
+            tradeContainer.innerHTML = `<p class="text-xs text-slate-500 py-2">No labour counts recorded yet.</p>`;
+        } else {
+            // Render all categories without slicing limit
+            sortedTrades.forEach(([trade, count]) => {
+                tradeContainer.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-700/60 p-2.5 rounded-xl flex justify-between items-center text-xs">
+                        <span class="font-medium text-white">${trade}</span>
+                        <span class="text-amber-400 font-bold">${count} Total Workers</span>
+                    </div>
+                `;
+            });
+        }
+
+        // Show toast notification as requested
+        showToast("analytics refresh");
     }
 
 
