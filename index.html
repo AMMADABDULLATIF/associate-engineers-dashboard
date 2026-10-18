@@ -1231,62 +1231,108 @@
     // PWA UPDATE & AUTO-REFRESH MECHANISM (FIXED)
     // ============================================================
     (function initPWA() {
+
         const manifest = {
+
             name: "ASSOCIATE ENGINEERS - Daily Log",
+
             short_name: "ASSOCIATE LOG",
+
             start_url: "./",
+
             display: "standalone",
+
             background_color: "#030712",
+
             theme_color: "#030712",
+
             icons: [{
+
                 src: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f477.png",
+
                 sizes: "72x72 96x96 128x128 192x192 512x512",
+
                 type: "image/png"
+
             }]
+
         };
+
+
 
         const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+
         const link = document.createElement('link');
+
         link.rel = 'manifest';
+
         link.href = URL.createObjectURL(manifestBlob);
+
         document.head.appendChild(link);
 
-        // Version Control Logic
-        const CURRENT_VERSION = "v1.0.0"; // Jab app update karni ho, bas yahan version badlein (e.g. v1.0.2)
+
+
+        const CURRENT_VERSION = "v1.0.0"; // Jab update karna ho, yahan version change karein
+
         const savedVersion = localStorage.getItem('app_version');
 
-        // Agar pehli dafa chal raha hai, toh current version save kar lo (Popup nahi aayega)
+
+
         if (!savedVersion) {
+
             localStorage.setItem('app_version', CURRENT_VERSION);
+
             return;
+
         }
 
-        // Agar saved version aur current version alag hain, tabhi popup dikhao
+
+
         if (savedVersion !== CURRENT_VERSION) {
+
             setTimeout(() => {
+
                 showUpdateNotification(CURRENT_VERSION);
+
             }, 1000);
+
         }
+
     })();
 
+
+
     function showUpdateNotification(newVer) {
+
         const toast = document.getElementById('toast');
+
         const msgSpan = document.getElementById('toast-msg');
+
         if (!toast || !msgSpan) return;
 
+
+
         toast.className = "fixed bottom-5 right-5 z-50 bg-amber-500 text-slate-950 px-5 py-3.5 rounded-xl shadow-2xl font-bold text-xs flex items-center gap-3 transform transition-all duration-300 cursor-pointer animate-bounce border-2 border-slate-950";
-        msgSpan.innerHTML = `<span>🚀 New Update Available (${newVer})! Click to Apply</span>`;
+
+        msgSpan.innerHTML = `<span> New Update Available (${newVer})! Click to Apply</span>`;
+
         
+
         toast.onclick = function() {
-            // Jaise hi user click kare, naya version save ho jaye aur popup gayab ho kar page refresh ho
+
             localStorage.setItem('app_version', newVer);
+
             toast.classList.add('hidden');
-            window.location.reload();
+
+            // Cache bypass karke fresh file load karne ke liye version parameter ke sath reload
+
+            window.location.href = window.location.pathname + '?v=' + newVer;
+
         };
+
         toast.classList.remove('hidden');
+
     }
-
-
 
     // ============================================================
     // FIREBASE INITIALIZATION
