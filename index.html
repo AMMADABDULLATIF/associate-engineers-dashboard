@@ -841,7 +841,7 @@
                             id="history-filter-date"
                             onchange="renderHistoryLogs()"
                             class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
-                        >
+                        />
 
                     </div>
 
@@ -1272,7 +1272,7 @@
 
 
 
-        const CURRENT_VERSION = "v1.0.0"; // Jab update karna ho, yahan version change karein
+        const CURRENT_VERSION = "v1.0.1"; // Jab update karna ho, yahan version change karein
 
         const savedVersion = localStorage.getItem('app_version');
 
@@ -2996,6 +2996,13 @@
         viewer.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
         renderImageViewer();
+    }
+
+    // Modal view ke liye alag se image viewer support (view log click karne par images dekhne ke liye)
+    function openModalImageViewer(imagesArray, index) {
+        if (!imagesArray || !imagesArray.length) return;
+        currentUploadedImages = imagesArray;
+        openImageViewer(index);
     }
 
     function renderImageViewer() {
@@ -5141,7 +5148,7 @@
         
         let imagesHtml = '';
         if (log.images && log.images.length > 0) {
-            let imgItems = log.images.map(src => `<img src="${src}" class="w-20 h-20 object-cover rounded-lg border border-slate-700">`).join('');
+            let imgItems = log.images.map((src, imgIdx) => `<img src="${src}" class="w-20 h-20 object-cover rounded-lg border border-slate-700 cursor-zoom-in hover:opacity-80 transition" onclick="openModalImageViewer(${JSON.stringify(log.images).replace(/"/g, '&quot;')}, ${imgIdx})" title="Click to preview photo">`).join('');
             imagesHtml = `
                 <div class="space-y-1.5">
                     <strong class="text-blue-400 block border-b border-slate-800 pb-1">SITE PROGRESS PHOTOS (${log.images.length})</strong>
