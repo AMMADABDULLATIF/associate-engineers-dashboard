@@ -143,6 +143,43 @@
             padding: 0 !important;
         }
     }
+
+    /* ===== Progress Tracker Styles ===== */
+    .milestone-progress-range {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 8px;
+        border-radius: 999px;
+        background: #1e293b;
+        outline: none;
+    }
+    .milestone-progress-range::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #f59e0b;
+        border: 2px solid #030712;
+        cursor: pointer;
+        box-shadow: 0 0 0 2px rgba(245,158,11,.35);
+    }
+    .milestone-progress-range::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #f59e0b;
+        border: 2px solid #030712;
+        cursor: pointer;
+    }
+    .milestone-progress-range:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+    }
+    .progress-fill {
+        transition: width .35s ease;
+    }
 </style>
 
 </head>
@@ -373,6 +410,15 @@
                 >
                     <i class="fa-solid fa-tractor text-white"></i>
                     Machinery & Fuel Log
+                </button>
+
+                <button
+                    onclick="switchTab('milestones')"
+                    id="tab-btn-milestones"
+                    class="flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800"
+                >
+                    <i class="fa-solid fa-list-check text-white"></i>
+                    Milestones & Progress
                 </button>
 
                 <button
@@ -912,7 +958,82 @@
 
 
 
-        <!-- TAB 4: ANALYTICS & SUMMARY DASHBOARD -->
+        <!-- TAB 4: MILESTONES & PROGRESS TRACKER (NEW) -->
+        <div id="tab-content-milestones" class="hidden space-y-6">
+
+            <!-- Overall Project Completion Gauge -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <div>
+                        <h3 class="font-bold text-amber-400 text-base sm:text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-gauge-high text-white"></i>
+                            Overall Project Completion
+                        </h3>
+                        <p class="text-xs text-slate-400">
+                            Weighted average across all tracked construction milestones
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <div id="overall-progress-percent" class="text-3xl sm:text-4xl font-extrabold text-amber-400 leading-none">0%</div>
+                        <span class="text-[11px] text-slate-400">Project complete</span>
+                    </div>
+                </div>
+
+                <div class="w-full h-5 bg-slate-800 rounded-full overflow-hidden border border-slate-700/80 relative">
+                    <div
+                        id="overall-progress-fill"
+                        class="progress-fill h-full bg-gradient-to-r from-amber-600 via-amber-500 to-emerald-500 rounded-full"
+                        style="width:0%"
+                    ></div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3 pt-1">
+                    <div class="bg-slate-800/70 border border-slate-700/70 rounded-xl p-3 text-center">
+                        <div id="milestone-count-completed" class="text-lg font-extrabold text-emerald-400">0</div>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wide">Completed</span>
+                    </div>
+                    <div class="bg-slate-800/70 border border-slate-700/70 rounded-xl p-3 text-center">
+                        <div id="milestone-count-progress" class="text-lg font-extrabold text-amber-400">0</div>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wide">In Progress</span>
+                    </div>
+                    <div class="bg-slate-800/70 border border-slate-700/70 rounded-xl p-3 text-center">
+                        <div id="milestone-count-pending" class="text-lg font-extrabold text-rose-400">0</div>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wide">Pending</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Milestone Checklist / Gantt Tracker -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+                <div class="flex flex-wrap justify-between items-center mb-4 border-b border-slate-800 pb-3 gap-2">
+                    <div>
+                        <h3 class="font-bold text-amber-400 text-sm sm:text-base flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-white"></i>
+                            Milestones & Progress Checklist
+                        </h3>
+                        
+                    </div>
+
+                    <button
+                        type="button"
+                        onclick="addMilestone()"
+                        class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/40 text-xs px-3 py-2 rounded-lg font-medium transition flex items-center gap-1"
+                    >
+                        <i class="fa-solid fa-plus text-white"></i>
+                        Add Milestone
+                    </button>
+                </div>
+
+                <div id="milestone-list" class="space-y-3">
+                    <!-- Dynamic milestone rows injected via JS -->
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <!-- TAB 5: ANALYTICS & SUMMARY DASHBOARD -->
         <div id="tab-content-analytics" class="hidden space-y-6">
 
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-6">
@@ -1221,13 +1342,6 @@
 <script>
 
     // ============================================================
-    // PWA MANIFEST & SERVICE WORKER AUTO-UPDATE INITIALIZATION
-    // ============================================================
-
-   // ============================================================
-    // PWA UPDATE & AUTO-REFRESH MECHANISM
-    // ============================================================
-   // ============================================================
     // PWA UPDATE & AUTO-REFRESH MECHANISM (FIXED)
     // ============================================================
     (function initPWA() {
@@ -1272,7 +1386,7 @@
 
 
 
-        const CURRENT_VERSION = "v1.1.0"; // Jab update karna ho, yahan version change karein
+        const CURRENT_VERSION = "v1.0.1"; // Jab update karna ho, yahan version change karein
 
         const savedVersion = localStorage.getItem('app_version');
 
@@ -1375,6 +1489,11 @@
     let siteMachineryCache = [];
     let machineryUnsubscribe = null;
 
+    // Cache for milestones
+    let siteMilestonesCache = [];
+    let milestonesUnsubscribe = null;
+    let milestoneSaveTimers = {};
+
 
 
     function initFirebase() {
@@ -1410,8 +1529,11 @@
             } catch (settingsErr) {
 
                 console.warn(
+
                     "Firestore settings warning:",
+
                     settingsErr
+
                 );
 
             }
@@ -1423,8 +1545,11 @@
             firebaseInitialized = true;
 
             updateSyncBadge(
+
                 true,
+
                 "Firebase Cloud Active"
+
             );
 
 
@@ -1432,12 +1557,17 @@
             if (db.enablePersistence) {
 
                 db.enablePersistence({
+
                     synchronizeTabs: true
+
                 }).catch(err => {
 
                     console.warn(
+
                         "Firestore offline persistence not enabled:",
+
                         err.code || err.message
+
                     );
 
                 });
@@ -1447,8 +1577,11 @@
         } catch (err) {
 
             console.error(
+
                 "Firebase initialization failed:",
+
                 err
+
             );
 
             isCloudMode = false;
@@ -1458,8 +1591,11 @@
             firebaseInitialized = false;
 
             updateSyncBadge(
+
                 false,
+
                 "Local Storage Active"
+
             );
 
         }
@@ -1469,8 +1605,11 @@
 
 
     function setSyncStatus(
+
         text,
+
         state = "cloud"
+
     ) {
 
         if (state === "error") {
@@ -1486,29 +1625,43 @@
         if (state === "syncing") {
 
             const badge =
+
                 document.getElementById(
+
                     'cloud-sync-badge'
+
                 );
 
             const statusText =
+
                 document.getElementById(
+
                     'sync-status-text'
+
                 );
 
             const statusDot =
+
                 document.getElementById(
+
                     'sync-status-dot'
+
                 );
 
             const statusIcon =
+
                 document.getElementById(
+
                     'sync-status-icon'
+
                 );
 
 
 
             if (statusText) {
+
                 statusText.textContent = text;
+
             }
 
 
@@ -1516,6 +1669,7 @@
             if (badge) {
 
                 badge.className =
+
                     "bg-amber-950/60 border border-amber-700/60 px-3 py-1.5 rounded-lg text-[11px] font-semibold text-amber-300 flex items-center gap-1.5 shadow-sm";
 
             }
@@ -1525,6 +1679,7 @@
             if (statusDot) {
 
                 statusDot.className =
+
                     "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
 
             }
@@ -1534,6 +1689,7 @@
             if (statusIcon) {
 
                 statusIcon.className =
+
                     "fa-solid fa-arrows-rotate fa-spin text-amber-400";
 
             }
@@ -1551,71 +1707,103 @@
 
 
     window.addEventListener(
+
         'online',
+
         () => {
 
             if (
+
                 firebaseInitialized &&
+
                 db &&
+
                 activeSite
+
             ) {
 
                 setSyncStatus(
+
                     "Reconnecting…",
+
                     "syncing"
+
                 );
 
                 setupFirestoreRealtimeListener();
                 setupMachineryListener();
+                setupMilestonesListener();
 
             }
 
         }
+
     );
 
 
 
     window.addEventListener(
+
         'offline',
+
         () => {
 
             if (isCloudMode) {
 
                 setSyncStatus(
+
                     "Offline — changes queued",
+
                     "syncing"
+
                 );
 
             }
 
         }
+
     );
 
 
 
     function updateSyncBadge(
+
         active,
+
         text
+
     ) {
 
         const badge =
+
             document.getElementById(
+
                 'cloud-sync-badge'
+
             );
 
         const statusText =
+
             document.getElementById(
+
                 'sync-status-text'
+
             );
 
         const statusDot =
+
             document.getElementById(
+
                 'sync-status-dot'
+
             );
 
         const statusIcon =
+
             document.getElementById(
+
                 'sync-status-icon'
+
             );
 
 
@@ -1633,6 +1821,7 @@
             if (badge) {
 
                 badge.className =
+
                     "bg-emerald-950/60 border border-emerald-700/60 px-3 py-1.5 rounded-lg text-[11px] font-semibold text-emerald-400 flex items-center gap-1.5 shadow-sm";
 
             }
@@ -1642,6 +1831,7 @@
             if (statusDot) {
 
                 statusDot.className =
+
                     "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
 
             }
@@ -1651,6 +1841,7 @@
             if (statusIcon) {
 
                 statusIcon.className =
+
                     "fa-solid fa-cloud text-emerald-400";
 
             }
@@ -1660,6 +1851,7 @@
             if (badge) {
 
                 badge.className =
+
                     "bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-lg text-[11px] font-semibold text-amber-400 flex items-center gap-1.5 shadow-sm";
 
             }
@@ -1669,6 +1861,7 @@
             if (statusDot) {
 
                 statusDot.className =
+
                     "w-2 h-2 rounded-full bg-amber-400";
 
             }
@@ -1678,6 +1871,7 @@
             if (statusIcon) {
 
                 statusIcon.className =
+
                     "fa-solid fa-hard-drive text-amber-400";
 
             }
@@ -1693,6 +1887,7 @@
     // ============================================================
 
     const STORAGE_SITES_KEY =
+
         'AE_SITES_LIST_V2';
 
     let activeSite = null;
@@ -1710,43 +1905,67 @@
     const DEFAULT_TRADES = [
 
         {
+
             id: 'electrician',
+
             label: 'Electricians'
+
         },
 
         {
+
             id: 'plumber',
+
             label: 'Plumbers'
+
         },
 
         {
+
             id: 'mason',
+
             label: 'Masons (Raj / Mistri)'
+
         },
 
         {
+
             id: 'labour',
+
             label: 'General Labour / Helpers'
+
         },
 
         {
+
             id: 'carpenter',
+
             label: 'Carpenters (Shuttering)'
+
         },
 
         {
+
             id: 'steelfixer',
+
             label: 'Steel Fixers (Sariya)'
+
         },
 
         {
+
             id: 'painter',
+
             label: 'Painters'
+
         },
 
         {
+
             id: 'welder',
+
             label: 'Welders / Fabricators'
+
         }
 
     ];
@@ -1754,6 +1973,7 @@
 
 
     let currentLaborTrades =
+
         [...DEFAULT_TRADES];
 
 
@@ -1768,6 +1988,10 @@
         return 'AE_MACHINERY_' + siteId;
     }
 
+    function getSiteMilestonesKey(siteId) {
+        return 'AE_MILESTONES_' + siteId;
+    }
+
 
 
     function setTodayDateDefault() {
@@ -1779,11 +2003,15 @@
             now.getFullYear(),
 
             String(
+
                 now.getMonth() + 1
+
             ).padStart(2, '0'),
 
             String(
+
                 now.getDate()
+
             ).padStart(2, '0')
 
         ].join('-');
@@ -1791,8 +2019,11 @@
 
 
         const logDateInput =
+
             document.getElementById(
+
                 'log-date'
+
             );
             
         const machDateInput = document.getElementById('mach-date');
@@ -1802,6 +2033,7 @@
         if (logDateInput) {
 
             logDateInput.value =
+
                 localDate;
 
         }
@@ -1833,8 +2065,11 @@
     function populateLoginSiteDatalist() {
 
         const datalist =
+
             document.getElementById(
+
                 'existing-sites-list'
+
             );
 
 
@@ -1848,10 +2083,15 @@
 
 
         const sites =
+
             JSON.parse(
+
                 localStorage.getItem(
+
                     STORAGE_SITES_KEY
+
                 )
+
             ) || [];
 
 
@@ -1859,15 +2099,21 @@
         sites.forEach(site => {
 
             const option =
+
                 document.createElement(
+
                     'option'
+
                 );
 
             option.value =
+
                 site.name;
 
             datalist.appendChild(
+
                 option
+
             );
 
         });
@@ -1879,13 +2125,19 @@
     function showLoginError(msg) {
 
         const errBox =
+
             document.getElementById(
+
                 'login-error'
+
             );
 
         const errText =
+
             document.getElementById(
+
                 'login-error-text'
+
             );
 
 
@@ -1895,7 +2147,9 @@
             errText.innerHTML = msg;
 
             errBox.classList.remove(
+
                 'hidden'
+
             );
 
         }
@@ -1907,8 +2161,11 @@
     function hideLoginError() {
 
         const errBox =
+
             document.getElementById(
+
                 'login-error'
+
             );
 
 
@@ -1916,7 +2173,9 @@
         if (errBox) {
 
             errBox.classList.add(
+
                 'hidden'
+
             );
 
         }
@@ -1934,26 +2193,37 @@
 
 
         const siteNameInput =
+
             document.getElementById(
+
                 'login-site-name'
+
             ).value.trim();
 
 
 
         const usernameInput =
+
             document.getElementById(
+
                 'login-username'
+
             ).value.trim();
 
 
 
         if (
+
             !siteNameInput ||
+
             !usernameInput
+
         ) {
 
             showLoginError(
+
                 "Please enter both Site Name and Supervisor Name."
+
             );
 
             return;
@@ -1963,12 +2233,19 @@
 
 
         const cleanSiteId =
+
             'site_' +
+
             siteNameInput
+
                 .toLowerCase()
+
                 .replace(
+
                     /[^a-z0-9]/g,
+
                     '_'
+
                 );
 
 
@@ -1982,12 +2259,15 @@
             try {
 
                 const siteDocRef =
+
                     db.collection('sites')
+
                         .doc(cleanSiteId);
 
 
 
                 const doc =
+
                     await siteDocRef.get();
 
 
@@ -1995,19 +2275,27 @@
                 if (doc.exists) {
 
                     const siteData =
+
                         doc.data();
 
 
 
                     if (
+
                         siteData.supervisor &&
+
                         siteData.supervisor
+
                             .toLowerCase() !==
+
                             usernameInput.toLowerCase()
+
                     ) {
 
                         showLoginError(
+
                             `Access Denied! Incorrect Supervisor Name for this site.`
+
                         );
 
                         return;
@@ -2017,8 +2305,11 @@
 
 
                     matchedSite = {
+
                         id: doc.id,
+
                         ...siteData
+
                     };
 
                 } else {
@@ -2032,7 +2323,9 @@
                         supervisor: usernameInput,
 
                         createdAt:
+
                             new Date()
+
                                 .toISOString()
 
                     };
@@ -2040,7 +2333,9 @@
 
 
                     await siteDocRef.set(
+
                         matchedSite
+
                     );
 
                 }
@@ -2048,15 +2343,21 @@
             } catch (err) {
 
                 console.warn(
+
                     "Cloud lookup failed or permission denied, resorting to local storage mode:",
+
                     err
+
                 );
 
                 isCloudMode = false;
 
                 updateSyncBadge(
+
                     false,
+
                     "Local Storage Active"
+
                 );
 
             }
@@ -2068,19 +2369,29 @@
         if (!matchedSite) {
 
             let sites =
+
                 JSON.parse(
+
                     localStorage.getItem(
+
                         STORAGE_SITES_KEY
+
                     )
+
                 ) || [];
 
 
 
             let foundSite =
+
                 sites.find(
+
                     s =>
+
                         s.name.toLowerCase() ===
+
                         siteNameInput.toLowerCase()
+
                 );
 
 
@@ -2088,14 +2399,21 @@
             if (foundSite) {
 
                 if (
+
                     foundSite.supervisor &&
+
                     foundSite.supervisor
+
                         .toLowerCase() !==
+
                         usernameInput.toLowerCase()
+
                 ) {
 
                     showLoginError(
+
                         `Access Denied! Incorrect Supervisor Name for this site.`
+
                     );
 
                     return;
@@ -2105,6 +2423,7 @@
 
 
                 matchedSite =
+
                     foundSite;
 
             } else {
@@ -2116,6 +2435,7 @@
                     name: siteNameInput,
 
                     supervisor:
+
                         usernameInput
 
                 };
@@ -2123,16 +2443,23 @@
 
 
                 sites.push(
+
                     matchedSite
+
                 );
 
 
 
                 localStorage.setItem(
+
                     STORAGE_SITES_KEY,
+
                     JSON.stringify(
+
                         sites
+
                     )
+
                 );
 
 
@@ -2148,38 +2475,57 @@
         activeSite = matchedSite;
 
         currentUser =
+
             usernameInput;
 
 
 
         let deviceSites =
+
             JSON.parse(
+
                 localStorage.getItem(
+
                     STORAGE_SITES_KEY
+
                 )
+
             ) || [];
 
 
 
         if (
+
             !deviceSites.some(
+
                 s =>
+
                     s.id ===
+
                     activeSite.id
+
             )
+
         ) {
 
             deviceSites.push(
+
                 activeSite
+
             );
 
 
 
             localStorage.setItem(
+
                 STORAGE_SITES_KEY,
+
                 JSON.stringify(
+
                     deviceSites
+
                 )
+
             );
 
 
@@ -2191,73 +2537,112 @@
 
 
         document
+
             .getElementById(
+
                 'login-view'
+
             )
+
             .classList.add(
+
                 'hidden'
+
             );
 
 
 
         document
+
             .getElementById(
+
                 'dashboard-view'
+
             )
+
             .classList.remove(
+
                 'hidden'
+
             );
 
 
 
         document
+
             .getElementById(
+
                 'header-user-section'
+
             )
+
             .classList.remove(
+
                 'hidden'
+
             );
 
 
 
         document
+
             .getElementById(
+
                 'active-site-display'
+
             )
+
             .textContent =
+
             activeSite.name;
 
 
 
         document
+
             .getElementById(
+
                 'active-user-display'
+
             )
+
             .textContent =
+
             currentUser;
 
 
 
         document
+
             .getElementById(
+
                 'log-supervisor'
+
             )
+
             .value =
+
             currentUser;
 
 
 
         document
+
             .getElementById(
+
                 'history-site-title'
+
             )
+
             .textContent =
+
             activeSite.name;
 
 
 
         setupFirestoreRealtimeListener();
         setupMachineryListener();
+        setupMilestonesListener();
 
 
 
@@ -2266,7 +2651,9 @@
 
 
         showToast(
+
             `Welcome ${currentUser}! Logged into ${activeSite.name}`
+
         );
 
     }
@@ -2276,9 +2663,13 @@
     function setupFirestoreRealtimeListener() {
 
         if (
+
             !firebaseInitialized ||
+
             !db ||
+
             !activeSite
+
         ) {
             return;
         }
@@ -2290,6 +2681,7 @@
             firestoreUnsubscribe();
 
             firestoreUnsubscribe =
+
                 null;
 
         }
@@ -2299,8 +2691,11 @@
         try {
 
             setSyncStatus(
+
                 "Connecting to Firebase…",
+
                 "syncing"
+
             );
 
 
@@ -2308,13 +2703,19 @@
             firestoreUnsubscribe =
 
                 db
+
                     .collection('sites')
+
                     .doc(activeSite.id)
+
                     .collection('logs')
+
                     .onSnapshot(
 
                         {
+
                             includeMetadataChanges: true
+
                         },
 
                         snapshot => {
@@ -2324,64 +2725,93 @@
 
 
                             snapshot.forEach(
+
                                 doc => {
 
                                     logs.push({
+
                                         id: doc.id,
+
                                         ...doc.data()
+
                                     });
 
                                 }
+
                             );
 
 
 
                             siteLogsCache =
+
                                 logs;
 
 
 
                             lastCloudSnapshotAt =
+
                                 Date.now();
 
 
 
                             localStorage.setItem(
+
                                 getSiteLogKey(
+
                                     activeSite.id
+
                                 ),
+
                                 JSON.stringify(
+
                                     logs
+
                                 )
+
                             );
 
 
 
                             if (
+
                                 snapshot.metadata
+
                                     .fromCache
+
                             ) {
 
                                 setSyncStatus(
+
                                     "Firebase cache — waiting for server…",
+
                                     "syncing"
+
                                 );
 
                             } else if (
+
                                 snapshot.metadata
+
                                     .hasPendingWrites
+
                             ) {
 
                                 setSyncStatus(
+
                                     "Syncing changes…",
+
                                     "syncing"
+
                                 );
 
                             } else {
 
                                 setSyncStatus(
+
                                     "Firebase Synced",
+
                                     "cloud"
+
                                 );
 
                             }
@@ -2393,14 +2823,23 @@
 
 
                             if (
+
                                 !document
+
                                     .getElementById(
+
                                         'tab-content-history'
+
                                     )
+
                                     .classList
+
                                     .contains(
+
                                         'hidden'
+
                                     )
+
                             ) {
 
                                 renderHistoryLogs();
@@ -2408,14 +2847,23 @@
                             }
 
                             if (
+
                                 !document
+
                                     .getElementById(
+
                                         'tab-content-analytics'
+
                                     )
+
                                     .classList
+
                                     .contains(
+
                                         'hidden'
+
                                     )
+
                             ) {
 
                                 renderAnalyticsDashboard();
@@ -2427,28 +2875,41 @@
                         error => {
 
                             console.error(
+
                                 "Firestore realtime listener error:",
+
                                 error
+
                             );
 
 
 
                             if (
+
                                 error &&
+
                                 error.code ===
+
                                 'permission-denied'
+
                             ) {
 
                                 setSyncStatus(
+
                                     "Firebase Permission Denied",
+
                                     "error"
+
                                 );
 
                             } else {
 
                                 setSyncStatus(
+
                                     "Firebase Reconnecting…",
+
                                     "syncing"
+
                                 );
 
                             }
@@ -2460,15 +2921,21 @@
         } catch (err) {
 
             console.error(
+
                 "Firestore listener initialization error:",
+
                 err
+
             );
 
 
 
             setSyncStatus(
+
                 "Firebase Reconnecting…",
+
                 "syncing"
+
             );
 
         }
@@ -2509,6 +2976,397 @@
         }
     }
 
+    // ============================================================
+    // MILESTONES & PROGRESS TRACKER (NEW)
+    // ============================================================
+    const DEFAULT_MILESTONES = [
+        { name: 'Excavation & Foundation', weight: 1 },
+        { name: 'Ground Floor / Basement Structure & Slab', weight: 1 },
+        { name: 'Brickwork & Plaster', weight: 1 },
+        { name: 'MEP (Electrical & Plumbing Piping)', weight: 1 },
+        { name: 'Finishing & Paint', weight: 1 }
+    ];
+
+    function getActiveSiteMilestones() {
+        if (!activeSite) return [];
+        const key = getSiteMilestonesKey(activeSite.id);
+        if (siteMilestonesCache && siteMilestonesCache.length > 0) {
+            return siteMilestonesCache;
+        }
+        return JSON.parse(localStorage.getItem(key)) || [];
+    }
+
+    function saveMilestonesLocal(list) {
+        if (!activeSite) return;
+        siteMilestonesCache = list;
+        localStorage.setItem(getSiteMilestonesKey(activeSite.id), JSON.stringify(list));
+    }
+
+    async function persistMilestone(milestone) {
+        if (!activeSite) return;
+        const docId = milestone.id;
+
+        if (isCloudMode && db && firebaseInitialized) {
+            setSyncStatus("Saving Milestone…", "syncing");
+            try {
+                await db.collection('sites').doc(activeSite.id)
+                    .collection('milestones').doc(docId).set(milestone);
+                setSyncStatus("Firebase Synced", "cloud");
+            } catch (err) {
+                console.error("Milestone save failed:", err);
+                setSyncStatus("Firebase Save Failed", "error");
+                showToast(`Milestone save failed: ${err.code || err.message}. Local copy kept.`);
+            }
+        }
+    }
+
+    async function deleteMilestoneDoc(milestoneId) {
+        if (!activeSite) return;
+        if (isCloudMode && db && firebaseInitialized) {
+            try {
+                await db.collection('sites').doc(activeSite.id)
+                    .collection('milestones').doc(milestoneId).delete();
+            } catch (err) {
+                console.error("Milestone delete failed:", err);
+                showToast(`Milestone delete failed: ${err.code || err.message}`);
+            }
+        }
+    }
+
+    async function setupMilestonesListener() {
+        if (!activeSite) return;
+
+        const localList = JSON.parse(localStorage.getItem(getSiteMilestonesKey(activeSite.id))) || [];
+        siteMilestonesCache = localList;
+
+        // Seed default milestones if site has none
+        if (localList.length === 0) {
+            const seeded = DEFAULT_MILESTONES.map((m, idx) => ({
+                id: 'ms_' + Date.now() + '_' + idx,
+                name: m.name,
+                progress: 0,
+                status: 'Pending',
+                startDate: '',
+                targetDate: '',
+                order: idx,
+                updatedAt: new Date().toISOString()
+            }));
+            saveMilestonesLocal(seeded);
+            renderMilestones();
+            if (isCloudMode && db && firebaseInitialized) {
+                for (const m of seeded) {
+                    try {
+                        await db.collection('sites').doc(activeSite.id)
+                            .collection('milestones').doc(m.id).set(m);
+                    } catch (err) { console.warn("Default milestone seed error:", err); }
+                }
+            }
+        } else {
+            renderMilestones();
+        }
+
+        if (!firebaseInitialized || !db) return;
+
+        if (milestonesUnsubscribe) {
+            milestonesUnsubscribe();
+            milestonesUnsubscribe = null;
+        }
+
+        try {
+            milestonesUnsubscribe = db.collection('sites').doc(activeSite.id)
+                .collection('milestones')
+                .onSnapshot(snapshot => {
+                    const list = [];
+                    snapshot.forEach(doc => {
+                        list.push({ id: doc.id, ...doc.data() });
+                    });
+                    list.sort((a, b) => (a.order || 0) - (b.order || 0));
+                    siteMilestonesCache = list;
+                    localStorage.setItem(getSiteMilestonesKey(activeSite.id), JSON.stringify(list));
+
+                    if (!document.getElementById('tab-content-milestones').classList.contains('hidden')) {
+                        renderMilestones();
+                    }
+                }, err => {
+                    console.error("Milestones listener error:", err);
+                });
+        } catch (err) {
+            console.error("Milestones listener init error:", err);
+        }
+    }
+
+    function addMilestone() {
+        if (!activeSite) return;
+        const name = prompt("Enter milestone name (e.g., Roof Waterproofing):");
+        if (!name || !name.trim()) return;
+
+        const list = [...getActiveSiteMilestones()];
+        const newMs = {
+            id: 'ms_' + Date.now(),
+            name: name.trim(),
+            progress: 0,
+            status: 'Pending',
+            startDate: '',
+            targetDate: '',
+            order: list.length,
+            updatedAt: new Date().toISOString()
+        };
+        list.push(newMs);
+        saveMilestonesLocal(list);
+        renderMilestones();
+        persistMilestone(newMs);
+        showToast(`Milestone "${newMs.name}" added!`);
+    }
+
+    function removeMilestone(id) {
+        const list = getActiveSiteMilestones();
+        const ms = list.find(m => m.id === id);
+        if (!ms) return;
+        if (!confirm(`Delete milestone "${ms.name}"?`)) return;
+
+        const updated = list.filter(m => m.id !== id);
+        saveMilestonesLocal(updated);
+        renderMilestones();
+        deleteMilestoneDoc(id);
+        showToast(`Milestone "${ms.name}" deleted.`);
+    }
+
+    function onMilestoneProgressInput(id, value) {
+        const list = getActiveSiteMilestones();
+        const ms = list.find(m => m.id === id);
+        if (!ms) return;
+
+        let progress = Math.max(0, Math.min(100, parseInt(value) || 0));
+        ms.progress = progress;
+
+        if (progress >= 100) ms.status = 'Completed';
+        else if (progress > 0 && ms.status !== 'Completed') ms.status = 'In Progress';
+        else if (progress === 0 && ms.status === 'In Progress') ms.status = 'Pending';
+
+        ms.updatedAt = new Date().toISOString();
+
+        saveMilestonesLocal(list);
+
+        // Update slider & number input & status in DOM without re-render
+        const slider = document.querySelector(`[data-ms-slider="${id}"]`);
+        const num = document.querySelector(`[data-ms-number="${id}"]`);
+        const statusSel = document.querySelector(`[data-ms-status="${id}"]`);
+        const bar = document.querySelector(`[data-ms-bar="${id}"]`);
+        const label = document.querySelector(`[data-ms-label="${id}"]`);
+
+        if (slider) slider.value = progress;
+        if (num && num.value !== String(progress)) num.value = progress;
+        if (statusSel) statusSel.value = ms.status;
+        if (bar) bar.style.width = progress + '%';
+        if (label) label.textContent = progress + '%';
+
+        updateOverallGauge();
+        scheduleMilestoneSave(ms);
+    }
+
+    function onMilestoneNumberChange(id, value) {
+        onMilestoneProgressInput(id, value);
+    }
+
+    function onMilestoneStatusChange(id, value) {
+        const list = getActiveSiteMilestones();
+        const ms = list.find(m => m.id === id);
+        if (!ms) return;
+
+        ms.status = value;
+        if (value === 'Completed') ms.progress = 100;
+        else if (value === 'Pending' && ms.progress === 100) ms.progress = 0;
+        else if (value === 'In Progress' && ms.progress === 0) ms.progress = 10;
+
+        ms.updatedAt = new Date().toISOString();
+        saveMilestonesLocal(list);
+
+        const slider = document.querySelector(`[data-ms-slider="${id}"]`);
+        const num = document.querySelector(`[data-ms-number="${id}"]`);
+        const bar = document.querySelector(`[data-ms-bar="${id}"]`);
+        const label = document.querySelector(`[data-ms-label="${id}"]`);
+        if (slider) slider.value = ms.progress;
+        if (num) num.value = ms.progress;
+        if (bar) bar.style.width = ms.progress + '%';
+        if (label) label.textContent = ms.progress + '%';
+
+        updateOverallGauge();
+        scheduleMilestoneSave(ms);
+    }
+
+    function onMilestoneDateChange(id, field, value) {
+        const list = getActiveSiteMilestones();
+        const ms = list.find(m => m.id === id);
+        if (!ms) return;
+        ms[field] = value;
+        ms.updatedAt = new Date().toISOString();
+        saveMilestonesLocal(list);
+        scheduleMilestoneSave(ms);
+    }
+
+    function scheduleMilestoneSave(ms) {
+        if (milestoneSaveTimers[ms.id]) clearTimeout(milestoneSaveTimers[ms.id]);
+        milestoneSaveTimers[ms.id] = setTimeout(() => {
+            persistMilestone(ms);
+            delete milestoneSaveTimers[ms.id];
+        }, 600);
+    }
+
+    function updateOverallGauge() {
+        const list = getActiveSiteMilestones();
+        const total = list.length;
+        let sum = 0;
+        let completed = 0, inProgress = 0, pending = 0;
+
+        list.forEach(m => {
+            const p = Math.max(0, Math.min(100, parseInt(m.progress) || 0));
+            sum += p;
+            if (m.status === 'Completed') completed++;
+            else if (m.status === 'In Progress') inProgress++;
+            else pending++;
+        });
+
+        const overall = total > 0 ? Math.round(sum / total) : 0;
+
+        const percentEl = document.getElementById('overall-progress-percent');
+        const fillEl = document.getElementById('overall-progress-fill');
+        const cEl = document.getElementById('milestone-count-completed');
+        const iEl = document.getElementById('milestone-count-progress');
+        const pEl = document.getElementById('milestone-count-pending');
+
+        if (percentEl) percentEl.textContent = overall + '%';
+        if (fillEl) fillEl.style.width = overall + '%';
+        if (cEl) cEl.textContent = completed;
+        if (iEl) iEl.textContent = inProgress;
+        if (pEl) pEl.textContent = pending;
+    }
+
+    function statusBadgeClass(status) {
+        if (status === 'Completed') return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40';
+        if (status === 'In Progress') return 'bg-amber-500/15 text-amber-400 border-amber-500/40';
+        return 'bg-rose-500/10 text-rose-400 border-rose-500/30';
+    }
+
+    function renderMilestones() {
+        if (!activeSite) return;
+        const list = getActiveSiteMilestones();
+        const container = document.getElementById('milestone-list');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (list.length === 0) {
+            container.innerHTML = `
+                <div class="bg-slate-800/50 border border-slate-800 rounded-xl p-6 text-center text-slate-400">
+                    <i class="fa-solid fa-list-check text-3xl mb-2 text-slate-600"></i>
+                    <p class="text-sm">No milestones defined yet.</p>
+                    <p class="text-xs text-slate-500 mt-1">Click "Add Milestone" to start tracking progress.</p>
+                </div>
+            `;
+            updateOverallGauge();
+            return;
+        }
+
+        list.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+        list.forEach(ms => {
+            const progress = Math.max(0, Math.min(100, parseInt(ms.progress) || 0));
+            const div = document.createElement('div');
+            div.className = 'bg-slate-800/60 border border-slate-700/70 rounded-2xl p-3.5 sm:p-4 space-y-3';
+            div.innerHTML = `
+                <div class="flex flex-wrap justify-between items-start gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="w-7 h-7 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-amber-400 text-[11px] font-bold">#${list.indexOf(ms) + 1}</span>
+                        <h4 class="font-bold text-white text-sm break-words">${escapeHtml(ms.name)}</h4>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-lg border ${statusBadgeClass(ms.status)}">${ms.status || 'Pending'}</span>
+                        <button type="button" onclick="removeMilestone('${ms.id}')" class="text-rose-400 hover:text-rose-300 text-xs px-2 py-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 transition" title="Delete Milestone">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <div class="flex justify-between items-center text-[11px]">
+                        <span class="text-slate-400 font-medium">Progress</span>
+                        <span data-ms-label="${ms.id}" class="text-amber-400 font-extrabold">${progress}%</span>
+                    </div>
+                    <div class="w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-700/80 relative">
+                        <div data-ms-bar="${ms.id}" class="progress-fill h-full rounded-full ${
+                            progress >= 100 ? 'bg-emerald-500' : (progress > 0 ? 'bg-amber-500' : 'bg-slate-700')
+                        }" style="width:${progress}%"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-1 font-semibold">Slide Progress</label>
+                        <input
+                            type="range"
+                            min="0" max="100" step="1"
+                            value="${progress}"
+                            data-ms-slider="${ms.id}"
+                            oninput="onMilestoneProgressInput('${ms.id}', this.value)"
+                            class="milestone-progress-range"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-1 font-semibold">Or Type % (0–100)</label>
+                        <div class="flex gap-2">
+                            <input
+                                type="number"
+                                min="0" max="100" step="1"
+                                value="${progress}"
+                                data-ms-number="${ms.id}"
+                                onchange="onMilestoneNumberChange('${ms.id}', this.value)"
+                                class="w-20 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 font-bold text-xs focus:outline-none focus:border-amber-500"
+                            >
+                            <select
+                                data-ms-status="${ms.id}"
+                                onchange="onMilestoneStatusChange('${ms.id}', this.value)"
+                                class="flex-grow bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
+                            >
+                                <option value="Pending" ${ms.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="In Progress" ${ms.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                <option value="Completed" ${ms.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-1 font-semibold"><i class="fa-solid fa-calendar-plus text-amber-400 mr-1"></i>Start Date</label>
+                        <input
+                            type="date"
+                            value="${ms.startDate || ''}"
+                            onchange="onMilestoneDateChange('${ms.id}', 'startDate', this.value)"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-1 font-semibold"><i class="fa-solid fa-calendar-check text-emerald-400 mr-1"></i>Target Date</label>
+                        <input
+                            type="date"
+                            value="${ms.targetDate || ''}"
+                            onchange="onMilestoneDateChange('${ms.id}', 'targetDate', this.value)"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
+                        >
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+
+        updateOverallGauge();
+    }
+
+    function escapeHtml(str) {
+        return String(str || '').replace(/[&<>"']/g, function(s) {
+            return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[s];
+        });
+    }
+
 
 
     function logout() {
@@ -2522,6 +3380,9 @@
         if (machineryUnsubscribe) {
             machineryUnsubscribe();
         }
+        if (milestonesUnsubscribe) {
+            milestonesUnsubscribe();
+        }
 
 
 
@@ -2533,43 +3394,66 @@
 
         siteLogsCache = [];
         siteMachineryCache = [];
+        siteMilestonesCache = [];
 
 
 
         document
+
             .getElementById(
+
                 'dashboard-view'
+
             )
+
             .classList.add(
+
                 'hidden'
+
             );
 
 
 
         document
+
             .getElementById(
+
                 'header-user-section'
+
             )
+
             .classList.add(
+
                 'hidden'
+
             );
 
 
 
         document
+
             .getElementById(
+
                 'login-view'
+
             )
+
             .classList.remove(
+
                 'hidden'
+
             );
 
 
 
         document
+
             .getElementById(
+
                 'login-form'
+
             )
+
             .reset();
 
 
@@ -2581,12 +3465,17 @@
 
 
     function renderLaborFields(
+
         existingValues = {}
+
     ) {
 
         const container =
+
             document.getElementById(
+
                 'labour-fields-container'
+
             );
 
 
@@ -2596,7 +3485,9 @@
 
 
         const currentValues = {
+
             ...existingValues
+
         };
 
 
@@ -2606,6 +3497,7 @@
 
 
         currentLaborTrades.forEach(
+
             trade => {
 
                 let val = '';
@@ -2614,7 +3506,9 @@
 
 
                 if (
+
                     currentValues[trade.label] !== undefined
+
                 ) {
                     if (typeof currentValues[trade.label] === 'object' && currentValues[trade.label] !== null) {
                         val = currentValues[trade.label].count !== undefined ? currentValues[trade.label].count : '';
@@ -2627,18 +3521,23 @@
 
 
                 const div =
+
                     document.createElement(
+
                         'div'
+
                     );
 
 
 
                 div.className =
+
                     "bg-slate-800/80 border border-slate-700/80 p-2.5 rounded-xl flex flex-col justify-between relative group";
 
 
 
                 const deleteBtnHtml =
+
                     `<button
                         type="button"
                         onclick="removeTradeCategory('${trade.id}')"
@@ -2687,10 +3586,13 @@
 
 
                 container.appendChild(
+
                     div
+
                 );
 
             }
+
         );
 
 
@@ -2708,35 +3610,49 @@
 
 
         currentLaborTrades.forEach(
+
             trade => {
 
                 const input =
+
                     document.querySelector(
+
                         `[data-trade-id="${trade.id}"]`
+
                     );
 
 
 
                 if (
+
                     input &&
+
                     input.value
+
                 ) {
 
                     total +=
+
                         parseInt(
+
                             input.value
+
                         ) || 0;
 
                 }
 
             }
+
         );
 
 
 
         const totalBadge =
+
             document.getElementById(
+
                 'total-labour-badge'
+
             );
 
 
@@ -2744,6 +3660,7 @@
         if (totalBadge) {
 
             totalBadge.textContent =
+
                 total;
 
         }
@@ -2755,13 +3672,17 @@
     function addCustomTrade() {
 
         const input =
+
             document.getElementById(
+
                 'new-trade-input'
+
             );
 
 
 
         const val =
+
             input.value.trim();
 
 
@@ -2771,15 +3692,23 @@
 
 
         if (
+
             currentLaborTrades.some(
+
                 t =>
+
                     t.label.toLowerCase() ===
+
                     val.toLowerCase()
+
             )
+
         ) {
 
             showToast(
+
                 "Trade category already exists!"
+
             );
 
             return;
@@ -2801,14 +3730,19 @@
 
 
         const newId =
+
             'trade_' +
+
             Date.now();
 
 
 
         currentLaborTrades.push({
+
             id: newId,
+
             label: val
+
         });
 
 
@@ -2822,7 +3756,9 @@
 
 
         showToast(
+
             `Trade "${val}" added successfully!`
+
         );
 
     }
@@ -2830,14 +3766,21 @@
 
 
     function removeTradeCategory(
+
         tradeId
+
     ) {
 
         const trade =
+
             currentLaborTrades.find(
+
                 t =>
+
                     t.id ===
+
                     tradeId
+
             );
 
 
@@ -2847,8 +3790,11 @@
 
 
         const confirmed =
+
             confirm(
+
                 `Are you sure you want to delete the "${trade.label}" trade category from this form?`
+
             );
 
 
@@ -2872,10 +3818,15 @@
 
 
         currentLaborTrades =
+
             currentLaborTrades.filter(
+
                 t =>
+
                     t.id !==
+
                     tradeId
+
             );
 
 
@@ -2885,7 +3836,9 @@
 
 
         showToast(
+
             `Trade "${trade.label}" removed successfully.`
+
         );
 
     }
@@ -2895,33 +3848,49 @@
     function resetFormRows() {
 
         document
+
             .getElementById(
+
                 'material-rows-container'
+
             )
+
             .innerHTML = '';
 
 
 
         document
+
             .getElementById(
+
                 'completed-tasks-container'
+
             )
+
             .innerHTML = '';
 
 
 
         document
+
             .getElementById(
+
                 'pending-tasks-container'
+
             )
+
             .innerHTML = '';
 
 
 
         document
+
             .getElementById(
+
                 'delay-tasks-container'
+
             )
+
             .innerHTML = '';
             
         currentUploadedImages = [];
@@ -3130,12 +4099,17 @@
 
 
     function addMaterialRow(
+
         data = {}
+
     ) {
 
         const container =
+
             document.getElementById(
+
                 'material-rows-container'
+
             );
 
 
@@ -3145,13 +4119,17 @@
 
 
         const tr =
+
             document.createElement(
+
                 'tr'
+
             );
 
 
 
         tr.className =
+
             'material-row border-b border-slate-800/60';
 
 
@@ -3228,7 +4206,9 @@
 
 
         container.appendChild(
+
             tr
+
         );
 
     }
@@ -3236,12 +4216,17 @@
 
 
     function addCompletedRow(
+
         data = {}
+
     ) {
 
         const container =
+
             document.getElementById(
+
                 'completed-tasks-container'
+
             );
 
 
@@ -3251,13 +4236,17 @@
 
 
         const div =
+
             document.createElement(
+
                 'div'
+
             );
 
 
 
         div.className =
+
             'completed-row flex items-center gap-2';
 
 
@@ -3291,7 +4280,9 @@
 
 
         container.appendChild(
+
             div
+
         );
 
     }
@@ -3299,12 +4290,17 @@
 
 
     function addPendingRow(
+
         data = {}
+
     ) {
 
         const container =
+
             document.getElementById(
+
                 'pending-tasks-container'
+
             );
 
 
@@ -3314,13 +4310,17 @@
 
 
         const div =
+
             document.createElement(
+
                 'div'
+
             );
 
 
 
         div.className =
+
             'pending-row flex items-center gap-2';
 
 
@@ -3353,7 +4353,9 @@
 
 
         container.appendChild(
+
             div
+
         );
 
     }
@@ -3361,12 +4363,17 @@
 
 
     function addDelayRow(
+
         data = {}
+
     ) {
 
         const container =
+
             document.getElementById(
+
                 'delay-tasks-container'
+
             );
 
 
@@ -3376,13 +4383,17 @@
 
 
         const div =
+
             document.createElement(
+
                 'div'
+
             );
 
 
 
         div.className =
+
             'delay-row bg-slate-800/80 border border-slate-700/80 p-3 rounded-xl space-y-2 relative';
 
 
@@ -3432,7 +4443,9 @@
 
 
         container.appendChild(
+
             div
+
         );
 
     }
@@ -3442,8 +4455,11 @@
     function removeRow(btn) {
 
         const row =
+
             btn.closest(
+
                 '.material-row, .completed-row, .pending-row, .delay-row'
+
             );
 
 
@@ -3465,8 +4481,11 @@
 
 
         if (
+
             siteLogsCache &&
+
             siteLogsCache.length > 0
+
         ) {
 
             return siteLogsCache;
@@ -3476,16 +4495,23 @@
 
 
         const siteKey =
+
             getSiteLogKey(
+
                 activeSite.id
+
             );
 
 
 
         return JSON.parse(
+
             localStorage.getItem(
+
                 siteKey
+
             )
+
         ) || [];
 
     }
@@ -3508,8 +4534,11 @@
 
 
         const dateVal =
+
             document.getElementById(
+
                 'log-date'
+
             ).value;
 
 
@@ -3519,36 +4548,51 @@
 
 
         const logs =
+
             getActiveSiteLogs();
 
 
 
         const existingLog =
+
             logs.find(
+
                 l =>
+
                     l.date ===
+
                     dateVal
+
             );
 
 
 
         const saveBtn =
+
             document.getElementById(
+
                 'save-log-btn'
+
             );
 
 
 
         const updateBtn =
+
             document.getElementById(
+
                 'update-log-btn'
+
             );
 
 
 
         const notice =
+
             document.getElementById(
+
                 'log-exists-notice'
+
             );
 
 
@@ -3556,15 +4600,21 @@
         if (editingLogId) {
 
             saveBtn.classList.add(
+
                 'hidden'
+
             );
 
             updateBtn.classList.remove(
+
                 'hidden'
+
             );
 
             notice.classList.add(
+
                 'hidden'
+
             );
 
             return;
@@ -3597,8 +4647,11 @@
 
 
         const dateVal =
+
             document.getElementById(
+
                 'log-date'
+
             ).value;
 
 
@@ -3616,15 +4669,21 @@
 
 
         const weatherVal =
+
             document.getElementById(
+
                 'log-weather'
+
             ).value;
 
 
 
         const supervisorVal =
+
             document.getElementById(
+
                 'log-supervisor'
+
             ).value;
 
 
@@ -3636,39 +4695,59 @@
 
 
         currentLaborTrades.forEach(
+
             trade => {
 
                 const input =
+
                     document.querySelector(
+
                         `[data-trade-id="${trade.id}"]`
+
                     );
 
                 const shiftInput =
+
                     document.querySelector(
+
                         `[data-trade-shift="${trade.id}"]`
+
                     );
 
 
 
                 const val =
+
                     input
+
                         ? parseInt(
+
                             input.value
+
                         ) || 0
+
                         : 0;
 
                 const shift =
+
                     shiftInput
+
                         ? shiftInput.value
+
                         : 'Day';
 
 
 
                 laborCounts[
+
                     trade.label
+
                 ] = {
+
                     count: val,
+
                     shift: shift
+
                 };
 
 
@@ -3676,6 +4755,7 @@
                 totalLabor += val;
 
             }
+
         );
 
 
@@ -3685,47 +4765,75 @@
 
 
         document
+
             .querySelectorAll(
+
                 '.material-row'
+
             )
+
             .forEach(
+
                 row => {
 
                     const item =
+
                         row
+
                             .querySelector(
+
                                 '.mat-item'
+
                             )
+
                             .value
+
                             .trim();
 
 
 
                     const qty =
+
                         row
+
                             .querySelector(
+
                                 '.mat-qty'
+
                             )
+
                             .value;
 
 
 
                     const unit =
+
                         row
+
                             .querySelector(
+
                                 '.mat-unit'
+
                             )
+
                             .value
+
                             .trim();
 
 
 
                     const note =
+
                         row
+
                             .querySelector(
+
                                 '.mat-note'
+
                             )
+
                             .value
+
                             .trim();
 
 
@@ -3733,15 +4841,21 @@
                     if (item) {
 
                         materials.push({
+
                             item,
+
                             qty,
+
                             unit,
+
                             note
+
                         });
 
                     }
 
                 }
+
             );
 
 
@@ -3751,28 +4865,45 @@
 
 
         document
+
             .querySelectorAll(
+
                 '.completed-row'
+
             )
+
             .forEach(
+
                 row => {
 
                     const task =
+
                         row
+
                             .querySelector(
+
                                 '.comp-task'
+
                             )
+
                             .value
+
                             .trim();
 
 
 
                     const loc =
+
                         row
+
                             .querySelector(
+
                                 '.comp-loc'
+
                             )
+
                             .value
+
                             .trim();
 
 
@@ -3780,13 +4911,17 @@
                     if (task) {
 
                         completed.push({
+
                             task,
+
                             location: loc
+
                         });
 
                     }
 
                 }
+
             );
 
 
@@ -3796,27 +4931,43 @@
 
 
         document
+
             .querySelectorAll(
+
                 '.pending-row'
+
             )
+
             .forEach(
+
                 row => {
 
                     const task =
+
                         row
+
                             .querySelector(
+
                                 '.pend-task'
+
                             )
+
                             .value
+
                             .trim();
 
 
 
                     const target =
+
                         row
+
                             .querySelector(
+
                                 '.pend-target'
+
                             )
+
                             .value;
 
 
@@ -3824,13 +4975,17 @@
                     if (task) {
 
                         pending.push({
+
                             task,
+
                             targetDate: target
+
                         });
 
                     }
 
                 }
+
             );
 
 
@@ -3840,28 +4995,45 @@
 
 
         document
+
             .querySelectorAll(
+
                 '.delay-row'
+
             )
+
             .forEach(
+
                 row => {
 
                     const task =
+
                         row
+
                             .querySelector(
+
                                 '.delay-task'
+
                             )
+
                             .value
+
                             .trim();
 
 
 
                     const reason =
+
                         row
+
                             .querySelector(
+
                                 '.delay-reason'
+
                             )
+
                             .value
+
                             .trim();
 
 
@@ -3869,13 +5041,17 @@
                     if (task) {
 
                         delays.push({
+
                             task,
+
                             reason
+
                         });
 
                     }
 
                 }
+
             );
 
 
@@ -3926,6 +5102,7 @@
 
 
         let docId =
+
             editingLogId;
 
 
@@ -3933,15 +5110,21 @@
         if (!docId) {
 
             const logs =
+
                 getActiveSiteLogs();
 
 
 
             const existingLog =
+
                 logs.find(
+
                     l =>
+
                         l.date ===
+
                         dateVal
+
                 );
 
 
@@ -3949,12 +5132,15 @@
             if (existingLog) {
 
                 docId =
+
                     existingLog.id;
 
             } else {
 
                 docId =
+
                     'log_' +
+
                     dateVal;
 
             }
@@ -3968,19 +5154,27 @@
 
 
         if (
+
             isCloudMode &&
+
             db &&
+
             firebaseInitialized
+
         ) {
 
             cloudWriteInFlight =
+
                 true;
 
 
 
             setSyncStatus(
+
                 "Saving to Firebase…",
+
                 "syncing"
+
             );
 
 
@@ -3988,25 +5182,41 @@
             try {
 
                 const docRef =
+
                     db
+
                         .collection(
+
                             'sites'
+
                         )
+
                         .doc(
+
                             activeSite.id
+
                         )
+
                         .collection(
+
                             'logs'
+
                         )
+
                         .doc(
+
                             docId
+
                         );
 
 
 
                 const cloudPayload =
+
                     {
+
                         ...logPayload
+
                     };
 
 
@@ -4014,9 +5224,13 @@
                 if (!editingLogId) {
 
                     cloudPayload.createdAt =
+
                         firebase
+
                             .firestore
+
                             .FieldValue
+
                             .serverTimestamp();
 
                 }
@@ -4031,19 +5245,25 @@
 
 
                 cloudSaved =
+
                     true;
 
 
 
                 setSyncStatus(
+
                     "Firebase Synced",
+
                     "cloud"
+
                 );
 
 
 
                 showToast(
+
                     `Daily Log for ${dateVal} successfully saved to Firebase.`
+
                 );
 
 
@@ -4051,21 +5271,29 @@
             } catch (err) {
 
                 console.error(
+
                     "Firestore save/update FAILED:",
+
                     err
+
                 );
 
 
 
                 setSyncStatus(
+
                     "Firebase Save Failed",
+
                     "error"
+
                 );
 
 
 
                 showToast(
+
                     `Firebase update failed: ${err.code || err.message}. Local copy kept.`
+
                 );
 
 
@@ -4073,6 +5301,7 @@
             } finally {
 
                 cloudWriteInFlight =
+
                     false;
 
             }
@@ -4082,26 +5311,39 @@
 
 
         const siteKey =
+
             getSiteLogKey(
+
                 activeSite.id
+
             );
 
 
 
         let logs =
+
             JSON.parse(
+
                 localStorage.getItem(
+
                     siteKey
+
                 )
+
             ) || [];
 
 
 
         const existingIndex =
+
             logs.findIndex(
+
                 l =>
+
                     l.id === docId ||
+
                     l.date === dateVal
+
             );
 
 
@@ -4109,13 +5351,17 @@
         if (existingIndex >= 0) {
 
             logs[
+
                 existingIndex
+
             ] = {
 
                 id: docId,
 
                 ...logs[
+
                     existingIndex
+
                 ],
 
                 ...logPayload
@@ -4141,21 +5387,31 @@
 
 
         localStorage.setItem(
+
             siteKey,
+
             JSON.stringify(
+
                 logs
+
             )
+
         );
 
 
 
         if (
+
             !isCloudMode ||
+
             !firebaseInitialized ||
+
             !cloudSaved
+
         ) {
 
             siteLogsCache =
+
                 logs;
 
         }
@@ -4175,37 +5431,57 @@
 
 
         document
+
             .getElementById(
+
                 'editing-indicator'
+
             )
+
             .classList.add(
+
                 'hidden'
+
             );
 
 
 
         document
+
             .getElementById(
+
                 'form-mode-badge'
+
             )
+
             .textContent =
+
             "New Entry Mode";
 
 
 
         document
+
             .getElementById(
+
                 'form-mode-badge'
+
             )
+
             .className =
+
             "text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-md";
 
 
 
         document
+
             .getElementById(
+
                 'daily-log-form'
+
             )
+
             .reset();
 
 
@@ -4217,10 +5493,15 @@
         if (currentUser) {
 
             document
+
                 .getElementById(
+
                     'log-supervisor'
+
                 )
+
                 .value =
+
                 currentUser;
 
         }
@@ -4240,47 +5521,25 @@
 
     function switchTab(tab) {
 
-        const entryBtn =
-            document.getElementById(
-                'tab-btn-entry'
-            );
-
-
-
-        const historyBtn =
-            document.getElementById(
-                'tab-btn-history'
-            );
-            
+        const entryBtn = document.getElementById('tab-btn-entry');
+        const historyBtn = document.getElementById('tab-btn-history');
         const machineryBtn = document.getElementById('tab-btn-machinery');
+        const milestonesBtn = document.getElementById('tab-btn-milestones');
         const analyticsBtn = document.getElementById('tab-btn-analytics');
 
-
-
-        const entryContent =
-            document.getElementById(
-                'tab-content-entry'
-            );
-
-
-
-        const historyContent =
-            document.getElementById(
-                'tab-content-history'
-            );
-            
+        const entryContent = document.getElementById('tab-content-entry');
+        const historyContent = document.getElementById('tab-content-history');
         const machineryContent = document.getElementById('tab-content-machinery');
+        const milestonesContent = document.getElementById('tab-content-milestones');
         const analyticsContent = document.getElementById('tab-content-analytics');
 
-
-
         // Reset all buttons
-        [entryBtn, historyBtn, machineryBtn, analyticsBtn].forEach(btn => {
+        [entryBtn, historyBtn, machineryBtn, milestonesBtn, analyticsBtn].forEach(btn => {
             if (btn) btn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
         });
 
         // Hide all contents
-        [entryContent, historyContent, machineryContent, analyticsContent].forEach(content => {
+        [entryContent, historyContent, machineryContent, milestonesContent, analyticsContent].forEach(content => {
             if (content) content.classList.add('hidden');
         });
 
@@ -4295,6 +5554,10 @@
             machineryBtn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
             machineryContent.classList.remove('hidden');
             renderMachineryLogs();
+        } else if (tab === 'milestones') {
+            milestonesBtn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
+            milestonesContent.classList.remove('hidden');
+            renderMilestones();
         } else if (tab === 'analytics') {
             analyticsBtn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
             analyticsContent.classList.remove('hidden');
@@ -4308,9 +5571,13 @@
     function clearHistoryFilter() {
 
         document
+
             .getElementById(
+
                 'history-filter-date'
+
             )
+
             .value = '';
 
 
@@ -4373,15 +5640,21 @@
 
 
         let logs =
+
             getActiveSiteLogs();
 
 
 
         const filterDate =
+
             document
+
                 .getElementById(
+
                     'history-filter-date'
+
                 )
+
                 .value;
 
 
@@ -4389,10 +5662,15 @@
         if (filterDate) {
 
             logs =
+
                 logs.filter(
+
                     l =>
+
                         l.date ===
+
                         filterDate
+
                 );
 
         }
@@ -4400,16 +5678,23 @@
 
 
         logs.sort(
+
             (a, b) =>
+
                 new Date(b.date) -
+
                 new Date(a.date)
+
         );
 
 
 
         const container =
+
             document.getElementById(
+
                 'history-records-list'
+
             );
 
 
@@ -4445,16 +5730,21 @@
 
 
         logs.forEach(
+
             log => {
 
                 const card =
+
                     document.createElement(
+
                         'div'
+
                     );
 
 
 
                 card.className =
+
                     "bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl hover:border-slate-700 transition space-y-4";
 
 
@@ -4661,10 +5951,13 @@
 
 
                 container.appendChild(
+
                     card
+
                 );
 
             }
+
         );
 
     }
@@ -4678,6 +5971,7 @@
 
 
         const logs =
+
             getActiveSiteLogs();
 
 
@@ -4685,7 +5979,9 @@
         if (logs.length === 0) {
 
             showToast(
+
                 "No logs available to export."
+
             );
 
             return;
@@ -4695,7 +5991,9 @@
 
 
         const exportData =
+
             logs.map(
+
                 l => ({
 
                     "Date":
@@ -4754,26 +6052,35 @@
                             : ''
 
                 })
+
             );
 
 
 
         const worksheet =
+
             XLSX.utils.json_to_sheet(
+
                 exportData
+
             );
 
 
 
         const workbook =
+
             XLSX.utils.book_new();
 
 
 
         XLSX.utils.book_append_sheet(
+
             workbook,
+
             worksheet,
+
             "Site Logs"
+
         );
 
 
@@ -4795,14 +6102,19 @@
 
 
         XLSX.writeFile(
+
             workbook,
+
             filename
+
         );
 
 
 
         showToast(
+
             "Excel spreadsheet exported successfully!"
+
         );
 
     }
@@ -4812,15 +6124,21 @@
     function editLogEntry(logId) {
 
         const logs =
+
             getActiveSiteLogs();
 
 
 
         const log =
+
             logs.find(
+
                 l =>
+
                     l.id ===
+
                     logId
+
             );
 
 
@@ -4830,7 +6148,9 @@
 
 
         editingLogId =
+
             log.id ||
+
             ('log_' + log.date);
 
 
@@ -4840,65 +6160,101 @@
 
 
         document
+
             .getElementById(
+
                 'log-date'
+
             )
+
             .value =
+
             log.date;
 
 
 
         document
+
             .getElementById(
+
                 'log-weather'
+
             )
+
             .value =
+
             log.weather;
 
 
 
         document
+
             .getElementById(
+
                 'log-supervisor'
+
             )
+
             .value =
+
             log.supervisor;
 
 
 
         document
+
             .getElementById(
+
                 'editing-indicator'
+
             )
+
             .classList.remove(
+
                 'hidden'
+
             );
 
 
 
         document
+
             .getElementById(
+
                 'editing-date-display'
+
             )
+
             .textContent =
+
             log.date;
 
 
 
         document
+
             .getElementById(
+
                 'form-mode-badge'
+
             )
+
             .textContent =
+
             "Editing Mode";
 
 
 
         document
+
             .getElementById(
+
                 'form-mode-badge'
+
             )
+
             .className =
+
             "text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-md font-bold";
 
 
@@ -4922,21 +6278,31 @@
 
 
         document
+
             .getElementById(
+
                 'material-rows-container'
+
             )
+
             .innerHTML = '';
 
 
 
         if (
+
             log.materials &&
+
             log.materials.length > 0
+
         ) {
 
             log.materials.forEach(
+
                 m =>
+
                     addMaterialRow(m)
+
             );
 
         } else {
@@ -4948,21 +6314,31 @@
 
 
         document
+
             .getElementById(
+
                 'completed-tasks-container'
+
             )
+
             .innerHTML = '';
 
 
 
         if (
+
             log.completedTasks &&
+
             log.completedTasks.length > 0
+
         ) {
 
             log.completedTasks.forEach(
+
                 c =>
+
                     addCompletedRow(c)
+
             );
 
         } else {
@@ -4974,21 +6350,31 @@
 
 
         document
+
             .getElementById(
+
                 'pending-tasks-container'
+
             )
+
             .innerHTML = '';
 
 
 
         if (
+
             log.pendingTasks &&
+
             log.pendingTasks.length > 0
+
         ) {
 
             log.pendingTasks.forEach(
+
                 p =>
+
                     addPendingRow(p)
+
             );
 
         } else {
@@ -5000,21 +6386,31 @@
 
 
         document
+
             .getElementById(
+
                 'delay-tasks-container'
+
             )
+
             .innerHTML = '';
 
 
 
         if (
+
             log.delays &&
+
             log.delays.length > 0
+
         ) {
 
             log.delays.forEach(
+
                 d =>
+
                     addDelayRow(d)
+
             );
 
         }
@@ -5033,15 +6429,21 @@
     function viewLogDetails(logId) {
 
         const logs =
+
             getActiveSiteLogs();
 
 
 
         const log =
+
             logs.find(
+
                 l =>
+
                     l.id ===
+
                     logId
+
             );
 
 
@@ -5051,44 +6453,67 @@
 
 
         document
+
             .getElementById(
+
                 'modal-site-title'
+
             )
+
             .textContent =
+
             activeSite.name;
 
 
 
         document
+
             .getElementById(
+
                 'modal-log-date'
+
             )
+
             .textContent =
+
             log.date;
 
 
 
         document
+
             .getElementById(
+
                 'modal-log-weather'
+
             )
+
             .textContent =
+
             `Weather: ${log.weather}`;
 
 
 
         document
+
             .getElementById(
+
                 'modal-log-author'
+
             )
+
             .textContent =
+
             `Prepared by Supervisor: ${log.supervisor}`;
 
 
 
         const content =
+
             document.getElementById(
+
                 'modal-detail-content'
+
             );
 
 
@@ -5100,8 +6525,11 @@
         if (log.laborBreakdown) {
 
             Object.entries(
+
                 log.laborBreakdown
+
             ).forEach(
+
                 ([trade, data]) => {
                     let count = (typeof data === 'object' && data !== null) ? (data.count || 0) : data;
                     let shift = (typeof data === 'object' && data !== null) ? (data.shift || 'Day') : 'Day';
@@ -5120,6 +6548,7 @@
                     }
 
                 }
+
             );
 
         }
@@ -5397,12 +6826,18 @@
 
 
         document
+
             .getElementById(
+
                 'modal-log-detail'
+
             )
+
             .classList.
             remove(
+
                 'hidden'
+
             );
 
     }
@@ -5412,11 +6847,17 @@
     function closeLogDetailModal() {
 
         document
+
             .getElementById(
+
                 'modal-log-detail'
+
             )
+
             .classList.add(
+
                 'hidden'
+
             );
 
     }
@@ -5742,39 +7183,53 @@
     function showToast(message) {
 
         const toast =
+
             document.getElementById(
+
                 'toast'
+
             );
 
 
 
         const msgSpan =
+
             document.getElementById(
+
                 'toast-msg'
+
             );
 
 
 
         msgSpan.textContent =
+
             message;
 
 
 
         toast.classList.remove(
+
             'hidden'
+
         );
 
 
 
         setTimeout(
+
             () => {
 
                 toast.classList.add(
+
                     'hidden'
+
                 );
 
             },
+
             3500
+
         );
 
     }
@@ -5792,7 +7247,9 @@
 
 
         showToast(
+
             "Local device memory cleared successfully!"
+
         );
 
     }
