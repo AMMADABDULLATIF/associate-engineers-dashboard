@@ -5750,7 +5750,7 @@
         document.getElementById('modal-machinery').classList.add('hidden');
     }
 
-    async function saveMachineryEntry(e) {
+        async function saveMachineryEntry(e) {
         e.preventDefault();
         if (!activeSite) return;
 
@@ -5762,6 +5762,25 @@
         const remarksVal = document.getElementById('mach-remarks').value.trim();
 
         const docId = entryId || ('mach_' + Date.now());
+
+        let oldDate = null;
+        if (entryId) {
+            const cachedList = getActiveSiteMachinery();
+            const cachedItem = cachedList.find(m => m.id === entryId);
+            if (cachedItem) oldDate = cachedItem.date;
+
+            if (isCloudMode && db && firebaseInitialized) {
+                try {
+                    const oldDoc = await db.collection('sites').doc(activeSite.id)
+                        .collection('machinery').doc(entryId).get();
+                    if (oldDoc.exists) {
+                        oldDate = oldDoc.data().date;
+                    }
+                } catch (err) {
+                    console.warn("Could not fetch old machinery date:", err);
+                }
+            }
+        }
 
         const payload = {
             date: dateVal,
@@ -5776,15 +5795,31 @@
         if (isCloudMode && db && firebaseInitialized) {
             setSyncStatus("Saving Machinery to Firebase...", "syncing");
             try {
-                await db.collection('sites').doc(activeSite.id).collection('machinery').doc(docId).set(payload, { merge: true });
-                
-                // Also update corresponding daily log if it exists in Firestore so that machineryLogs stays synced instantly
-                const dailyLogId = 'log_' + dateVal;
-                const dailyLogRef = db.collection('sites').doc(activeSite.id).collection('logs').doc(dailyLogId);
-                const dailyLogDoc = await dailyLogRef.get();
-                if (dailyLogDoc.exists) {
-                    const currentMachLogs = getActiveSiteMachinery().filter(m => m.date === dateVal);
-                    await dailyLogRef.update({ machineryLogs: currentMachLogs });
+                await db.collection('sites').doc(activeSite.id)
+                    .collection('machinery').doc(docId)
+                    .set(payload, { merge: true });
+
+                if (oldDate && oldDate !== dateVal) {
+                    const oldLogRef = db.collection('sites').doc(activeSite.id)
+                        .collection('logs').doc('log_' + oldDate);
+                    const oldLogDoc = await oldLogRef.get();
+                    if (oldLogDoc.exists) {
+                        const oldLogData = oldLogDoc.data();
+                        const oldMachLogs = Array.isArray(oldLogData.machineryLogs) ? oldLogData.machineryLogs : [];
+                        const filtered = oldMachLogs.filter(m => m.id !== docId);
+                        await oldLogRef.update({ machineryLogs: filtered });
+                    }
+                }
+
+                const newLogRef = db.collection('sites').doc(activeSite.id)
+                    .collection('logs').doc('log_' + dateVal);
+                const newLogDoc = await newLogRef.get();
+                if (newLogDoc.exists) {
+                    const machSnap = await db.collection('sites').doc(activeSite.id)
+                        .collection('machinery').where('date', '==', dateVal).get();
+                    const freshMachLogs = [];
+                    machSnap.forEach(d => freshMachLogs.push({ id: d.id, ...d.data() }));
+                    await newLogRef.update({ machineryLogs: freshMachLogs });
                 }
 
                 setSyncStatus("Firebase Synced", "cloud");
@@ -5803,22 +5838,34 @@
         } else {
             list.push({ id: docId, ...payload });
         }
-
         localStorage.setItem(getSiteMachineryKey(activeSite.id), JSON.stringify(list));
         siteMachineryCache = list;
 
-        // Also update local daily log if present
         const siteKey = getSiteLogKey(activeSite.id);
         let logs = JSON.parse(localStorage.getItem(siteKey)) || [];
-        const logIdx = logs.findIndex(l => l.date === dateVal);
-        if (logIdx >= 0) {
-            logs[logIdx].machineryLogs = list.filter(m => m.date === dateVal);
-            localStorage.setItem(siteKey, JSON.stringify(logs));
-            siteLogsCache = logs;
+
+        if (oldDate && oldDate !== dateVal) {
+            const oldLogIdx = logs.findIndex(l => l.date === oldDate);
+            if (oldLogIdx >= 0) {
+                const oldMachLogs = Array.isArray(logs[oldLogIdx].machineryLogs) ? logs[oldLogIdx].machineryLogs : [];
+                logs[oldLogIdx].machineryLogs = oldMachLogs.filter(m => m.id !== docId);
+            }
         }
+
+        const newLogIdx = logs.findIndex(l => l.date === dateVal);
+        if (newLogIdx >= 0) {
+            logs[newLogIdx].machineryLogs = list.filter(m => m.date === dateVal);
+        }
+
+        localStorage.setItem(siteKey, JSON.stringify(logs));
+        siteLogsCache = logs;
 
         closeMachineryModal();
         renderMachineryLogs();
+
+        if (!document.getElementById('tab-content-history').classList.contains('hidden')) {
+            renderHistoryLogs();
+        }
     }
 
     async function deleteMachineryEntry(id) {
@@ -5834,14 +5881,15 @@
             setSyncStatus("Deleting from Firebase...", "syncing");
             try {
                 await db.collection('sites').doc(activeSite.id).collection('machinery').doc(id).delete();
-                
-                // If a daily log exists for this date, update/remove the machinery logs inside it in Firestore too
+
                 if (targetDate) {
-                    const dailyLogId = 'log_' + targetDate;
-                    const dailyLogRef = db.collection('sites').doc(activeSite.id).collection('logs').doc(dailyLogId);
+                    const dailyLogRef = db.collection('sites').doc(activeSite.id)
+                        .collection('logs').doc('log_' + targetDate);
                     const dailyLogDoc = await dailyLogRef.get();
                     if (dailyLogDoc.exists) {
-                        const updatedMachLogsForDate = list.filter(m => m.id !== id && m.date === targetDate);
+                        const existing = dailyLogDoc.data().machineryLogs;
+                        const arr = Array.isArray(existing) ? existing : [];
+                        const updatedMachLogsForDate = arr.filter(m => m.id !== id);
                         await dailyLogRef.update({ machineryLogs: updatedMachLogsForDate });
                     }
                 }
@@ -5857,13 +5905,13 @@
         localStorage.setItem(getSiteMachineryKey(activeSite.id), JSON.stringify(updated));
         siteMachineryCache = updated;
 
-        // Also update local daily log if present
         if (targetDate) {
             const siteKey = getSiteLogKey(activeSite.id);
             let logs = JSON.parse(localStorage.getItem(siteKey)) || [];
             const logIdx = logs.findIndex(l => l.date === targetDate);
             if (logIdx >= 0) {
-                logs[logIdx].machineryLogs = updated.filter(m => m.date === targetDate);
+                const arr = Array.isArray(logs[logIdx].machineryLogs) ? logs[logIdx].machineryLogs : [];
+                logs[logIdx].machineryLogs = arr.filter(m => m.id !== id);
                 localStorage.setItem(siteKey, JSON.stringify(logs));
                 siteLogsCache = logs;
             }
@@ -6383,6 +6431,15 @@
             "Local device memory cleared successfully!"
         );
 
+    }
+
+        // Service Worker for PWA Install
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('Service Worker registered!'))
+          .catch(err => console.log('Service Worker failed:', err));
+      });
     }
 
 </script>
