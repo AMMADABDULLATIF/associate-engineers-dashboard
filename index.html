@@ -1498,8 +1498,7 @@
             }]
 
         };
-
-
+        
 
         const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
 
@@ -1511,70 +1510,9 @@
 
         document.head.appendChild(link);
 
-
-
-        const CURRENT_VERSION = "v1.0.3"; // Updated version for milestones feature
-
-        const savedVersion = localStorage.getItem('app_version');
-
-
-
-        if (!savedVersion) {
-
-            localStorage.setItem('app_version', CURRENT_VERSION);
-
-            return;
-
-        }
-
-
-
-        if (savedVersion !== CURRENT_VERSION) {
-
-            setTimeout(() => {
-
-                showUpdateNotification(CURRENT_VERSION);
-
-            }, 1000);
-
-        }
-
     })();
 
-
-
-    function showUpdateNotification(newVer) {
-
-        const toast = document.getElementById('toast');
-
-        const msgSpan = document.getElementById('toast-msg');
-
-        if (!toast || !msgSpan) return;
-
-
-
-        toast.className = "fixed bottom-5 right-5 z-50 bg-amber-500 text-slate-950 px-5 py-3.5 rounded-xl shadow-2xl font-bold text-xs flex items-center gap-3 transform transition-all duration-300 cursor-pointer animate-bounce border-2 border-slate-950";
-
-        msgSpan.innerHTML = `<span> New Update Available (${newVer})! Click to Apply</span>`;
-
-        
-
-        toast.onclick = function() {
-
-            localStorage.setItem('app_version', newVer);
-
-            toast.classList.add('hidden');
-
-            // Cache bypass karke fresh file load karne ke liye version parameter ke sath reload
-
-            window.location.href = window.location.pathname + '?v=' + newVer;
-
-        };
-
-        toast.classList.remove('hidden');
-
-    }
-
+    
     // ============================================================
     // FIREBASE INITIALIZATION
     // ============================================================
