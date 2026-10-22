@@ -6433,11 +6433,24 @@
 
     }
 
-        // Service Worker for PWA Install
+           // Service Worker for PWA Install & Auto Update
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
-          .then(reg => console.log('Service Worker registered!'))
+          .then(reg => {
+            // Background mein check karega ke naya version aaya hai ya nahi
+            reg.onupdatefound = () => {
+              const installingWorker = reg.installing;
+              installingWorker.onstatechange = () => {
+                if (installingWorker.state === 'installed') {
+                  if (navigator.serviceWorker.controller) {
+                    // Agar naya version aa gaya hai, toh page auto refresh hoga
+                    window.location.reload();
+                  }
+                }
+              };
+            };
+          })
           .catch(err => console.log('Service Worker failed:', err));
       });
     }
