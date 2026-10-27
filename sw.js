@@ -1,4 +1,4 @@
-const CACHE_NAME = 'associate-engineers-v4'; // Version change karein har baar naya code dalte waqt
+const CACHE_NAME = 'associate-engineers-v6'; // Version ko v6 kar diya hai
 
 self.addEventListener('install', (event) => {
   self.skipWaiting(); // Foran naya version activate karega
@@ -20,8 +20,22 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// YEH SABSE ZAROORI HAI (Cache First Strategy)
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
+    caches.match(event.request).then((cachedResponse) => {
+      // Agar file phone ki memory (cache) mein hai, toh foran dikhao
+      return cachedResponse || fetch(event.request).then((fetchRes) => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, fetchRes.clone());
+          return fetchRes;
+        });
+      });
+    }).catch(() => {
+      // Agar internet nahi hai aur file memory mein bhi nahi, toh index.html dikhao
+      if (event.request.mode === 'navigate') {
+        return caches.match('/index.html');
+      }
+    })
   );
 });
