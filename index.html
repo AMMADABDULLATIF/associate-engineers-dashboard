@@ -623,6 +623,75 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 @media print{#modal-log-detail .print-card{padding-top:0!important}#modal-log-detail .print-card>button[onclick="closeLogDetailModal()"]{display:none!important}}
 </style>
 
+
+<style id="ae-mobile-performance-and-milestone-editor">
+/* Mobile rendering performance: keep the premium look while avoiding expensive mobile blur/animation layers. */
+@media (max-width: 768px) {
+  header, .saas-sidebar, #modal-machinery, #modal-log-detail, #site-image-viewer { backdrop-filter:none!important; -webkit-backdrop-filter:none!important; }
+  header { background:rgba(8,11,23,.97)!important; box-shadow:0 4px 14px rgba(0,0,0,.14)!important; }
+  .saas-sidebar { box-shadow:0 8px 20px rgba(0,0,0,.15)!important; }
+  #dashboard-view .shadow-xl,#dashboard-view .shadow-lg,#tab-content-milestones #milestones-list>div { box-shadow:0 5px 16px rgba(0,0,0,.14)!important; }
+  #tab-content-entry,#tab-content-history,#tab-content-machinery,#tab-content-milestones,#tab-content-analytics { animation:none!important; }
+  #dashboard-view button,.side-link,#tab-content-milestones #milestones-list>div { transition:none!important; }
+  #dashboard-view button:hover,#tab-content-milestones #milestones-list>div:hover { transform:none!important; }
+  .custom-scrollbar,.overflow-x-auto { -webkit-overflow-scrolling:touch; }
+}
+@media (max-width: 640px) {
+  body:before { display:none!important; }
+  #modal-machinery,#modal-log-detail,#site-image-viewer { background:rgba(4,7,17,.97)!important; }
+  #dashboard-view .bg-slate-900,#dashboard-view .bg-slate-950 { box-shadow:none!important; }
+  .ae-editor-hero { align-items:flex-start!important; padding:19px!important; }
+  .ae-editor-icon { width:42px!important;height:42px!important;flex-basis:42px!important;border-radius:13px!important; }
+  .ae-editor-hero h2 { font-size:25px!important; }
+  .ae-editor-form { padding:17px!important; }
+  .ae-editor-footer { align-items:stretch!important; }
+  .ae-editor-footer>p { max-width:none!important; }
+  .ae-editor-actions { width:100%; }
+  .ae-editor-actions button { flex:1; }
+}
+.ae-milestone-editor { width:100%; min-width:0; }
+.ae-editor-topbar { display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap; }
+.ae-editor-back { display:inline-flex;align-items:center;gap:9px;min-height:42px;padding:10px 14px;border:1px solid var(--ae-line);border-radius:12px;background:#151d35;color:#dce5ff;font-size:12px;font-weight:700; }
+.ae-editor-back i { color:var(--ae-cyan); }
+.ae-editor-kicker,.ae-editor-eyebrow { color:var(--ae-cyan);font-size:9px;font-weight:800;letter-spacing:.17em; }
+.ae-editor-hero { display:flex;align-items:center;gap:18px;padding:clamp(22px,3vw,34px);border:1px solid rgba(98,229,245,.2);border-radius:23px;background:radial-gradient(ellipse at 100% 0,rgba(139,124,255,.14),transparent 45%),linear-gradient(135deg,#151d35,#0d1326);box-shadow:0 14px 36px rgba(0,0,0,.15); }
+.ae-editor-icon { width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(135deg,rgba(98,229,245,.17),rgba(139,124,255,.2));border:1px solid rgba(98,229,245,.24);color:var(--ae-cyan);font-size:22px; }
+.ae-editor-hero h2 { margin:5px 0 6px;font:700 clamp(26px,3vw,36px) 'Space Grotesk',sans-serif;letter-spacing:-.05em;color:#f4f7ff; }
+.ae-editor-description { margin:0;color:var(--ae-muted);font-size:12px;line-height:1.7; }
+.ae-editor-form { padding:clamp(19px,3vw,30px);border:1px solid var(--ae-line);border-radius:22px;background:linear-gradient(145deg,rgba(19,27,51,.99),rgba(12,18,35,.99));box-shadow:0 16px 40px rgba(0,0,0,.17); }
+.ae-editor-section-title { display:flex;align-items:center;gap:13px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--ae-line); }
+.ae-editor-section-title>span { display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:rgba(98,229,245,.1);border:1px solid rgba(98,229,245,.2);color:var(--ae-cyan);font:700 12px 'Space Grotesk'; }
+.ae-editor-section-title h3 { margin:0;color:#f4f7ff;font:700 17px 'Space Grotesk',sans-serif; }
+.ae-editor-section-title p { margin:4px 0 0;color:var(--ae-muted);font-size:11px; }
+.ae-editor-form label { display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;color:#aebada;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase; }
+.ae-editor-form label b { color:var(--ae-cyan); }
+.ae-editor-form input:not([type=range]),.ae-editor-form select { width:100%;min-height:46px;padding:12px 13px;border:1px solid var(--ae-field-border);border-radius:12px;background:var(--ae-field);color:var(--ae-text);font:500 13px 'DM Sans',sans-serif; }
+.ae-editor-form input:focus,.ae-editor-form select:focus { outline:none;border-color:rgba(98,229,245,.72);box-shadow:0 0 0 3px rgba(98,229,245,.1); }
+.ae-editor-range { width:100%;height:8px;margin:11px 0 6px;accent-color:var(--ae-cyan); }
+.ae-range-scale { display:flex;justify-content:space-between;gap:8px;color:#7f8bad;font-size:9px; }
+.ae-editor-footer { display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;padding-top:20px;border-top:1px solid var(--ae-line); }
+.ae-editor-footer>p { margin:0;max-width:340px;color:var(--ae-muted);font-size:10px;line-height:1.6; }
+.ae-editor-footer>p i { color:var(--ae-green);margin-right:6px; }
+.ae-editor-actions { display:flex;gap:10px; }
+.ae-editor-cancel,.ae-editor-save { display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:43px;padding:0 18px;border-radius:12px;font-size:11px;font-weight:800; }
+.ae-editor-cancel { background:#1a2442;color:#dce5ff;border:1px solid var(--ae-line); }
+.ae-editor-save { background:linear-gradient(115deg,#62e5f5,#8b7cff);color:#07101f;border:1px solid rgba(98,229,245,.2);box-shadow:0 8px 22px rgba(98,229,245,.12); }
+</style>
+
+<style id="ae-auto-update-notice-styles">
+  #ae-auto-update-notice{position:fixed;z-index:2147483647;top:18px;right:18px;width:min(390px,calc(100vw - 28px));padding:14px;border:1px solid rgba(212,160,23,.42);border-radius:18px;background:rgba(10,18,35,.96);color:#f8fafc;box-shadow:0 18px 55px rgba(0,0,0,.35);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-family:inherit;animation:aeUpdateNoticeIn .25s ease-out}
+  #ae-auto-update-notice .ae-update-card{display:flex;align-items:center;gap:12px}
+  #ae-auto-update-notice .ae-update-icon{flex:0 0 42px;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#d4a017,#f5c451);color:#101827;font-size:18px}
+  #ae-auto-update-notice .ae-update-copy{min-width:0;display:flex;flex:1;flex-direction:column;gap:5px}
+  #ae-auto-update-notice .ae-update-copy strong{font-size:14px;line-height:1.3;font-weight:800;letter-spacing:.01em}
+  #ae-auto-update-notice .ae-update-copy span{font-size:12px;line-height:1.45;color:#cbd5e1}
+  #ae-auto-update-notice .ae-update-progress{height:3px;margin-top:4px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.12)}
+  #ae-auto-update-notice .ae-update-progress span{display:block;width:35%;height:100%;border-radius:99px;background:#e6b52e;animation:aeUpdateProgress 2.4s ease-in-out forwards}
+  @keyframes aeUpdateNoticeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes aeUpdateProgress{from{width:0}to{width:100%}}
+  @media(max-width:640px){#ae-auto-update-notice{top:10px;right:10px;width:calc(100vw - 20px);padding:12px;border-radius:15px;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 8px 24px rgba(0,0,0,.28)}}
+  @media(prefers-reduced-motion:reduce){#ae-auto-update-notice,#ae-auto-update-notice .ae-update-progress span{animation:none}}
+</style>
 </head>
 
 <body class="min-h-screen flex flex-col justify-between custom-scrollbar select-none bg-slate-950">
@@ -1614,6 +1683,30 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
                 </div>
             </div>
 
+            <!-- Separate full-page milestone editor (shown only after Edit is clicked) -->
+            <section id="milestone-edit-screen" class="hidden ae-milestone-editor space-y-6" aria-labelledby="milestone-editor-title">
+                <div class="ae-editor-topbar">
+                    <button type="button" onclick="closeMilestoneEditScreen()" class="ae-editor-back"><i class="fa-solid fa-arrow-left"></i><span>Back to Milestones</span></button>
+                    <span class="ae-editor-kicker"><i class="fa-solid fa-pen-to-square"></i> PROJECT MANAGEMENT</span>
+                </div>
+                <div class="ae-editor-hero">
+                    <div class="ae-editor-icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                    <div><p class="ae-editor-eyebrow">MILESTONE WORKSPACE</p><h2 id="milestone-editor-title">Edit Milestone</h2><p class="ae-editor-description">Update the saved milestone details below. Your changes will be saved to this site's milestone record.</p></div>
+                </div>
+                <form id="milestone-edit-screen-form" onsubmit="saveMilestoneEditScreen(event)" class="ae-editor-form">
+                    <input type="hidden" id="milestone-screen-edit-id">
+                    <div class="ae-editor-section-title"><span>01</span><div><h3>Milestone details</h3><p>Review and update the activity information.</p></div></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div class="sm:col-span-2"><label for="milestone-screen-name">Milestone Name <b>*</b></label><input id="milestone-screen-name" type="text" required maxlength="180" placeholder="e.g. Foundation & Excavation"></div>
+                        <div><label for="milestone-screen-start-date">Start Date</label><input id="milestone-screen-start-date" type="date"></div>
+                        <div><label for="milestone-screen-target-date">Target Completion Date</label><input id="milestone-screen-target-date" type="date"></div>
+                        <div><label for="milestone-screen-progress-range">Progress <span id="milestone-screen-progress-label">0%</span></label><input id="milestone-screen-progress-range" type="range" min="0" max="100" value="0" oninput="document.getElementById('milestone-screen-progress-input').value=this.value;document.getElementById('milestone-screen-progress-label').textContent=this.value+'%'" class="ae-editor-range"><div class="ae-range-scale"><span>0% · Not started</span><span>100% · Complete</span></div></div>
+                        <div><label for="milestone-screen-progress-input">Progress (%)</label><input id="milestone-screen-progress-input" type="number" min="0" max="100" value="0" oninput="const v=Math.max(0,Math.min(100,Number(this.value)||0));document.getElementById('milestone-screen-progress-range').value=v;document.getElementById('milestone-screen-progress-label').textContent=v+'%'"></div>
+                        <div class="sm:col-span-2"><label for="milestone-screen-status">Current Status</label><select id="milestone-screen-status"><option value="Pending">Pending</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select></div>
+                    </div>
+                    <div class="ae-editor-footer"><p><i class="fa-solid fa-cloud-arrow-up"></i> Changes are saved to the active site's milestone record.</p><div class="ae-editor-actions"><button type="button" onclick="closeMilestoneEditScreen()" class="ae-editor-cancel">Cancel</button><button type="submit" id="milestone-screen-save-btn" class="ae-editor-save"><i class="fa-solid fa-check"></i> Save Changes</button></div></div>
+                </form>
+            </section>
         </div>
 
 
@@ -6516,23 +6609,101 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
     function editMilestone(id) {
         const list = getActiveSiteMilestones();
         const item = list.find(m => m.id === id);
-        if (!item) return;
+        if (!item) { showToast("This milestone could not be found."); return; }
 
-        document.getElementById('milestone-edit-id').value = item.id;
-        document.getElementById('milestone-name').value = item.name;
-        document.getElementById('milestone-start-date').value = item.startDate || '';
-        document.getElementById('milestone-target-date').value = item.targetDate || '';
-        document.getElementById('milestone-progress-range').value = item.progress || 0;
-        document.getElementById('milestone-progress-input').value = item.progress || 0;
-        document.getElementById('milestone-status').value = item.status || 'Pending';
-        
-        updateMilestoneRangeVisual(document.getElementById('milestone-progress-range'));
-        
-        document.getElementById('milestone-submit-btn').innerHTML = '<i class="fa-solid fa-check text-slate-950"></i><span id="milestone-submit-text">Update Milestone</span>';
-        document.getElementById('milestone-cancel-edit-btn').classList.remove('hidden');
+        document.getElementById('milestone-screen-edit-id').value = item.id;
+        document.getElementById('milestone-screen-name').value = item.name || '';
+        document.getElementById('milestone-screen-start-date').value = item.startDate || '';
+        document.getElementById('milestone-screen-target-date').value = item.targetDate || '';
+        const progress = Math.max(0, Math.min(100, parseInt(item.progress, 10) || 0));
+        document.getElementById('milestone-screen-progress-range').value = progress;
+        document.getElementById('milestone-screen-progress-input').value = progress;
+        document.getElementById('milestone-screen-progress-label').textContent = progress + '%';
+        document.getElementById('milestone-screen-status').value = item.status || 'Pending';
+        document.getElementById('milestone-screen-save-btn').disabled = false;
+        document.getElementById('milestone-screen-save-btn').innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
 
-        // Scroll to form
-        document.getElementById('milestone-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const milestonesTab = document.getElementById('tab-content-milestones');
+        Array.from(milestonesTab.children).forEach(child => {
+            if (child.id === 'milestone-edit-screen') child.classList.remove('hidden');
+            else child.classList.add('hidden');
+        });
+        const title = document.getElementById('saas-page-title');
+        const subtitle = document.getElementById('saas-page-subtitle');
+        const crumb = document.getElementById('saas-breadcrumb');
+        if (title) title.textContent = 'Edit Milestone';
+        if (subtitle) subtitle.textContent = 'Update a saved construction milestone.';
+        if (crumb) crumb.textContent = 'MILESTONE EDITOR';
+        window.scrollTo({ top: 0, behavior: window.matchMedia('(max-width: 768px)').matches ? 'auto' : 'smooth' });
+        setTimeout(() => document.getElementById('milestone-screen-name').focus({preventScroll:true}), 80);
+    }
+
+    function closeMilestoneEditScreen() {
+        const milestonesTab = document.getElementById('tab-content-milestones');
+        const editor = document.getElementById('milestone-edit-screen');
+        if (editor) editor.classList.add('hidden');
+        Array.from(milestonesTab.children).forEach(child => {
+            if (child.id !== 'milestone-edit-screen') child.classList.remove('hidden');
+        });
+        const title = document.getElementById('saas-page-title');
+        const subtitle = document.getElementById('saas-page-subtitle');
+        const crumb = document.getElementById('saas-breadcrumb');
+        if (title) title.textContent = 'Project Milestones';
+        if (subtitle) subtitle.textContent = 'Monitor planned activities and overall project completion.';
+        if (crumb) crumb.textContent = 'PROJECT MILESTONES';
+        document.getElementById('milestone-edit-screen-form').reset();
+        document.getElementById('milestone-screen-edit-id').value = '';
+        document.getElementById('milestone-screen-progress-label').textContent = '0%';
+        const saveBtn = document.getElementById('milestone-screen-save-btn');
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
+        window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    async function saveMilestoneEditScreen(event) {
+        event.preventDefault();
+        if (!activeSite) { showToast('Please select a site first.'); return; }
+        const id = document.getElementById('milestone-screen-edit-id').value;
+        const list = getActiveSiteMilestones();
+        const existing = list.find(m => m.id === id);
+        if (!id || !existing) { showToast('Saved milestone not found. Please return to the list and try again.'); return; }
+
+        const name = document.getElementById('milestone-screen-name').value.trim();
+        const progressRaw = document.getElementById('milestone-screen-progress-input').value;
+        const progress = Math.max(0, Math.min(100, Number.parseInt(progressRaw, 10) || 0));
+        if (!name) { showToast('Please enter a milestone name.'); return; }
+        const payload = {
+            ...existing,
+            name,
+            startDate: document.getElementById('milestone-screen-start-date').value,
+            targetDate: document.getElementById('milestone-screen-target-date').value,
+            progress,
+            status: document.getElementById('milestone-screen-status').value,
+            updatedAt: new Date().toISOString()
+        };
+
+        const saveBtn = document.getElementById('milestone-screen-save-btn');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
+        try {
+            if (isCloudMode && db && firebaseInitialized) {
+                setSyncStatus('Saving milestone to Firebase...', 'syncing');
+                await db.collection('sites').doc(activeSite.id).collection('milestones').doc(id).set(payload, { merge: true });
+                setSyncStatus('Firebase Synced', 'cloud');
+            }
+            const updated = list.map(m => m.id === id ? { ...payload, id } : m);
+            localStorage.setItem(getSiteMilestonesKey(activeSite.id), JSON.stringify(updated));
+            siteMilestonesCache = updated;
+            renderMilestones();
+            closeMilestoneEditScreen();
+            showToast('Milestone updated successfully!');
+        } catch (err) {
+            console.error('Milestone edit-screen update failed:', err);
+            setSyncStatus('Firebase Save Failed', 'error');
+            showToast('Could not sync milestone. Please try again.');
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
+        }
     }
 
     function updateMilestoneStatusFromProgress(progressValue, statusSelect) {
@@ -6860,27 +7031,231 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 
     }
 
-       // Service Worker for PWA Install & Auto Update
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(reg => {
-            // Background mein check karega ke naya version aaya hai ya nahi
-            reg.onupdatefound = () => {
-              const installingWorker = reg.installing;
-              installingWorker.onstatechange = () => {
-                if (installingWorker.state === 'installed') {
-                  if (navigator.serviceWorker.controller) {
-                    // Agar naya version aa gaya hai, toh page auto refresh hoga
-                    window.location.reload();
-                  }
-                }
-              };
-            };
-          })
-          .catch(err => console.log('Service Worker failed:', err));
+       // ASSOCIATE ENGINEERS: safe automatic update system.
+    // Updates are detected automatically; they are applied only when forms/saves/uploads are safe.
+    (function setupDashboardAutoUpdates() {
+      if (!('serviceWorker' in navigator)) return;
+
+      const trackedFormIds = ['daily-log-form', 'machinery-form', 'milestone-form', 'milestone-edit-screen-form'];
+      const dirtyForms = new Set();
+      const savingForms = new Set();
+      let pendingWorker = null;
+      let updateNotice = null;
+      let updateDetected = false;
+      let applyingUpdate = false;
+      let initialValidator = null;
+      let lastCheckAt = 0;
+
+      function setFormDirty(form, dirty) {
+        if (!form || !form.id || !trackedFormIds.includes(form.id)) return;
+        if (dirty) dirtyForms.add(form.id);
+        else dirtyForms.delete(form.id);
+        scheduleSafeApply();
+      }
+
+      function isSafeToReload() {
+        if (dirtyForms.size || savingForms.size) return false;
+        // Wait for any image FileReader still processing before reloading.
+        if (window.__aeImageReadsInFlight > 0) return false;
+        // Avoid reload while a file input has a selected file awaiting handling.
+        if (Array.from(document.querySelectorAll('input[type="file"]')).some(input => input.files && input.files.length)) return false;
+        return true;
+      }
+
+      function ensureNotice() {
+        if (updateNotice && document.body.contains(updateNotice)) return;
+        updateNotice = document.getElementById('ae-auto-update-notice');
+        if (updateNotice) return;
+        updateNotice = document.createElement('div');
+        updateNotice.id = 'ae-auto-update-notice';
+        updateNotice.setAttribute('role', 'status');
+        updateNotice.setAttribute('aria-live', 'polite');
+        updateNotice.innerHTML = `
+          <div class="ae-update-card">
+            <div class="ae-update-icon"><i class="fas fa-cloud-arrow-down"></i></div>
+            <div class="ae-update-copy">
+              <strong>New Update Available</strong>
+              <span id="ae-update-message">A new dashboard version is ready. It will apply automatically when your current work is safe.</span>
+              <div class="ae-update-progress"><span></span></div>
+            </div>
+          </div>`;
+        document.body.appendChild(updateNotice);
+      }
+
+      function showNotice(message) {
+        ensureNotice();
+        const msg = document.getElementById('ae-update-message');
+        if (msg) msg.textContent = message;
+      }
+
+      function scheduleSafeApply() {
+        if (!updateDetected || applyingUpdate) return;
+        if (!isSafeToReload()) {
+          showNotice('Update ready. Finishing your current work before applying it…');
+          return;
+        }
+        showNotice('Update is being applied automatically…');
+        // Brief delay allows the notice to be seen, without asking the user to click anything.
+        window.setTimeout(() => {
+          if (!updateDetected || applyingUpdate || !isSafeToReload()) return;
+          applyingUpdate = true;
+          if (pendingWorker && pendingWorker.state !== 'redundant') {
+            try { pendingWorker.postMessage({ type: 'AE_SKIP_WAITING' }); }
+            catch (err) { console.warn('Could not activate updated service worker:', err); }
+            // Fallback if a controllerchange event is not emitted.
+            window.setTimeout(() => { if (applyingUpdate) window.location.reload(); }, 5000);
+          } else {
+            window.location.reload();
+          }
+        }, 1200);
+      }
+
+      // Track edits so an automatic update cannot discard a changed form.
+      document.addEventListener('input', event => {
+        const form = event.target && event.target.closest ? event.target.closest('form') : null;
+        setFormDirty(form, true);
+      }, true);
+      document.addEventListener('change', event => {
+        const form = event.target && event.target.closest ? event.target.closest('form') : null;
+        setFormDirty(form, true);
+      }, true);
+      document.addEventListener('reset', event => {
+        const form = event.target;
+        window.setTimeout(() => { setFormDirty(form, false); if (form && form.id) savingForms.delete(form.id); scheduleSafeApply(); }, 0);
+      }, true);
+      document.addEventListener('submit', event => {
+        const form = event.target;
+        if (form && trackedFormIds.includes(form.id)) savingForms.add(form.id);
+        // Safety timeout clears a stuck saving indicator but keeps dirty state intact.
+        if (form && trackedFormIds.includes(form.id)) {
+          const id = form.id;
+          window.setTimeout(() => { savingForms.delete(id); scheduleSafeApply(); }, 120000);
+        }
+      }, true);
+
+      // Track local photo FileReader work already used by the dashboard.
+      const originalHandleImageUpload = window.handleImageUpload;
+      if (typeof originalHandleImageUpload === 'function') {
+        window.handleImageUpload = function(event) {
+          const files = event && event.target && event.target.files ? Array.from(event.target.files) : [];
+          window.__aeImageReadsInFlight = (window.__aeImageReadsInFlight || 0) + files.length;
+          try { return originalHandleImageUpload.apply(this, arguments); }
+          finally {
+            // FileReader callbacks run asynchronously; release the guard after each reader finishes.
+            if (!files.length) window.__aeImageReadsInFlight = Math.max(0, (window.__aeImageReadsInFlight || 0) - 1);
+          }
+        };
+        // Existing handler pushes data in FileReader.onload. Wrap FileReader to safely track completion.
+        const OriginalFileReader = window.FileReader;
+        if (OriginalFileReader && !window.__aeFileReaderWrapped) {
+          window.__aeFileReaderWrapped = true;
+          window.FileReader = function() {
+            const reader = new OriginalFileReader();
+            reader.addEventListener('loadend', () => {
+              window.__aeImageReadsInFlight = Math.max(0, (window.__aeImageReadsInFlight || 0) - 1);
+              scheduleSafeApply();
+            });
+            return reader;
+          };
+          window.FileReader.prototype = OriginalFileReader.prototype;
+        }
+      }
+
+      // Successful save toasts clear only the matching form's dirty/saving guard.
+      function installToastSaveObserver() {
+        if (typeof window.showToast !== 'function' || window.__aeToastObserverInstalled) return;
+        window.__aeToastObserverInstalled = true;
+        const originalShowToast = window.showToast;
+        window.showToast = function(message) {
+          const msg = String(message || '').toLowerCase();
+          const success = msg.includes('successfully saved to firebase') || msg.includes('successfully updated') ||
+            msg.includes('milestone updated successfully') || msg.includes('milestone added successfully') ||
+            msg.includes('milestone updated locally') || msg.includes('log successfully saved') ||
+            msg.includes('successfully saved');
+          if (success) {
+            if (msg.includes('daily log')) { dirtyForms.delete('daily-log-form'); savingForms.delete('daily-log-form'); }
+            if (msg.includes('machinery')) { dirtyForms.delete('machinery-form'); savingForms.delete('machinery-form'); }
+            if (msg.includes('milestone')) {
+              dirtyForms.delete('milestone-form'); savingForms.delete('milestone-form');
+              dirtyForms.delete('milestone-edit-screen-form'); savingForms.delete('milestone-edit-screen-form');
+            }
+            scheduleSafeApply();
+          } else if (msg.includes('failed') || msg.includes('could not sync')) {
+            ['daily-log-form','machinery-form','milestone-form','milestone-edit-screen-form'].forEach(id => savingForms.delete(id));
+            scheduleSafeApply();
+          }
+          return originalShowToast.apply(this, arguments);
+        };
+      }
+
+      function workerInstalled(reg) {
+        const worker = reg.installing;
+        if (!worker) return;
+        worker.addEventListener('statechange', () => {
+          if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+            pendingWorker = reg.waiting || worker;
+            updateDetected = true;
+            showNotice('New dashboard version found. It will apply automatically when your current work is safe.');
+            scheduleSafeApply();
+          }
+        });
+      }
+
+      async function getDeploymentValidator() {
+        try {
+          const response = await fetch('/index.html', { method: 'HEAD', cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
+          if (!response.ok) return null;
+          return response.headers.get('etag') || response.headers.get('last-modified') || null;
+        } catch (_) { return null; }
+      }
+
+      async function checkDeployedHTML() {
+        const validator = await getDeploymentValidator();
+        if (!validator) return;
+        if (initialValidator === null) { initialValidator = validator; return; }
+        if (validator !== initialValidator) {
+          initialValidator = validator;
+          updateDetected = true;
+          showNotice('A new dashboard version is available. It will apply automatically when your current work is safe.');
+          // Check whether a new worker is waiting too; HTML-only deployments can still reload safely.
+          if (navigator.serviceWorker.getRegistration) {
+            try {
+              const reg = await navigator.serviceWorker.getRegistration('/');
+              if (reg) {
+                await reg.update().catch(() => {});
+                if (reg.waiting) pendingWorker = reg.waiting;
+              }
+            } catch (_) {}
+          }
+          scheduleSafeApply();
+        }
+      }
+
+      window.addEventListener('load', async () => {
+        installToastSaveObserver();
+        try {
+          const reg = await navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' });
+          if (reg.waiting && navigator.serviceWorker.controller) {
+            pendingWorker = reg.waiting;
+            updateDetected = true;
+            showNotice('New dashboard version found. It will apply automatically when your current work is safe.');
+          }
+          reg.addEventListener('updatefound', () => workerInstalled(reg));
+          await reg.update().catch(() => {});
+        } catch (err) { console.warn('Service Worker registration failed:', err); }
+
+        await checkDeployedHTML();
+        // Detect index.html-only deployments too; does not require sw.js to change each release.
+        window.setInterval(checkDeployedHTML, 60000);
+        // Reinstall observer if the app defines/redefines showToast after load.
+        window.setInterval(installToastSaveObserver, 5000);
+        scheduleSafeApply();
       });
-    }
+
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (applyingUpdate) window.location.reload();
+      });
+    })();
 
 </script>
 
