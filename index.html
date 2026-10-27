@@ -2474,24 +2474,20 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 
 
 
-       window.onload = function() {
-        // Agar internet hai, tabhi Firebase connect karo. Warna local mode chalao.
-        if (navigator.onLine) {
-            try {
-                initFirebase();
-            } catch (err) {
-                console.warn("Offline mode active.");
-            }
-        } else {
-            isCloudMode = false;
-            updateSyncBadge(false, "Offline Mode");
-        }
-        
+    window.onload = function() {
+
+        initFirebase();
+
         setTodayDateDefault();
+
         populateLoginSiteDatalist();
+
         renderLaborFields();
+
         resetFormRows();
+
         updateMilestoneRangeVisual(document.getElementById('milestone-progress-range'));
+
     };
 
 
@@ -2591,111 +2587,351 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 
 
 
-       async function handleLogin(e) {
+    async function handleLogin(e) {
+
         e.preventDefault();
+
         hideLoginError();
 
-        const siteNameInput = document.getElementById('login-site-name').value.trim();
-        const usernameInput = document.getElementById('login-username').value.trim();
 
-        if (!siteNameInput || !usernameInput) {
-            showLoginError("Please enter both Site Name and Supervisor Name.");
+
+        const siteNameInput =
+            document.getElementById(
+                'login-site-name'
+            ).value.trim();
+
+
+
+        const usernameInput =
+            document.getElementById(
+                'login-username'
+            ).value.trim();
+
+
+
+        if (
+            !siteNameInput ||
+            !usernameInput
+        ) {
+
+            showLoginError(
+                "Please enter both Site Name and Supervisor Name."
+            );
+
             return;
+
         }
 
-        const cleanSiteId = 'site_' + siteNameInput.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+
+        const cleanSiteId =
+            'site_' +
+            siteNameInput
+                .toLowerCase()
+                .replace(
+                    /[^a-z0-9]/g,
+                    '_'
+                );
+
+
+
         let matchedSite = null;
 
-        // --- OFFLINE CHECK START ---
-        if (!navigator.onLine) {
-            let sites = JSON.parse(localStorage.getItem(STORAGE_SITES_KEY)) || [];
-            let foundSite = sites.find(s => s.name.toLowerCase() === siteNameInput.toLowerCase() && s.supervisor.toLowerCase() === usernameInput.toLowerCase());
-            
-            if (foundSite) {
-                matchedSite = foundSite;
-                showToast("Offline Mode: Logging in locally...");
-            } else {
-                showLoginError("Offline! No saved login found for this site on this device.");
-                return;
-            }
-        } 
-        // --- OFFLINE CHECK END ---
-        
-        if (!matchedSite) {
-            if (isCloudMode && db) {
-                try {
-                    const siteDocRef = db.collection('sites').doc(cleanSiteId);
-                    const doc = await siteDocRef.get();
-                    if (doc.exists) {
-                        const siteData = doc.data();
-                        if (siteData.supervisor && siteData.supervisor.toLowerCase() !== usernameInput.toLowerCase()) {
-                            showLoginError(`Access Denied! Incorrect Supervisor Name for this site.`);
-                            return;
-                        }
-                        matchedSite = { id: doc.id, ...siteData };
-                    } else {
-                        matchedSite = {
-                            id: cleanSiteId,
-                            name: siteNameInput,
-                            supervisor: usernameInput,
-                            createdAt: new Date().toISOString()
-                        };
-                        await siteDocRef.set(matchedSite);
-                    }
-                } catch (err) {
-                    console.warn("Cloud lookup failed, resorting to local storage mode:", err);
-                    isCloudMode = false;
-                    updateSyncBadge(false, "Local Storage Active");
-                }
-            }
 
-            if (!matchedSite) {
-                let sites = JSON.parse(localStorage.getItem(STORAGE_SITES_KEY)) || [];
-                let foundSite = sites.find(s => s.name.toLowerCase() === siteNameInput.toLowerCase());
 
-                if (foundSite) {
-                    if (foundSite.supervisor && foundSite.supervisor.toLowerCase() !== usernameInput.toLowerCase()) {
-                        showLoginError(`Access Denied! Incorrect Supervisor Name for this site.`);
+        if (isCloudMode && db) {
+
+            try {
+
+                const siteDocRef =
+                    db.collection('sites')
+                        .doc(cleanSiteId);
+
+
+
+                const doc =
+                    await siteDocRef.get();
+
+
+
+                if (doc.exists) {
+
+                    const siteData =
+                        doc.data();
+
+
+
+                    if (
+                        siteData.supervisor &&
+                        siteData.supervisor
+                            .toLowerCase() !==
+                            usernameInput.toLowerCase()
+                    ) {
+
+                        showLoginError(
+                            `Access Denied! Incorrect Supervisor Name for this site.`
+                        );
+
                         return;
+
                     }
-                    matchedSite = foundSite;
-                } else {
+
+
+
                     matchedSite = {
-                        id: cleanSiteId,
-                        name: siteNameInput,
-                        supervisor: usernameInput
+                        id: doc.id,
+                        ...siteData
                     };
-                    sites.push(matchedSite);
-                    localStorage.setItem(STORAGE_SITES_KEY, JSON.stringify(sites));
-                    populateLoginSiteDatalist();
+
+                } else {
+
+                    matchedSite = {
+
+                        id: cleanSiteId,
+
+                        name: siteNameInput,
+
+                        supervisor: usernameInput,
+
+                        createdAt:
+                            new Date()
+                                .toISOString()
+
+                    };
+
+
+
+                    await siteDocRef.set(
+                        matchedSite
+                    );
+
                 }
+
+            } catch (err) {
+
+                console.warn(
+                    "Cloud lookup failed or permission denied, resorting to local storage mode:",
+                    err
+                );
+
+                isCloudMode = false;
+
+                updateSyncBadge(
+                    false,
+                    "Local Storage Active"
+                );
+
             }
+
         }
+
+
+
+        if (!matchedSite) {
+
+            let sites =
+                JSON.parse(
+                    localStorage.getItem(
+                        STORAGE_SITES_KEY
+                    )
+                ) || [];
+
+
+
+            let foundSite =
+                sites.find(
+                    s =>
+                        s.name.toLowerCase() ===
+                        siteNameInput.toLowerCase()
+                );
+
+
+
+            if (foundSite) {
+
+                if (
+                    foundSite.supervisor &&
+                    foundSite.supervisor
+                        .toLowerCase() !==
+                        usernameInput.toLowerCase()
+                ) {
+
+                    showLoginError(
+                        `Access Denied! Incorrect Supervisor Name for this site.`
+                    );
+
+                    return;
+
+                }
+
+
+
+                matchedSite =
+                    foundSite;
+
+            } else {
+
+                matchedSite = {
+
+                    id: cleanSiteId,
+
+                    name: siteNameInput,
+
+                    supervisor:
+                        usernameInput
+
+                };
+
+
+
+                sites.push(
+                    matchedSite
+                );
+
+
+
+                localStorage.setItem(
+                    STORAGE_SITES_KEY,
+                    JSON.stringify(
+                        sites
+                    )
+                );
+
+
+
+                populateLoginSiteDatalist();
+
+            }
+
+        }
+
+
 
         activeSite = matchedSite;
-        currentUser = usernameInput;
 
-        let deviceSites = JSON.parse(localStorage.getItem(STORAGE_SITES_KEY)) || [];
-        if (!deviceSites.some(s => s.id === activeSite.id)) {
-            deviceSites.push(activeSite);
-            localStorage.setItem(STORAGE_SITES_KEY, JSON.stringify(deviceSites));
+        currentUser =
+            usernameInput;
+
+
+
+        let deviceSites =
+            JSON.parse(
+                localStorage.getItem(
+                    STORAGE_SITES_KEY
+                )
+            ) || [];
+
+
+
+        if (
+            !deviceSites.some(
+                s =>
+                    s.id ===
+                    activeSite.id
+            )
+        ) {
+
+            deviceSites.push(
+                activeSite
+            );
+
+
+
+            localStorage.setItem(
+                STORAGE_SITES_KEY,
+                JSON.stringify(
+                    deviceSites
+                )
+            );
+
+
+
             populateLoginSiteDatalist();
+
         }
 
-        document.getElementById('login-view').classList.add('hidden');
-        document.getElementById('dashboard-view').classList.remove('hidden');
-        document.getElementById('header-user-section').classList.remove('hidden');
-        document.getElementById('active-site-display').textContent = activeSite.name;
-        document.getElementById('active-user-display').textContent = currentUser;
-        document.getElementById('log-supervisor').value = currentUser;
-        document.getElementById('history-site-title').textContent = activeSite.name;
+
+
+        document
+            .getElementById(
+                'login-view'
+            )
+            .classList.add(
+                'hidden'
+            );
+
+
+
+        document
+            .getElementById(
+                'dashboard-view'
+            )
+            .classList.remove(
+                'hidden'
+            );
+
+
+
+        document
+            .getElementById(
+                'header-user-section'
+            )
+            .classList.remove(
+                'hidden'
+            );
+
+
+
+        document
+            .getElementById(
+                'active-site-display'
+            )
+            .textContent =
+            activeSite.name;
+
+
+
+        document
+            .getElementById(
+                'active-user-display'
+            )
+            .textContent =
+            currentUser;
+
+
+
+        document
+            .getElementById(
+                'log-supervisor'
+            )
+            .value =
+            currentUser;
+
+
+
+        document
+            .getElementById(
+                'history-site-title'
+            )
+            .textContent =
+            activeSite.name;
+
+
 
         setupFirestoreRealtimeListener();
         setupMachineryListener();
         setupMilestonesListener();
 
+
+
         loadLogForSelectedDate();
-        showToast(`Welcome ${currentUser}! Logged into ${activeSite.name}`);
+
+
+
+        showToast(
+            `Welcome ${currentUser}! Logged into ${activeSite.name}`
+        );
+
     }
 
 
