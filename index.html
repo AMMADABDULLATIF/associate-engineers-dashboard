@@ -15,17 +15,17 @@
 <title>ASSOCIATE ENGINEERS - Daily Site Log Dashboard</title>
 
 <!-- Tailwind CSS CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.tailwindcss.com"></script>
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <!-- Google Fonts Inter -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- SheetJS (xlsx) for Excel Exports -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <!-- Firebase JS SDK (Compat mode for single-file web apps) -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
     tailwind.config = {
@@ -800,6 +800,8 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
         </div>
 
 
+
+        <div id="ae-offline-login-hint" class="hidden mb-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200" role="status">Offline mode: login will use this device's saved site data.</div>
 
         <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
 
@@ -2629,6 +2631,9 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 
     }
 
+    // Populate saved site suggestions immediately from local storage; this also works offline.
+    try { populateLoginSiteDatalist(); } catch (offlineInitError) { console.warn('Offline site list initialization:', offlineInitError); }
+
 
 
     function showLoginError(msg) {
@@ -2732,7 +2737,7 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 
 
 
-        if (isCloudMode && db) {
+        if (isCloudMode && db && navigator.onLine) {
 
             try {
 
@@ -7304,6 +7309,24 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>polish());else polish();
   const obs=new MutationObserver(records=>records.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1)polish(n)})));
   obs.observe(document.documentElement,{subtree:true,childList:true});
+})();
+</script>
+
+
+<script id="ae-offline-login-status">
+(function () {
+  function updateOfflineLoginHint() {
+    var hint = document.getElementById('ae-offline-login-hint');
+    if (!hint) return;
+    hint.classList.toggle('hidden', navigator.onLine);
+  }
+  window.addEventListener('online', updateOfflineLoginHint);
+  window.addEventListener('offline', updateOfflineLoginHint);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateOfflineLoginHint, { once: true });
+  } else {
+    updateOfflineLoginHint();
+  }
 })();
 </script>
 
