@@ -1,4 +1,4 @@
-const CACHE_NAME = 'associate-engineers-v6'; // Version ko v6 kar diya hai
+const CACHE_NAME = 'associate-engineers-v7'; // Version ko v6 kar diya hai
 
 self.addEventListener('install', (event) => {
   self.skipWaiting(); // Foran naya version activate karega
