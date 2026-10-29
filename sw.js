@@ -1,7 +1,6 @@
-const CACHE_NAME = 'associate-engineers-v10';
+const CACHE_NAME = 'associate-engineers-v11';
 
 self.addEventListener('install', (event) => {
-  // Cache the app shell during install so the login page can open offline after the app has been installed once online.
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
     try {
@@ -11,7 +10,6 @@ self.addEventListener('install', (event) => {
         await cache.put('/', response.clone());
       }
     } catch (error) {
-      // First installation needs an online visit; keep install resilient if precaching fails.
       console.warn('Could not pre-cache app shell during install:', error);
     }
   })());
@@ -36,7 +34,6 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  // Firebase and CDN requests remain network-only; local login works from the cached app shell.
   if (url.origin !== self.location.origin) return;
   if (url.pathname === '/index.html' && url.searchParams.has('ae-version-check')) return;
 
