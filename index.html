@@ -3411,7 +3411,7 @@ img,video,canvas,svg{max-width:100%;}
         currentLaborTrades.forEach(
             trade => {
 
-                let val = '';
+                let val = 0;
                 let shiftVal = 'Day';
 
 
@@ -4262,44 +4262,27 @@ img,video,canvas,svg{max-width:100%;}
 
 
     function getActiveSiteLogs() {
-
         if (!activeSite) return [];
-
-
-
-        if (
-            siteLogsCache &&
-            siteLogsCache.length > 0
-        ) {
-
-            return siteLogsCache;
-
-        }
-
-
-
-        const siteKey =
-            getSiteLogKey(
-                activeSite.id
-            );
-
-
-
-        return JSON.parse(
-            localStorage.getItem(
-                siteKey
-            )
-        ) || [];
-
+        // Local storage is the source of truth for offline edits. Always refresh the
+        // in-memory cache so History/View Log cannot render stale snapshots.
+        const siteKey = getSiteLogKey(activeSite.id);
+        let logs = [];
+        try { logs = JSON.parse(localStorage.getItem(siteKey) || '[]'); } catch (_) {}
+        if (!Array.isArray(logs)) logs = [];
+        siteLogsCache = logs;
+        return logs;
     }
 
     function getActiveSiteMachinery() {
         if (!activeSite) return [];
-        if (siteMachineryCache && siteMachineryCache.length > 0) {
-            return siteMachineryCache;
-        }
+        // Always read the latest locally saved machinery list, especially after an
+        // offline edit or date change.
         const key = getSiteMachineryKey(activeSite.id);
-        return JSON.parse(localStorage.getItem(key)) || [];
+        let machinery = [];
+        try { machinery = JSON.parse(localStorage.getItem(key) || '[]'); } catch (_) {}
+        if (!Array.isArray(machinery)) machinery = [];
+        siteMachineryCache = machinery;
+        return machinery;
     }
 
     function getActiveSiteMilestones() {
@@ -4775,123 +4758,7 @@ img,video,canvas,svg{max-width:100%;}
 
 
 
-        let cloudSaved = false;
-
-
-
-        if (
-            isCloudMode &&
-            db &&
-            firebaseInitialized
-        ) {
-
-            cloudWriteInFlight =
-                true;
-
-
-
-            setSyncStatus(
-                "Saving to Firebase…",
-                "syncing"
-            );
-
-
-
-            try {
-
-                const docRef =
-                    db
-                        .collection(
-                            'sites'
-                        )
-                        .doc(
-                            activeSite.id
-                        )
-                        .collection(
-                            'logs'
-                        )
-                        .doc(
-                            docId
-                        );
-
-
-
-                const cloudPayload =
-                    {
-                        ...logPayload
-                    };
-
-
-
-                if (!editingLogId) {
-
-                    cloudPayload.createdAt =
-                        firebase
-                            .firestore
-                            .FieldValue
-                            .serverTimestamp();
-
-                }
-
-
-
-                // Replace the complete daily-log document. Using merge:true here would
-                // keep removed laborBreakdown map keys in Firestore, causing stale trade
-                // counts in the labour summary and analytics.
-                await docRef.set(cloudPayload);
-
-
-
-                cloudSaved =
-                    true;
-
-
-
-                setSyncStatus(
-                    "Firebase Synced",
-                    "cloud"
-                );
-
-
-
-                showToast(
-                    `Daily Log for ${dateVal} successfully saved to Firebase.`
-                );
-
-
-
-            } catch (err) {
-
-                console.error(
-                    "Firestore save/update FAILED:",
-                    err
-                );
-
-
-
-                setSyncStatus(
-                    "Firebase Save Failed",
-                    "error"
-                );
-
-
-
-                showToast(
-                    `Firebase update failed: ${err.code || err.message}. Local copy kept.`
-                );
-
-
-
-            } finally {
-
-                cloudWriteInFlight =
-                    false;
-
-            }
-
-        }
-
-
+        const isNewLog = !editingLogId;
 
         const siteKey =
             getSiteLogKey(
@@ -4952,29 +4819,34 @@ img,video,canvas,svg{max-width:100%;}
 
 
 
-        localStorage.setItem(
-            siteKey,
-            JSON.stringify(
-                logs
-            )
-        );
+        localStorage.setItem(siteKey, JSON.stringify(logs));
+        siteLogsCache = logs;
+        renderHistoryLogs();
 
-
-
-        if (
-            !isCloudMode ||
-            !firebaseInitialized ||
-            !cloudSaved
-        ) {
-
-            siteLogsCache =
-                logs;
-
-        }
-
-
-
+        // Reset immediately after the local write. Firestore writes can remain pending
+        // while offline, so never await them before clearing the form.
         resetFormAfterSave();
+
+        if (isCloudMode && db && firebaseInitialized) {
+            cloudWriteInFlight = true;
+            setSyncStatus("Saving to Firebase…", "syncing");
+            const cloudPayload = { ...logPayload };
+            if (isNewLog) {
+                cloudPayload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            }
+            db.collection('sites').doc(activeSite.id).collection('logs').doc(docId)
+                .set(cloudPayload)
+                .then(() => {
+                    setSyncStatus("Firebase Synced", "cloud");
+                    showToast(`Daily Log for ${dateVal} successfully saved to Firebase.`);
+                })
+                .catch(err => {
+                    console.error("Firestore save/update FAILED:", err);
+                    setSyncStatus("Firebase Save Failed", "error");
+                    showToast(`Firebase update failed: ${err.code || err.message}. Local copy kept.`);
+                })
+                .finally(() => { cloudWriteInFlight = false; });
+        }
 
     }
 
@@ -5014,13 +4886,19 @@ img,video,canvas,svg{max-width:100%;}
 
 
 
-        document
-            .getElementById(
-                'daily-log-form'
-            )
-            .reset();
+        const dailyForm = document.getElementById('daily-log-form');
+        if (dailyForm) dailyForm.reset();
 
-
+        // Native form.reset() restores HTML default values, which may include stale
+        // values in some browsers/PWA sessions. Explicitly clear entry fields.
+        if (dailyForm) {
+            dailyForm.querySelectorAll('input, textarea').forEach(field => {
+                if (field.type === 'hidden' || field.type === 'button' || field.type === 'submit' || field.type === 'file') return;
+                if (field.id === 'log-date' || field.id === 'log-supervisor') return;
+                if (field.type === 'checkbox' || field.type === 'radio') field.checked = false;
+                else field.value = '';
+            });
+        }
 
         setTodayDateDefault();
 
@@ -5041,10 +4919,21 @@ img,video,canvas,svg{max-width:100%;}
 
         currentLaborTrades = [...DEFAULT_TRADES];
         renderLaborFields({});
-        
-        resetFormRows();
 
-        loadLogForSelectedDate();
+        // Clear all repeatable fields after both Save and Update.
+        resetFormRows();
+        const delayContainer = document.getElementById('delay-tasks-container');
+        if (delayContainer) delayContainer.innerHTML = '';
+        const imageInput = document.getElementById('site-images-input');
+        if (imageInput) imageInput.value = '';
+
+        // Keep the form in a genuinely fresh-entry state after Save/Update.
+        const saveBtn = document.getElementById('save-log-btn');
+        const updateBtn = document.getElementById('update-log-btn');
+        const notice = document.getElementById('log-exists-notice');
+        if (saveBtn) saveBtn.classList.remove('hidden');
+        if (updateBtn) updateBtn.classList.add('hidden');
+        if (notice) notice.classList.add('hidden');
 
     }
 
@@ -5300,7 +5189,7 @@ img,video,canvas,svg{max-width:100%;}
                         ${log.totalLabor} Workers
                     </span>`;
                     
-                const machCount = (log.machineryLogs && log.machineryLogs.length > 0) ? log.machineryLogs.length : getActiveSiteMachinery().filter(m => m.date === log.date).length;
+                const machCount = getActiveSiteMachinery().filter(m => m.date === log.date).length;
                 const machBadge = machCount > 0 ? `<span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-2.5 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-tractor text-white"></i> ${machCount} Machines</span>` : '';
 
 
@@ -5959,7 +5848,7 @@ img,video,canvas,svg{max-width:100%;}
         }
         
         // Retrieve machinery logs for this specific date (fallback to live site cache if older log didn't store it)
-        const dayMachinery = (log.machineryLogs && log.machineryLogs.length > 0) ? log.machineryLogs : getActiveSiteMachinery().filter(m => m.date === log.date);
+        const dayMachinery = getActiveSiteMachinery().filter(m => m.date === log.date);
         
         let machineryRows = '';
         if (dayMachinery && dayMachinery.length > 0) {
@@ -6282,6 +6171,19 @@ img,video,canvas,svg{max-width:100%;}
         document.getElementById('modal-machinery').classList.add('hidden');
     }
 
+    function syncMachinerySnapshotsToDailyLogs() {
+        if (!activeSite) return;
+        const siteKey = getSiteLogKey(activeSite.id);
+        const machinery = getActiveSiteMachinery();
+        const logs = getActiveSiteLogs();
+        const reconciled = logs.map(log => ({
+            ...log,
+            machineryLogs: machinery.filter(item => item.date === log.date).map(item => ({ ...item }))
+        }));
+        localStorage.setItem(siteKey, JSON.stringify(reconciled));
+        siteLogsCache = reconciled;
+    }
+
         async function saveMachineryEntry(e) {
         e.preventDefault();
         if (!activeSite) return;
@@ -6297,21 +6199,8 @@ img,video,canvas,svg{max-width:100%;}
 
         let oldDate = null;
         if (entryId) {
-            const cachedList = getActiveSiteMachinery();
-            const cachedItem = cachedList.find(m => m.id === entryId);
+            const cachedItem = getActiveSiteMachinery().find(m => m.id === entryId);
             if (cachedItem) oldDate = cachedItem.date;
-
-            if (isCloudMode && db && firebaseInitialized) {
-                try {
-                    const oldDoc = await db.collection('sites').doc(activeSite.id)
-                        .collection('machinery').doc(entryId).get();
-                    if (oldDoc.exists) {
-                        oldDate = oldDoc.data().date;
-                    }
-                } catch (err) {
-                    console.warn("Could not fetch old machinery date:", err);
-                }
-            }
         }
 
         const payload = {
@@ -6324,45 +6213,6 @@ img,video,canvas,svg{max-width:100%;}
             updatedAt: new Date().toISOString()
         };
 
-        if (isCloudMode && db && firebaseInitialized) {
-            setSyncStatus("Saving Machinery to Firebase...", "syncing");
-            try {
-                await db.collection('sites').doc(activeSite.id)
-                    .collection('machinery').doc(docId)
-                    .set(payload, { merge: true });
-
-                if (oldDate && oldDate !== dateVal) {
-                    const oldLogRef = db.collection('sites').doc(activeSite.id)
-                        .collection('logs').doc('log_' + oldDate);
-                    const oldLogDoc = await oldLogRef.get();
-                    if (oldLogDoc.exists) {
-                        const oldLogData = oldLogDoc.data();
-                        const oldMachLogs = Array.isArray(oldLogData.machineryLogs) ? oldLogData.machineryLogs : [];
-                        const filtered = oldMachLogs.filter(m => m.id !== docId);
-                        await oldLogRef.update({ machineryLogs: filtered });
-                    }
-                }
-
-                const newLogRef = db.collection('sites').doc(activeSite.id)
-                    .collection('logs').doc('log_' + dateVal);
-                const newLogDoc = await newLogRef.get();
-                if (newLogDoc.exists) {
-                    const machSnap = await db.collection('sites').doc(activeSite.id)
-                        .collection('machinery').where('date', '==', dateVal).get();
-                    const freshMachLogs = [];
-                    machSnap.forEach(d => freshMachLogs.push({ id: d.id, ...d.data() }));
-                    await newLogRef.update({ machineryLogs: freshMachLogs });
-                }
-
-                setSyncStatus("Firebase Synced", "cloud");
-                showToast("Machinery log successfully saved to Firebase!");
-            } catch (err) {
-                console.error("Machinery save failed:", err);
-                setSyncStatus("Firebase Save Failed", "error");
-                showToast("Firebase save failed, local backup kept.");
-            }
-        }
-
         const list = getActiveSiteMachinery();
         const idx = list.findIndex(m => m.id === docId);
         if (idx >= 0) {
@@ -6373,30 +6223,51 @@ img,video,canvas,svg{max-width:100%;}
         localStorage.setItem(getSiteMachineryKey(activeSite.id), JSON.stringify(list));
         siteMachineryCache = list;
 
-        const siteKey = getSiteLogKey(activeSite.id);
-        let logs = JSON.parse(localStorage.getItem(siteKey)) || [];
-
-        if (oldDate && oldDate !== dateVal) {
-            const oldLogIdx = logs.findIndex(l => l.date === oldDate);
-            if (oldLogIdx >= 0) {
-                const oldMachLogs = Array.isArray(logs[oldLogIdx].machineryLogs) ? logs[oldLogIdx].machineryLogs : [];
-                logs[oldLogIdx].machineryLogs = oldMachLogs.filter(m => m.id !== docId);
-            }
-        }
-
-        const newLogIdx = logs.findIndex(l => l.date === dateVal);
-        if (newLogIdx >= 0) {
-            logs[newLogIdx].machineryLogs = list.filter(m => m.date === dateVal);
-        }
-
-        localStorage.setItem(siteKey, JSON.stringify(logs));
-        siteLogsCache = logs;
+        // Keep every cached daily-log snapshot consistent with the machinery master list.
+        syncMachinerySnapshotsToDailyLogs();
 
         closeMachineryModal();
         renderMachineryLogs();
+        renderHistoryLogs();
 
-        if (!document.getElementById('tab-content-history').classList.contains('hidden')) {
-            renderHistoryLogs();
+        // Sync in the background only after localStorage/UI are updated. Firestore can
+        // queue offline writes, but its promise must not block local machinery edits.
+        if (isCloudMode && db && firebaseInitialized) {
+            setSyncStatus("Saving Machinery to Firebase...", "syncing");
+            (async () => {
+                try {
+                    await db.collection('sites').doc(activeSite.id)
+                        .collection('machinery').doc(docId).set(payload, { merge: true });
+
+                    if (oldDate && oldDate !== dateVal) {
+                        const oldLogRef = db.collection('sites').doc(activeSite.id)
+                            .collection('logs').doc('log_' + oldDate);
+                        const oldLogDoc = await oldLogRef.get();
+                        if (oldLogDoc.exists) {
+                            const oldData = oldLogDoc.data();
+                            const oldItems = Array.isArray(oldData.machineryLogs) ? oldData.machineryLogs : [];
+                            await oldLogRef.update({ machineryLogs: oldItems.filter(m => m.id !== docId) });
+                        }
+                    }
+
+                    const newLogRef = db.collection('sites').doc(activeSite.id)
+                        .collection('logs').doc('log_' + dateVal);
+                    const newLogDoc = await newLogRef.get();
+                    if (newLogDoc.exists) {
+                        const snap = await db.collection('sites').doc(activeSite.id)
+                            .collection('machinery').where('date', '==', dateVal).get();
+                        const fresh = [];
+                        snap.forEach(d => fresh.push({ id: d.id, ...d.data() }));
+                        await newLogRef.update({ machineryLogs: fresh });
+                    }
+                    setSyncStatus("Firebase Synced", "cloud");
+                    showToast("Machinery log successfully saved to Firebase!");
+                } catch (err) {
+                    console.error("Machinery save failed:", err);
+                    setSyncStatus("Firebase Save Failed", "error");
+                    showToast("Machinery saved locally. Firebase sync will retry when connection is available.");
+                }
+            })();
         }
     }
 
@@ -6437,17 +6308,8 @@ img,video,canvas,svg{max-width:100%;}
         localStorage.setItem(getSiteMachineryKey(activeSite.id), JSON.stringify(updated));
         siteMachineryCache = updated;
 
-        if (targetDate) {
-            const siteKey = getSiteLogKey(activeSite.id);
-            let logs = JSON.parse(localStorage.getItem(siteKey)) || [];
-            const logIdx = logs.findIndex(l => l.date === targetDate);
-            if (logIdx >= 0) {
-                const arr = Array.isArray(logs[logIdx].machineryLogs) ? logs[logIdx].machineryLogs : [];
-                logs[logIdx].machineryLogs = arr.filter(m => m.id !== id);
-                localStorage.setItem(siteKey, JSON.stringify(logs));
-                siteLogsCache = logs;
-            }
-        }
+        // Remove deleted machinery from all daily-log snapshots, including offline cache.
+        syncMachinerySnapshotsToDailyLogs();
 
         renderMachineryLogs();
         renderHistoryLogs();

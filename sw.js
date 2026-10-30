@@ -1,5 +1,5 @@
 /* ASSOCIATE ENGINEERS PWA service worker — resilient online/offline shell and safe cache updates. */
-const CACHE_NAME = 'associate-engineers-v11';
+const CACHE_NAME = 'associate-engineers-v12';
 const APP_SHELL_URLS = ['/', '/index.html'];
 const NAVIGATION_NETWORK_TIMEOUT_MS = 1800;
 
