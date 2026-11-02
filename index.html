@@ -6840,9 +6840,74 @@ img,video,canvas,svg{max-width:100%;}
 
 
     function printLogModal() {
+        const sourceCard = document.querySelector('#modal-log-detail .print-card');
+        if (!sourceCard) { showToast('Open a daily log before exporting PDF.'); return; }
 
-        window.print();
+        // Open synchronously from the click so mobile browsers do not block the print window.
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            showToast('Print window was blocked. Allow pop-ups for this site and try again.');
+            return;
+        }
 
+        const safeTitle = (document.getElementById('modal-site-title')?.textContent || 'Daily Site Log')
+            .replace(/[<>"&]/g, ' ').trim();
+        const clonedCard = sourceCard.cloneNode(true);
+        clonedCard.querySelectorAll('.no-print, button[onclick="closeLogDetailModal()"]').forEach(el => el.remove());
+
+        const headAssets = Array.from(document.head.querySelectorAll('style, link[rel="stylesheet"]'))
+            .map(node => node.outerHTML).join('\n');
+        const printCss = `
+          <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>${safeTitle} - Daily Site Log</title>
+          <style>
+            *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+            html,body{margin:0;padding:0;background:#fff!important;color:#172033!important;font-family:Arial,sans-serif!important}
+            body{padding:14mm!important}
+            .print-card{display:block!important;position:static!important;width:100%!important;max-width:none!important;max-height:none!important;overflow:visible!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important;color:#172033!important}
+            .print-card *{color:#172033!important;box-shadow:none!important;text-shadow:none!important}
+            .print-card h2{background:none!important;-webkit-text-fill-color:#172033!important;color:#172033!important}
+            #modal-detail-content{display:block!important;font-size:10pt!important}
+            #modal-detail-content table{width:100%!important;border-collapse:collapse!important}
+            #modal-detail-content th{background:#eaf0f8!important;color:#172033!important}
+            #modal-detail-content td,#modal-detail-content th{border:1px solid #d5dce8!important;padding:7px!important;color:#172033!important}
+            #modal-detail-content>div{break-inside:avoid;page-break-inside:avoid;background:#fff!important;border:0!important;padding:0!important}
+            img{max-width:100%;height:auto}
+            @page{size:A4;margin:0}
+            @media print{body{padding:14mm!important}}
+          </style>`;
+
+        printWindow.document.open();
+        printWindow.document.write(`<!doctype html><html><head>${headAssets}${printCss}</head><body></body></html>`);
+        printWindow.document.close();
+        printWindow.document.body.appendChild(clonedCard);
+
+        const doPrint = () => {
+            if (printWindow.closed) return;
+            printWindow.focus();
+            // Allow layout and web fonts/images to settle before invoking native print UI.
+            printWindow.requestAnimationFrame(() => printWindow.requestAnimationFrame(() => {
+                window.setTimeout(() => {
+                    try { printWindow.focus(); printWindow.print(); }
+                    catch (error) { console.error('PDF print failed:', error); }
+                }, 250);
+            }));
+        };
+        const images = Array.from(printWindow.document.images);
+        const imageReady = Promise.all(images.map(img => img.complete ? Promise.resolve() : new Promise(resolve => {
+            img.addEventListener('load', resolve, { once: true });
+            img.addEventListener('error', resolve, { once: true });
+            window.setTimeout(resolve, 2500);
+        })));
+        const stylesReady = Promise.all(Array.from(printWindow.document.querySelectorAll('link[rel="stylesheet"]')).map(link =>
+            link.sheet ? Promise.resolve() : new Promise(resolve => {
+                link.addEventListener('load', resolve, { once: true });
+                link.addEventListener('error', resolve, { once: true });
+                window.setTimeout(resolve, 1800);
+            })
+        ));
+        Promise.all([imageReady, stylesReady, printWindow.document.fonts ? printWindow.document.fonts.ready.catch(() => {}) : Promise.resolve()])
+            .then(() => window.setTimeout(doPrint, 180));
     }
 
 
@@ -7162,18 +7227,22 @@ img,video,canvas,svg{max-width:100%;}
     'fa-hard-hat':'fa-helmet-safety','fa-hammer':'fa-hammer','fa-list-alt':'fa-rectangle-list'
   };
   function polish(root=document){
-    root.querySelectorAll('i[class*="fa-"]').forEach(icon=>{
+    const icons = [];
+    if (root.nodeType === 1 && root.matches && root.matches('i[class*="fa-"]')) icons.push(root);
+    if (root.querySelectorAll) icons.push(...root.querySelectorAll('i[class*="fa-"]'));
+    icons.forEach(icon=>{
       for(const [from,to] of Object.entries(iconMap)){
         if(icon.classList.contains(from)){
-          icon.classList.remove(from);
-          if(!icon.classList.contains(to))icon.classList.add(to);
+          icon.classList.replace(from,to);
           break;
         }
       }
       icon.classList.add('ae-icon-polished');
     });
-    const login=document.querySelector('#login-view>.bg-gradient-to-r');
-    if(login)login.style.background='linear-gradient(100deg,#62e5f5,#8b7cff)';
+    if (root === document) {
+      const login=document.querySelector('#login-view>.bg-gradient-to-r');
+      if(login)login.style.background='linear-gradient(100deg,#62e5f5,#8b7cff)';
+    }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>polish());else polish();
   let polishQueued=false;
@@ -7185,7 +7254,8 @@ img,video,canvas,svg{max-width:100%;}
     }
     if(!hasElements || polishQueued)return;
     polishQueued=true;
-    const run=()=>{polishQueued=false;polish(document);};
+    const added=records.flatMap(record=>Array.from(record.addedNodes)).filter(node=>node.nodeType===1);
+    const run=()=>{polishQueued=false;added.forEach(polish);};
     if('requestAnimationFrame' in window)requestAnimationFrame(run);else setTimeout(run,32);
   });
   obs.observe(document.documentElement,{subtree:true,childList:true});
