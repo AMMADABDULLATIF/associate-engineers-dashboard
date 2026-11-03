@@ -712,22 +712,6 @@ img,video,canvas,svg{max-width:100%;}
 }
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}}
 </style>
-<style id="ae-mobile-pdf-print-safety">
-@media print {
- html,body{height:auto!important;min-height:0!important;overflow:visible!important;background:#fff!important}
- #modal-log-detail,#modal-log-detail.hidden{display:block!important;visibility:visible!important;position:static!important;inset:auto!important;width:100%!important;height:auto!important;max-height:none!important;overflow:visible!important;opacity:1!important;transform:none!important;background:#fff!important;padding:0!important}
- #modal-log-detail .print-card{display:block!important;visibility:visible!important;width:100%!important;max-width:none!important;max-height:none!important;height:auto!important;overflow:visible!important;position:static!important;margin:0!important;padding:0!important;background:#fff!important;color:#172033!important}
- #modal-detail-content,#modal-detail-content *{visibility:visible!important;opacity:1!important;color:#172033!important;text-shadow:none!important;transform:none!important}
- #modal-detail-content{display:block!important;overflow:visible!important}
- #modal-detail-content>div{display:block!important;break-inside:avoid!important;page-break-inside:avoid!important;background:#fff!important;color:#172033!important;border-color:#d5dce8!important}
- #modal-detail-content table{display:table!important;width:100%!important;border-collapse:collapse!important}
- #modal-detail-content th,#modal-detail-content td{color:#172033!important;background:#fff!important;border:1px solid #cbd5e1!important;padding:6px!important}
- #modal-log-detail .no-print,#modal-log-detail button,header,main,#login-view,#dashboard-view,#modal-machinery,#site-image-viewer,#toast,#ae-update-message{display:none!important}
- @page{size:A4;margin:12mm}
-}
-.ae-offline-icon{display:inline-flex!important;align-items:center;justify-content:center;min-width:1.1em;font-family:Arial,sans-serif!important;font-style:normal!important;font-weight:700!important;line-height:1!important}
-</style>
-
 </head>
 
 <body class="min-h-screen flex flex-col justify-between custom-scrollbar select-none bg-slate-950">
@@ -6855,121 +6839,13 @@ img,video,canvas,svg{max-width:100%;}
 
 
 
-    let aePrintInProgress = false;
-    let aePrintFrame = null;
     function printLogModal() {
-        if (aePrintInProgress) return;
 
-        const modal = document.getElementById('modal-log-detail');
-        const content = document.getElementById('modal-detail-content');
-        const title = document.getElementById('modal-site-title');
-        const date = document.getElementById('modal-log-date');
-        const weather = document.getElementById('modal-log-weather');
-        const author = document.getElementById('modal-log-author');
+        window.print();
 
-        if (!modal || !content || !content.textContent.trim()) {
-            if (typeof showToast === 'function') showToast('Report details are not ready. Reopen View Log and try again.');
-            return;
-        }
-
-        // Print an isolated copy of the report. Do not call window.print() on the
-        // dashboard itself: Android/PWA print can otherwise print a blank page or
-        // disturb the active app document/session.
-        const report = content.cloneNode(true);
-        report.querySelectorAll('button, .no-print, [data-no-print]').forEach(el => el.remove());
-        report.querySelectorAll('input, select, textarea').forEach(el => {
-            const value = document.createElement('span');
-            value.textContent = el.value || el.getAttribute('value') || '';
-            el.replaceWith(value);
-        });
-
-        const esc = value => String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-        const docHtml = `<!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Daily Site Log - ${esc(date && date.textContent)}</title>
-<style>
-*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-html,body{margin:0;padding:0;background:#fff;color:#172033;font:12px Arial,Helvetica,sans-serif}
-body{padding:18px}
-.report-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;border-bottom:2px solid #1d3557;padding:0 0 14px;margin-bottom:16px}
-.brand{font-size:11px;font-weight:800;letter-spacing:2px;color:#13556a;text-transform:uppercase}
-h1{font-size:22px;line-height:1.2;margin:7px 0 4px;color:#172033;overflow-wrap:anywhere}
-.subtitle{font-size:11px;color:#536176}
-.meta{text-align:right;min-width:105px;font-size:11px;line-height:1.6}
-.meta strong{display:block;color:#13556a;font-size:12px}
-#report-content{display:block!important;width:100%!important;color:#172033!important;font-size:11px!important;overflow:visible!important}
-#report-content>div{display:block!important;width:100%!important;max-width:none!important;margin:0 0 13px!important;padding:10px!important;background:#fff!important;color:#172033!important;border:1px solid #d5dce8!important;border-radius:5px!important;box-shadow:none!important;break-inside:avoid-page;page-break-inside:avoid}
-#report-content h2,#report-content h3,#report-content h4{color:#172033!important;font-size:12px!important;margin:0 0 8px!important;break-after:avoid}
-#report-content p,#report-content span,#report-content li,#report-content strong,#report-content label{color:#172033!important;overflow-wrap:anywhere}
-#report-content table{display:table!important;width:100%!important;border-collapse:collapse!important;font-size:10px!important;table-layout:auto}
-#report-content thead{display:table-header-group}
-#report-content tr{break-inside:avoid;page-break-inside:avoid}
-#report-content th,#report-content td{border:1px solid #cbd5e1!important;padding:6px!important;text-align:left;vertical-align:top;color:#172033!important;background:#fff!important;overflow-wrap:anywhere}
-#report-content th{background:#eaf0f8!important;font-weight:700}
-#report-content img{max-width:100%!important;height:auto!important;object-fit:contain;break-inside:avoid}
-#report-content video{display:none!important}
-#report-content a{color:#13556a!important;text-decoration:none}
-@page{size:A4;margin:12mm}
-@media print{body{padding:0}.report-head{break-inside:avoid-page}}
-</style></head><body>
-<header class="report-head"><div><div class="brand">ASSOCIATE ENGINEERS</div><h1>${esc(title && title.textContent)}</h1><div class="subtitle">Daily Construction Site Activity &amp; Machinery Report</div></div><div class="meta"><strong>${esc(date && date.textContent)}</strong>${esc(weather && weather.textContent)}<br>${esc(author && author.textContent)}</div></header>
-<main id="report-content">${report.innerHTML}</main>
-</body></html>`;
-
-        aePrintInProgress = true;
-        const frame = document.createElement('iframe');
-        aePrintFrame = frame;
-        frame.setAttribute('aria-hidden', 'true');
-        frame.title = 'Print report';
-        frame.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:1px;border:0;opacity:0;pointer-events:none;z-index:-1;';
-
-        let cleaned = false;
-        const cleanup = () => {
-            if (cleaned) return;
-            cleaned = true;
-            aePrintInProgress = false;
-            try { frame.remove(); } catch (_) {}
-            if (aePrintFrame === frame) aePrintFrame = null;
-        };
-        frame.onload = async () => {
-            try {
-                const w = frame.contentWindow;
-                const d = frame.contentDocument;
-                if (!w || !d) throw new Error('Print document unavailable');
-                const imgs = Array.from(d.images || []);
-                await Promise.race([Promise.all(imgs.map(img => {
-                    if (img.complete) return Promise.resolve();
-                    return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; setTimeout(resolve, 2500); });
-                })), new Promise(resolve => setTimeout(resolve, 3000))]);
-                if (d.fonts && d.fonts.ready) await Promise.race([d.fonts.ready, new Promise(resolve => setTimeout(resolve, 800))]);
-                setTimeout(() => {
-                    try {
-                        w.focus();
-                        w.print();
-                        // Some Android print dialogs do not dispatch afterprint reliably.
-                        setTimeout(cleanup, 120000);
-                    } catch (err) {
-                        cleanup();
-                        if (typeof showToast === 'function') showToast('Unable to open PDF/print. Please try again.');
-                    }
-                }, 180);
-                w.addEventListener('afterprint', cleanup, { once: true });
-            } catch (err) {
-                console.error('Report print preparation failed:', err);
-                cleanup();
-                if (typeof showToast === 'function') showToast('Could not prepare the report for printing. Please try again.');
-            }
-        };
-        frame.srcdoc = docHtml;
-        document.body.appendChild(frame);
-        // If a browser does not fire iframe onload for srcdoc, fail safely without touching the app.
-        setTimeout(() => {
-            if (aePrintInProgress && frame.isConnected && !frame.contentDocument?.readyState) {
-                cleanup();
-                if (typeof showToast === 'function') showToast('Print preview could not be prepared. Please try again.');
-            }
-        }, 15000);
     }
+
+
 
     function showToast(message) {
 
@@ -7258,14 +7134,6 @@ h1{font-size:22px;line-height:1.2;margin:7px 0 4px;color:#172033;overflow-wrap:a
 </script>
 
 
-<script id="ae-offline-icon-fallback">
-(function(){
- const map=[[/fa-(house|home)/,'⌂'],[/fa-(gauge-high|dashboard|tachometer-alt)/,'◫'],[/fa-(file-lines|file-alt|file-text|clipboard-check|clipboard-list)/,'▤'],[/fa-(calendar|calendar-days|calendar-check|calendar-day)/,'▦'],[/fa-(users|user-group|people-group)/,'♙'],[/fa-(truck|truck-fast|tractor)/,'▰'],[/fa-(chart|chart-column|chart-simple|chart-line|chart-area|chart-pie)/,'▥'],[/fa-(eye|arrow-up-right-from-square)/,'◉'],[/fa-(file-pdf|print)/,'▧'],[/fa-(pen|pen-to-square|edit)/,'✎'],[/fa-(trash|trash-can|delete)/,'×'],[/fa-(plus|circle-plus)/,'+'],[/fa-(xmark|times|close)/,'×'],[/fa-(check|circle-check|check-circle)/,'✓'],[/fa-(gear|cog|wrench|screwdriver-wrench)/,'⚙'],[/fa-(cloud|cloud-arrow-up|cloud-arrow-down)/,'☁'],[/fa-(image|images)/,'▧'],[/fa-(video|film|clapperboard)/,'▷'],[/fa-(right-from-bracket|sign-out-alt)/,'⇥'],[/fa-(search|magnifying-glass)/,'⌕'],[/fa-bell/,'♢']];
- function fallback(){let loaded=false;try{for(const s of document.styleSheets){if((s.href||'').includes('font-awesome')&&s.cssRules&&s.cssRules.length){loaded=true;break;}}}catch(e){}
- if(loaded)return;document.querySelectorAll('i[class*="fa-"]').forEach(el=>{if(el.dataset.aeFallbackDone)return;let found=map.find(([re])=>re.test(el.className));el.textContent=found?found[1]:'•';el.classList.add('ae-offline-icon');el.dataset.aeFallbackDone='1';el.setAttribute('aria-hidden','true');});}
- setTimeout(fallback,1500);
-})();
-</script>
 <script id="ae-premium-runtime-polish">
 (function(){
   const iconMap={
