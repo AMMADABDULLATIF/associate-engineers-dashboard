@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
+
+<script id="ae-console-noise-filter">
+(function() {
+  var _err = console.error;
+  console.error = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var str = args.map(function(x) { return typeof x === 'object' ? JSON.stringify(x) : String(x); }).join(' ');
+    if (str.indexOf('failed to connect to websocket') !== -1 || (str.indexOf('vite') !== -1 && str.indexOf('websocket') !== -1)) {
+      return;
+    }
+    _err.apply(console, args);
+  };
+  var _warn = console.warn;
+  console.warn = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var str = args.map(function(x) { return typeof x === 'object' ? JSON.stringify(x) : String(x); }).join(' ');
+    if (str.indexOf('enableMultiTabIndexedDbPersistence') !== -1 || str.indexOf('FirestoreSettings.cache') !== -1) {
+      return;
+    }
+    _warn.apply(console, args);
+  };
+})();
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
@@ -2052,7 +2076,7 @@ i.fa-solid, i.fa-regular, i.fa-brands, [class*=" fa-"], [class^="fa-"] {
 
 
 <!-- Tailwind CSS CDN -->
-<script defer src="https://cdn.tailwindcss.com"></script>
+
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 <!-- Google Fonts Inter -->
@@ -4129,14 +4153,6 @@ img,video,canvas,svg{max-width:100%;}
                     <i class="fa-solid fa-file-pdf text-slate-950"></i>
                     Download PDF
                 </button>
-                <button
-                    type="button"
-                    onclick="printLogModal()"
-                    class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-md"
-                >
-                    <i class="fa-solid fa-print text-slate-950"></i>
-                    Print
-                </button>
 
                 <button
                     onclick="closeLogDetailModal()"
@@ -4319,7 +4335,8 @@ img,video,canvas,svg{max-width:100%;}
 
                     ignoreUndefinedProperties: true,
 
-                    experimentalAutoDetectLongPolling: true
+                    experimentalAutoDetectLongPolling: true,
+                    merge: true
 
                 });
 
