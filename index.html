@@ -2045,12 +2045,6 @@ img,video,canvas,svg{max-width:100%;}
     // PWA MANIFEST & SERVICE WORKER AUTO-UPDATE INITIALIZATION
     // ============================================================
 
-   // ============================================================
-    // PWA UPDATE & AUTO-REFRESH MECHANISM
-    // ============================================================
-   // ============================================================
-    // PWA UPDATE & AUTO-REFRESH MECHANISM (FIXED)
-    // ============================================================
     (function initPWA() {
 
         const manifest = {
@@ -2091,15 +2085,9 @@ img,video,canvas,svg{max-width:100%;}
 
         document.head.appendChild(link);
 
-
-
-       
-
     })();
 
 
-
-    
 
     // ============================================================
     // FIREBASE INITIALIZATION
@@ -2126,18 +2114,14 @@ img,video,canvas,svg{max-width:100%;}
 
 
     let db = null;
-
     let isCloudMode = false;
-
     let firebaseInitialized = false;
-
     let cloudWriteInFlight = false;
-
     let lastCloudSnapshotAt = 0;
-    
+
     // Array to store uploaded site images for current log entry/edit
     let currentUploadedImages = [];
-    
+
     // Cache for machinery logs
     let siteMachineryCache = [];
     let machineryUnsubscribe = null;
@@ -2145,6 +2129,12 @@ img,video,canvas,svg{max-width:100%;}
     // Cache for milestones
     let siteMilestonesCache = [];
     let milestonesUnsubscribe = null;
+
+    // ===== Session persistence (fixes the "logout after print reload" bug) =====
+    // Holds the log currently shown in the View Log modal so Print always has data.
+    let activeViewLogId = null;
+
+    const AE_SESSION_KEY = 'AE_SESSION_V1';
 
 
 
@@ -2589,6 +2579,57 @@ img,video,canvas,svg{max-width:100%;}
 
 
 
+    // ============================================================
+    // SESSION PERSISTENCE (fixes logout after print reload)
+    // ============================================================
+    function persistSession() {
+        try {
+            if (activeSite && currentUser) {
+                const activeTab = document.querySelector('[data-nav-tab].active')?.getAttribute('data-nav-tab') || 'entry';
+                sessionStorage.setItem(AE_SESSION_KEY, JSON.stringify({
+                    site: activeSite,
+                    user: currentUser,
+                    tab: activeTab,
+                    openLogId: activeViewLogId || null
+                }));
+            } else {
+                sessionStorage.removeItem(AE_SESSION_KEY);
+            }
+        } catch (_) {}
+    }
+
+    function restoreSessionOnLoad() {
+        let saved = null;
+        try { saved = JSON.parse(sessionStorage.getItem(AE_SESSION_KEY) || 'null'); } catch (_) {}
+        if (!saved || !saved.site || !saved.user) return false;
+
+        activeSite = saved.site;
+        currentUser = saved.user;
+
+        document.getElementById('login-view').classList.add('hidden');
+        document.getElementById('dashboard-view').classList.remove('hidden');
+        document.getElementById('header-user-section').classList.remove('hidden');
+        document.getElementById('active-site-display').textContent = activeSite.name;
+        document.getElementById('active-user-display').textContent = currentUser;
+        document.getElementById('log-supervisor').value = currentUser;
+        document.getElementById('history-site-title').textContent = activeSite.name;
+
+        setupFirestoreRealtimeListener();
+        setupMachineryListener();
+        setupMilestonesListener();
+        loadLogForSelectedDate();
+
+        const tab = saved.tab || 'entry';
+        switchTab(tab);
+
+        if (saved.openLogId) {
+            setTimeout(() => {
+                try { viewLogDetails(saved.openLogId); } catch (e) { console.warn('Could not restore open log:', e); }
+            }, 220);
+        }
+        return true;
+    }
+
     window.onload = function() {
 
         initFirebase();
@@ -2602,6 +2643,10 @@ img,video,canvas,svg{max-width:100%;}
         resetFormRows();
 
         updateMilestoneRangeVisual(document.getElementById('milestone-progress-range'));
+
+        // If the page reloaded (e.g. mobile browser after print dialog), restore the
+        // user to the same screen instead of showing the login page.
+        restoreSessionOnLoad();
 
     };
 
@@ -3037,6 +3082,9 @@ img,video,canvas,svg{max-width:100%;}
             `Welcome ${currentUser}! Logged into ${activeSite.name}`
         );
 
+        // Save session snapshot so a reload restores this state.
+        persistSession();
+
     }
 
 
@@ -3332,10 +3380,14 @@ img,video,canvas,svg{max-width:100%;}
         currentUser = null;
 
         editingLogId = null;
+        activeViewLogId = null;
 
         siteLogsCache = [];
         siteMachineryCache = [];
         siteMilestonesCache = [];
+
+        // Clear the persisted session only on a real logout.
+        try { sessionStorage.removeItem(AE_SESSION_KEY); } catch (_) {}
 
 
 
@@ -5024,6 +5076,9 @@ img,video,canvas,svg{max-width:100%;}
             renderAnalyticsDashboard();
         }
 
+        // Remember the tab so a reload restores the same screen.
+        persistSession();
+
     }
 
 
@@ -5771,6 +5826,10 @@ img,video,canvas,svg{max-width:100%;}
 
         if (!log) return;
 
+        // Remember which log is open so Print always has data and a reload can restore it.
+        activeViewLogId = log.id;
+        persistSession();
+
 
 
         document
@@ -6128,6 +6187,8 @@ img,video,canvas,svg{max-width:100%;}
                 'hidden'
             );
 
+        document.body.style.overflow = 'hidden';
+
     }
 
 
@@ -6141,6 +6202,11 @@ img,video,canvas,svg{max-width:100%;}
             .classList.add(
                 'hidden'
             );
+
+        document.body.style.overflow = '';
+
+        activeViewLogId = null;
+        persistSession();
 
     }
 
@@ -6184,7 +6250,7 @@ img,video,canvas,svg{max-width:100%;}
         siteLogsCache = reconciled;
     }
 
-        async function saveMachineryEntry(e) {
+    async function saveMachineryEntry(e) {
         e.preventDefault();
         if (!activeSite) return;
 
@@ -6648,8 +6714,6 @@ img,video,canvas,svg{max-width:100%;}
                 statusIcon = 'fa-circle-check';
             }
 
-            let progressBarColor = progress >= 100 ? 'bg-emerald-500' : progress > 0 ? 'bg-amber-500' : 'bg-slate-600';
-
             const card = document.createElement('div');
             card.className = "bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 space-y-3";
             card.innerHTML = `
@@ -6839,10 +6903,180 @@ img,video,canvas,svg{max-width:100%;}
 
 
 
+    // ============================================================
+    // PRINT / PDF — robust print via a dedicated print window.
+    // Fixes: blank PDF, missing machinery log, mobile reload logout.
+    // ============================================================
     function printLogModal() {
+        const logId = activeViewLogId;
+        const logs = getActiveSiteLogs();
+        const log = logs.find(l => l.id === logId);
+        if (!log) { showToast('Log not found for printing.'); return; }
 
-        window.print();
+        // Prefer machinery snapshot stored on the log; fallback to live cache.
+        const dayMachinery = (Array.isArray(log.machineryLogs) && log.machineryLogs.length)
+            ? log.machineryLogs
+            : getActiveSiteMachinery().filter(m => m.date === log.date);
 
+        const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+
+        const laborRows = Object.entries(log.laborBreakdown || {})
+            .map(([trade, data]) => {
+                const count = (typeof data === 'object' && data !== null) ? (data.count || 0) : data;
+                const shift = (typeof data === 'object' && data !== null) ? (data.shift || 'Day') : 'Day';
+                return count > 0 ? `<tr><td>${escapeHtml(trade)}</td><td>${escapeHtml(shift)}</td><td>${count}</td></tr>` : '';
+            }).join('');
+
+        const materialRows = (log.materials || []).map(m =>
+            `<tr><td>${escapeHtml(m.item)}</td><td>${escapeHtml(m.qty)}</td><td>${escapeHtml(m.unit)}</td><td>${escapeHtml(m.note || '')}</td></tr>`
+        ).join('');
+
+        const machineryRows = dayMachinery.map(m =>
+            `<tr><td>${escapeHtml(m.name)}</td><td>${m.hours || 0}</td><td>${m.fuel || 0}</td><td>${escapeHtml(m.remarks || '')}</td></tr>`
+        ).join('');
+
+        const completedRows = (log.completedTasks || []).map(c =>
+            `<tr><td>${escapeHtml(c.task)}</td><td>${escapeHtml(c.location || '')}</td></tr>`
+        ).join('');
+
+        const pendingRows = (log.pendingTasks || []).map(p =>
+            `<tr><td>${escapeHtml(p.task)}</td><td>${escapeHtml(p.targetDate || '')}</td></tr>`
+        ).join('');
+
+        const delayRows = (log.delays || []).map(d =>
+            `<tr><td>${escapeHtml(d.task)}</td><td>${escapeHtml(d.reason)}</td></tr>`
+        ).join('');
+
+        const imagesHtml = (log.images && log.images.length)
+            ? `<h3>Site Photos</h3><div class="imgs">${
+                log.images.map(src => `<img src="${src}" alt="Site photo">`).join('')
+              }</div>`
+            : '';
+
+        const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escapeHtml(activeSite.name)} — Daily Log ${escapeHtml(log.date)}</title>
+<style>
+  @page { size: A4; margin: 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #172033; margin: 0; padding: 0; font-size: 11pt; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1d3557; padding-bottom: 10px; margin-bottom: 16px; }
+  .header h1 { margin: 0; font-size: 18pt; color: #1d3557; }
+  .header .sub { color: #475569; font-size: 10pt; margin-top: 4px; }
+  .meta { text-align: right; font-size: 10pt; }
+  .meta strong { color: #1d3557; }
+  h3 { font-size: 12pt; color: #1d3557; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin: 16px 0 8px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; font-size: 10pt; vertical-align: top; }
+  th { background: #eaf0f8; color: #1d3557; }
+  .empty { color: #64748b; font-style: italic; font-size: 10pt; }
+  .delays td { color: #7f1d1d; }
+  .imgs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .imgs img { width: 120px; height: 120px; object-fit: cover; border: 1px solid #cbd5e1; border-radius: 4px; }
+  .footer { margin-top: 20px; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 9pt; color: #64748b; display: flex; justify-content: space-between; }
+  @media print { .imgs img { break-inside: avoid; } }
+</style></head>
+<body>
+  <div class="header">
+    <div>
+      <h1>ASSOCIATE ENGINEERS</h1>
+      <div class="sub">Daily Construction Site Activity &amp; Machinery Report</div>
+      <div class="sub"><strong>Site:</strong> ${escapeHtml(activeSite.name)}</div>
+    </div>
+    <div class="meta">
+      <div><strong>Date:</strong> ${escapeHtml(log.date)}</div>
+      <div><strong>Weather:</strong> ${escapeHtml(log.weather)}</div>
+      <div><strong>Supervisor:</strong> ${escapeHtml(log.supervisor)}</div>
+    </div>
+  </div>
+
+  <h3>Labour Deployment Summary (Total: ${log.totalLabor || 0} Workers)</h3>
+  ${laborRows ? `<table><thead><tr><th>Trade</th><th>Shift</th><th>Count</th></tr></thead><tbody>${laborRows}</tbody></table>`
+              : '<p class="empty">No labor counted.</p>'}
+
+  <h3>Material Deliveries (Maal Received)</h3>
+  ${materialRows ? `<table><thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Supplier / Note</th></tr></thead><tbody>${materialRows}</tbody></table>`
+                : '<p class="empty">No materials delivered today.</p>'}
+
+  <h3>Machinery &amp; Heavy Equipment Log (${dayMachinery.length})</h3>
+  ${machineryRows ? `<table><thead><tr><th>Equipment</th><th>Hours</th><th>Fuel (L)</th><th>Operator / Note</th></tr></thead><tbody>${machineryRows}</tbody></table>`
+                 : '<p class="empty">No machinery logged for this date.</p>'}
+
+  <h3>Work Completed Today</h3>
+  ${completedRows ? `<table><thead><tr><th>Task</th><th>Zone / Location</th></tr></thead><tbody>${completedRows}</tbody></table>`
+                 : '<p class="empty">No completed tasks logged.</p>'}
+
+  <h3>Remaining / Pending Work</h3>
+  ${pendingRows ? `<table><thead><tr><th>Task</th><th>Target Date</th></tr></thead><tbody>${pendingRows}</tbody></table>`
+               : '<p class="empty">No pending work logged.</p>'}
+
+  <h3>Delays &amp; Reasons</h3>
+  ${delayRows ? `<table class="delays"><thead><tr><th>Scheduled Work</th><th>Reason for Delay</th></tr></thead><tbody>${delayRows}</tbody></table>`
+             : '<p class="empty">No work delays reported today.</p>'}
+
+  ${imagesHtml}
+
+  <div class="footer">
+    <span>ASSOCIATE ENGINEERS — Field Operations Suite</span>
+    <span>Generated: ${new Date().toLocaleString()}</span>
+  </div>
+</body></html>`;
+
+        // Open a dedicated print window with only the report content. This avoids
+        // the dashboard's print CSS hiding the modal, and avoids blank PDFs on
+        // mobile browsers that ignore window.print() on the main page.
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            // Popup blocked fallback: use a hidden iframe that browsers treat as printable.
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = '0';
+            document.body.appendChild(iframe);
+            const doc = iframe.contentWindow.document;
+            doc.open(); doc.write(html); doc.close();
+            iframe.onload = () => {
+                setTimeout(() => {
+                    try { iframe.contentWindow.focus(); iframe.contentWindow.print(); }
+                    catch (e) { showToast('Please allow popups to print.'); }
+                    setTimeout(() => iframe.remove(), 2000);
+                }, 300);
+            };
+            return;
+        }
+
+        printWindow.document.open();
+        printWindow.document.write(html);
+        printWindow.document.close();
+
+        // Wait for images to load before printing so they appear in the PDF.
+        const triggerPrint = () => {
+            try {
+                printWindow.focus();
+                printWindow.print();
+            } catch (e) {
+                console.warn('Print failed:', e);
+            }
+        };
+        const imgs = printWindow.document.images;
+        if (imgs.length === 0) {
+            setTimeout(triggerPrint, 350);
+        } else {
+            let loaded = 0;
+            const done = () => { if (++loaded >= imgs.length) setTimeout(triggerPrint, 250); };
+            Array.from(imgs).forEach(img => {
+                if (img.complete) done();
+                else { img.onload = done; img.onerror = done; }
+            });
+            // Safety net if an image never fires load/error.
+            setTimeout(triggerPrint, 3000);
+        }
     }
 
 
@@ -6904,6 +7138,18 @@ img,video,canvas,svg{max-width:100%;}
         );
 
     }
+
+    // ===== Print safety listeners: keep the modal open and restore body scroll =====
+    (function attachPrintSafety() {
+        window.addEventListener('afterprint', () => {
+            const modal = document.getElementById('modal-log-detail');
+            if (modal && !modal.classList.contains('hidden')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+    })();
 
        // ASSOCIATE ENGINEERS: safe automatic update system.
     // Updates are detected automatically; they are applied only when forms/saves/uploads are safe.
