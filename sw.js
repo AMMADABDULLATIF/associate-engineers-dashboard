@@ -1,5 +1,5 @@
 /* ASSOCIATE ENGINEERS PWA Service Worker — Offline First Shell & CDN Asset Cache */
-const CACHE_NAME = 'associate-engineers-v26';
+const CACHE_NAME = 'associate-engineers-v31';
 
 // Core assets to pre-cache on install
 const PRECACHE_ASSETS = [
@@ -8,8 +8,11 @@ const PRECACHE_ASSETS = [
   './',
   './index.html',
   '/manifest.json',
+  './manifest.json',
   '/favicon.png',
-  '/icon.svg',
+  '/pwa-192x192.png',
+  '/pwa-512x512.png',
+  '/pwa-maskable-512x512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.woff2',
