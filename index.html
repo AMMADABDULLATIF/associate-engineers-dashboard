@@ -2166,7 +2166,6 @@ html, body {
 #tab-content-entry,
 #tab-content-history,
 #tab-content-machinery,
-#tab-content-materials,
 #tab-content-milestones,
 #tab-content-analytics {
   animation: none !important;
@@ -2174,7 +2173,7 @@ html, body {
   transform: none !important;
 }
 
-/* Milestone progress bars signature cyan-to-violet gradient */
+/* Milestone progress bars restored to original signature cyan-to-violet gradient */
 .milestone-progress-bar,
 #overall-progress-bar,
 .ae-progress-fill,
@@ -2185,146 +2184,8 @@ html, body {
   animation: none !important;
 }
 
-/* Prevent modal top cutoff on all screens: align to start and allow smooth vertical scroll */
-#modal-store-material,
-#modal-quick-stock,
-#modal-balance-sheet,
-#modal-machinery {
-  align-items: flex-start !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-  padding: clamp(12px, 3vw, 24px) !important;
-}
-#modal-store-material > div,
-#modal-quick-stock > div,
-#modal-balance-sheet > div,
-#modal-machinery > div {
-  margin-top: clamp(8px, 2vh, 20px) !important;
-  margin-bottom: clamp(16px, 3vh, 32px) !important;
-  max-height: none !important;
-}
-
-
-/* 2. EYE-FRIENDLY STATIONARY STATIC AMBIENT ANIMATION ON LOGIN SCREEN (0px translation, gentle on eyes) */
-#login-view {
-  border: 1px solid rgba(98, 229, 245, 0.22) !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 30px rgba(98, 229, 245, 0.08) !important;
-  position: relative;
-}
-
 #login-supervisor-badge {
-  position: relative !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 64px !important;
-  height: 64px !important;
-  border-radius: 20px !important;
-  background: linear-gradient(135deg, rgba(98, 229, 245, 0.12), rgba(139, 124, 255, 0.18)) !important;
-  border: 1.5px solid rgba(98, 229, 245, 0.35) !important;
-  animation: aeStationaryAmbientPulse 3.5s ease-in-out infinite !important;
-}
-
-#login-supervisor-badge i {
-  color: #62e5f5 !important;
-  font-size: 28px !important;
-}
-
-@keyframes aeStationaryAmbientPulse {
-  0%, 100% {
-    box-shadow: 0 0 14px rgba(98, 229, 245, 0.22), 0 0 0 0 rgba(98, 229, 245, 0.2);
-    border-color: rgba(98, 229, 245, 0.35);
-  }
-  50% {
-    box-shadow: 0 0 28px rgba(139, 124, 255, 0.38), 0 0 0 5px rgba(98, 229, 245, 0.08);
-    border-color: rgba(139, 124, 255, 0.55);
-  }
-}
-
-/* 3. MOBILE SIDE OPEN & CLOSE DRAWER (KEEPS DESKTOP FIXED SIDEBAR INTACT) */
-#mobile-sidebar-toggle {
-  display: none;
-}
-#mobile-sidebar-backdrop {
-  display: none;
-}
-.sidebar-mobile-header {
-  display: none;
-}
-
-@media (max-width: 1100px) {
-  #mobile-sidebar-toggle {
-    display: inline-flex !important;
-  }
-
-  #mobile-sidebar-backdrop.active {
-    display: block !important;
-  }
-
-  .sidebar-mobile-header {
-    display: flex !important;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2px 4px 14px 4px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid rgba(153, 174, 226, 0.16);
-  }
-
-  #dashboard-view {
-    padding-left: 0 !important;
-  }
-
-  .saas-sidebar {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    bottom: 0 !important;
-    width: 290px !important;
-    max-width: 86vw !important;
-    z-index: 60 !important;
-    transform: translateX(-105%) !important;
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.65) !important;
-    background: #0c1122 !important;
-    border-right: 1px solid rgba(153, 174, 226, 0.2) !important;
-    border-radius: 0 22px 22px 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 16px 14px !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-
-  .saas-sidebar.drawer-open {
-    transform: translateX(0) !important;
-  }
-
-  .sidebar-brand,
-  .sidebar-label,
-  .sidebar-bottom {
-    display: flex !important;
-  }
-
-  .side-link {
-    display: flex !important;
-    flex-direction: row !important;
-    text-align: left !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
-    min-height: 46px !important;
-    font-size: 13px !important;
-    gap: 12px !important;
-    padding: 10px 12px !important;
-  }
-
-  .side-link b {
-    display: inline-block !important;
-  }
-
-  .side-link span {
-    flex: 1 !important;
-    line-height: 1.4 !important;
-  }
+  animation: none !important;
 }
 </style>
 
@@ -3041,7 +2902,7 @@ img,video,canvas,svg{max-width:100%;}
     overflow: visible !important;
     font-family: Arial, sans-serif !important;
   }
-  body:before, header, aside, .saas-page-head, .legacy-tab-bar, #login-view, #modal-machinery, #modal-store-material, #modal-quick-stock, #modal-balance-sheet, #site-image-viewer, #toast {
+  body:before, header, aside, .saas-page-head, .legacy-tab-bar, #login-view, #modal-machinery, #site-image-viewer, #toast {
     display: none !important;
   }
   #dashboard-view {
@@ -3049,7 +2910,7 @@ img,video,canvas,svg{max-width:100%;}
     padding: 0 !important;
     min-height: auto !important;
   }
-  #tab-content-entry, #tab-content-history, #tab-content-machinery, #tab-content-materials, #tab-content-milestones, #tab-content-analytics {
+  #tab-content-entry, #tab-content-history, #tab-content-machinery, #tab-content-milestones, #tab-content-analytics {
     display: none !important;
   }
   #modal-log-detail {
@@ -3126,7 +2987,7 @@ img,video,canvas,svg{max-width:100%;}
 </style>
 
 <style id="ae-calm-supervisor-badge">
-/* CALM, STATIONARY SUPERVISOR BADGE (EYE-FRIENDLY STATIC AMBIENT PULSE, 0px TRANSLATION) */
+/* CALM, STATIONARY SUPERVISOR BADGE (100% STATIC, NO ANIMATION) */
 .ae-supervisor-badge {
   position: relative !important;
   display: inline-flex !important;
@@ -3140,7 +3001,7 @@ img,video,canvas,svg{max-width:100%;}
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
   margin: 0 auto 16px auto !important;
   transform: none !important;
-  animation: aeStationaryAmbientPulse 3.5s ease-in-out infinite !important;
+  animation: none !important;
 }
 
 .ae-badge-inner {
@@ -3154,19 +3015,6 @@ img,video,canvas,svg{max-width:100%;}
 .ae-badge-inner i {
   font-size: 28px !important;
   color: #62e5f5 !important;
-}
-</style>
-
-<style id="ae-consistent-cyan-focus">
-#dashboard-view input:focus, #dashboard-view select:focus, #dashboard-view textarea:focus,
-#modal-machinery input:focus, #modal-machinery select:focus, #modal-machinery textarea:focus,
-#modal-store-material input:focus, #modal-store-material select:focus, #modal-store-material textarea:focus,
-#modal-quick-stock input:focus, #modal-quick-stock select:focus, #modal-quick-stock textarea:focus,
-#modal-balance-sheet input:focus, #modal-balance-sheet select:focus, #modal-balance-sheet textarea:focus,
-input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
-  outline: none !important;
-  border-color: rgba(98, 229, 245, 0.85) !important;
-  box-shadow: 0 0 0 2.5px rgba(98, 229, 245, 0.22) !important;
 }
 </style>
 
@@ -3213,7 +3061,6 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
             </button>
 
             <div id="header-user-section" class="hidden flex items-center gap-2 sm:gap-3">
-            <button id="mobile-sidebar-toggle" onclick="toggleMobileSidebar(true)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm" aria-label="Open Navigation Menu"><i class="fa-solid fa-bars text-cyan-400"></i><span class="text-[11px] font-bold">Menu</span></button>
 
                 <div class="bg-slate-800/80 border border-slate-700/80 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2">
                     <span class="text-slate-400 hidden sm:inline">Site:</span>
@@ -3374,17 +3221,14 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
     <!-- DASHBOARD VIEW -->
     <div id="dashboard-view" class="hidden space-y-6">
 
-        <div id="mobile-sidebar-backdrop" onclick="toggleMobileSidebar(false)" class="hidden fixed inset-0 bg-slate-950/80 z-50 transition-opacity"></div>
         <aside id="saas-sidebar" class="saas-sidebar no-print" aria-label="Main navigation">
-            <div class="sidebar-mobile-header"><span class="text-xs font-bold text-slate-300 tracking-wider">PROJECT OPERATIONS</span><button type="button" onclick="toggleMobileSidebar(false)" class="text-slate-400 hover:text-white p-1 text-base"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="sidebar-brand"><span class="sidebar-brand-icon"><svg viewBox="0 0 52 52" aria-label="AE logo"><path d="M7 39 18 13h6l11 26h-7l-2.2-5.5H16L13.8 39Z" fill="currentColor"/><path d="M18.4 27.8h5.8l-2.9-7.1Z" fill="#10162a"/><path d="M31 13h14v5.5H37v4.8h7.5v5.2H37v5h8V39H31Z" fill="currentColor"/></svg></span><span><strong>AE WORKSITE</strong><small>PROJECT OPERATIONS</small></span></div>
             <div class="sidebar-label">WORKSPACE</div>
             <button class="side-link active" data-nav-tab="entry" onclick="switchTab('entry')"><i class="fa-solid fa-layer-group"></i><span>Daily Site Log</span><b>01</b></button>
             <button class="side-link" data-nav-tab="history" onclick="switchTab('history')"><i class="fa-solid fa-clock-rotate-left"></i><span>Log Archive</span><b>02</b></button>
             <button class="side-link" data-nav-tab="machinery" onclick="switchTab('machinery')"><i class="fa-solid fa-truck-monster"></i><span>Plant & Machinery</span><b>03</b></button>
-            <button class="side-link" data-nav-tab="materials" onclick="switchTab('materials')"><i class="fa-solid fa-boxes-stacked"></i><span>Site Store & Materials</span><b>04</b></button>
-            <button class="side-link" data-nav-tab="milestones" onclick="switchTab('milestones')"><i class="fa-solid fa-chart-gantt"></i><span>Project Milestones</span><b>05</b></button>
-            <button class="side-link" data-nav-tab="analytics" onclick="switchTab('analytics')"><i class="fa-solid fa-chart-pie"></i><span>Insights & Analytics</span><b>06</b></button>
+            <button class="side-link" data-nav-tab="milestones" onclick="switchTab('milestones')"><i class="fa-solid fa-chart-gantt"></i><span>Project Milestones</span><b>04</b></button>
+            <button class="side-link" data-nav-tab="analytics" onclick="switchTab('analytics')"><i class="fa-solid fa-chart-pie"></i><span>Insights & Analytics</span><b>05</b></button>
             <div class="sidebar-bottom"><div class="sidebar-status"><span class="status-pulse"></span><span><strong>Cloud workspace</strong><small id="sidebar-sync-label">Live data connection</small></span></div><div class="sidebar-footnote">ASSOCIATE ENGINEERS <span>FIELD OPERATIONS SUITE</span></div></div>
         </aside>
         <div class="saas-page-head no-print"><div><div class="eyebrow"><span class="eyebrow-dot"></span> FIELD OPERATIONS / <span id="saas-breadcrumb">DAILY SITE LOG</span></div><h2 id="saas-page-title">Daily Site Log</h2><p id="saas-page-subtitle">Capture the work completed, resources deployed, and what comes next.</p></div><div class="page-head-right"><div class="head-date-chip"><i class="fa-regular fa-calendar"></i><span id="saas-today-label">SITE OPERATIONS</span></div><div class="head-avatar">AE</div></div></div>
@@ -3418,15 +3262,6 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                 >
                     <i class="fa-solid fa-tractor text-white"></i>
                     Machinery & Fuel Log
-                </button>
-
-                <button
-                    onclick="switchTab('materials')"
-                    id="tab-btn-materials"
-                    class="flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800"
-                >
-                    <i class="fa-solid fa-boxes-stacked text-white"></i>
-                    Site Store & Materials
                 </button>
 
                 <button
@@ -3604,36 +3439,58 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
 
 
 
-                <!-- Site Store & Received Materials Connected Banner -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/20">
-                    <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl flex-shrink-0">
-                            <i class="fa-solid fa-boxes-stacked"></i>
-                        </div>
+                <!-- Material Received Card -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+
                         <div>
-                            <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-slate-200 text-sm sm:text-base">
-                                    Site Store & Material Deliveries
-                                </h3>
-                                <span class="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                                    Auto-Synced
-                                </span>
-                            </div>
-                            <p class="text-xs text-slate-400 mt-0.5">
-                                Incoming site deliveries, challans, and consumption are managed in the dedicated Site Store tab and automatically archived into today's log & PDF report.
+                            <h3 class="font-bold text-amber-400 text-sm sm:text-base flex items-center gap-2">
+                                <i class="fa-solid fa-truck-ramp-box text-white"></i>
+                                Material Received Today (Maal / Deliveries)
+                            </h3>
+
+                            <p class="text-xs text-slate-400">
+                                Log incoming site materials and equipment
                             </p>
                         </div>
+
+                        <button
+                            type="button"
+                            onclick="addMaterialRow()"
+                            class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/40 text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1"
+                        >
+                            <i class="fa-solid fa-plus text-white"></i>
+                            Add Item
+                        </button>
+
                     </div>
-                    <button
-                        type="button"
-                        onclick="switchTab('materials')"
-                        class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-amber-500/10 flex-shrink-0"
-                    >
-                        <i class="fa-solid fa-arrow-right"></i>
-                        <span>Open Site Store & Balances →</span>
-                    </button>
-                    <!-- Hidden tbody placeholder so existing code never encounters a null element -->
-                    <table class="hidden"><tbody id="material-rows-container"></tbody></table>
+
+
+
+                    <div class="overflow-x-auto custom-scrollbar">
+
+                        <table class="w-full text-xs text-left min-w-[500px]">
+
+                            <thead class="bg-slate-800 text-slate-300 uppercase tracking-wider font-semibold">
+                                <tr>
+                                    <th class="p-2.5 rounded-l-lg">Material / Item Description</th>
+                                    <th class="p-2.5">Quantity</th>
+                                    <th class="p-2.5">Unit (Bags/Tons)</th>
+                                    <th class="p-2.5">Supplier / Note</th>
+                                    <th class="p-2.5 rounded-r-lg text-center">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody
+                                id="material-rows-container"
+                                class="divide-y divide-slate-800"
+                            >
+                                <!-- Dynamic Rows -->
+                            </tbody>
+
+                        </table>
+                    </div>
                 </div>
 
 
@@ -3793,20 +3650,11 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
 
                     <div
                         id="editing-indicator"
-                        class="hidden text-xs text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3.5 py-2 rounded-xl flex items-center justify-between gap-3 shadow-sm"
+                        class="hidden text-xs text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3.5 py-2 rounded-xl flex items-center gap-2"
                     >
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-pen-to-square text-amber-400"></i>
-                            <span>Editing Log Entry for <strong id="editing-date-display" class="font-bold text-white">--</strong></span>
-                        </div>
-                        <button
-                            type="button"
-                            onclick="cancelEditingLog()"
-                            class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-[11px] font-semibold px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer"
-                            title="Cancel editing and return to new log entry mode"
-                        >
-                            <i class="fa-solid fa-xmark text-slate-400"></i> Cancel Edit
-                        </button>
+                        <i class="fa-solid fa-pen-to-square text-white"></i>
+                        Editing Log Entry for
+                        <span id="editing-date-display" class="font-bold text-white">--</span>
                     </div>
 
 
@@ -3955,120 +3803,6 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
 
                 <div id="machinery-records-list" class="space-y-3">
                     <!-- Dynamic Machinery Cards -->
-                </div>
-            </div>
-
-        </div>
-
-        <!-- TAB 3.5: DEDICATED SITE STORE & MATERIAL STOCK TRACKER -->
-        <div id="tab-content-materials" class="hidden space-y-6">
-
-            <!-- Store Header Card with Key Actions -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
-                <div class="flex flex-wrap justify-between items-center pb-4 border-b border-slate-800 gap-3">
-                    <div>
-                        <h3 class="font-bold text-amber-400 text-sm sm:text-base flex items-center gap-2">
-                            <i class="fa-solid fa-boxes-stacked text-white"></i>
-                            Daily Material Stock & Consumption Tracker (Site Store)
-                        </h3>
-                        <p class="text-xs text-slate-400 mt-0.5">
-                            Formula: <span class="text-slate-300 font-mono font-semibold">Opening Stock + Received Today − Used Today = Balance Stock</span>
-                        </p>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-4 sm:gap-6">
-                        <!-- Active Store Transaction Date Selector -->
-                        <div class="flex items-center gap-2 bg-slate-850 border border-slate-700/80 px-3 py-1.5 rounded-xl shadow-inner">
-                            <label class="text-[11px] font-bold text-amber-400 whitespace-nowrap flex items-center gap-1.5">
-                                <i class="fa-regular fa-calendar-days text-amber-400"></i> Date:
-                            </label>
-                            <input
-                                type="date"
-                                id="site-store-active-date"
-                                onchange="onSiteStoreActiveDateChange(this.value)"
-                                class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-slate-100 text-xs font-semibold focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 cursor-pointer"
-                            >
-                        </div>
-
-                        <!-- 2 BUTTONS WITH DISTINCT GAP IN BETWEEN -->
-                        <div class="flex flex-wrap items-center gap-3 sm:gap-4">
-                            <button
-                                type="button"
-                                onclick="openBalanceSheetModal()"
-                                class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95"
-                            >
-                                <i class="fa-solid fa-table-list text-slate-950"></i>
-                                View Balance Sheet
-                            </button>
-                            <button
-                                type="button"
-                                onclick="openAddStoreMaterialModal()"
-                                class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95"
-                            >
-                                <i class="fa-solid fa-plus text-slate-950"></i>
-                                Add New Material
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KPI Counters Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
-                    <div class="bg-slate-850/80 border border-slate-800 rounded-2xl p-4 shadow-md">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-semibold text-slate-400">Tracked Materials</span>
-                            <i class="fa-solid fa-warehouse text-slate-500 text-sm"></i>
-                        </div>
-                        <div class="text-2xl sm:text-3xl font-black text-white mt-2" id="store-stat-total-items">0</div>
-                        <div class="text-[11px] text-slate-500 mt-0.5">Active inventory items</div>
-                    </div>
-
-                    <div id="store-stat-low-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md transition">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-semibold text-rose-300">Low Stock Warning</span>
-                            <i class="fa-solid fa-triangle-exclamation text-rose-400 text-sm"></i>
-                        </div>
-                        <div class="text-2xl sm:text-3xl font-black text-rose-400 mt-2" id="store-stat-low-count">0</div>
-                        <div class="text-[11px] text-rose-300/80 mt-0.5" id="store-stat-low-sub">All Stocks Healthy</div>
-                    </div>
-
-                    <div class="bg-slate-850/80 border border-slate-800 rounded-2xl p-4 shadow-md">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-semibold text-cyan-300">Total Inflow (+Received)</span>
-                            <i class="fa-solid fa-arrow-down text-cyan-400 text-sm"></i>
-                        </div>
-                        <div class="text-2xl sm:text-3xl font-black text-cyan-400 mt-2" id="store-stat-recv-units">0</div>
-                        <div class="text-[11px] text-slate-500 mt-0.5">Cumulative site deliveries</div>
-                    </div>
-
-                    <div class="bg-slate-850/80 border border-slate-800 rounded-2xl p-4 shadow-md">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-semibold text-amber-300">Total Consumption (−Used)</span>
-                            <i class="fa-solid fa-arrow-up text-amber-400 text-sm"></i>
-                        </div>
-                        <div class="text-2xl sm:text-3xl font-black text-amber-400 mt-2" id="store-stat-used-units">0</div>
-                        <div class="text-[11px] text-slate-500 mt-0.5">Cumulative consumed on site</div>
-                    </div>
-                </div>
-
-                <!-- Low Stock Urgent Warning Banner (Auto displayed if any material <= minAlert) -->
-                <div id="store-alert-banner" class="hidden mt-4 p-4 rounded-2xl bg-rose-500/15 border-2 border-rose-500/40 text-rose-200">
-                    <div class="flex items-start gap-3">
-                        <div class="p-2 rounded-xl bg-rose-500/20 text-rose-300 flex-shrink-0 mt-0.5">
-                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-                        </div>
-                        <div class="flex-grow">
-                            <h4 class="font-bold text-sm text-rose-300 flex items-center gap-2">
-                                LOW STOCK ALERT: Advance Purchase Order Required!
-                                <span class="bg-rose-500/30 text-white text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold">Urgent</span>
-                            </h4>
-                            <p class="text-xs text-rose-200/90 mt-1">
-                                The following essential materials have dropped below their safety threshold limit. Please place procurement orders to avoid site stoppage:
-                            </p>
-                            <div id="store-alert-items-text" class="text-xs font-mono mt-2 bg-slate-950/40 p-2.5 rounded-xl border border-rose-500/20 space-y-1">
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -4417,7 +4151,7 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                     type="date"
                     id="mach-date"
                     required
-                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500"
                 >
             </div>
 
@@ -4428,7 +4162,7 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                     id="mach-name"
                     required
                     placeholder="e.g., Excavator / Crane / Concrete Mixer / Generator"
-                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500"
                 >
             </div>
 
@@ -4441,7 +4175,7 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                         min="0"
                         id="mach-hours"
                         placeholder="e.g., 8"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500"
                     >
                 </div>
                 <div>
@@ -4452,7 +4186,7 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                         min="0"
                         id="mach-fuel"
                         placeholder="e.g., 45"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500"
                     >
                 </div>
             </div>
@@ -4463,7 +4197,7 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                     type="text"
                     id="mach-remarks"
                     placeholder="e.g., Operator Ahmed / Main foundation digging"
-                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500"
                 >
             </div>
 
@@ -4483,351 +4217,6 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                 </button>
             </div>
         </form>
-    </div>
-</div>
-
-<!-- SITE STORE MATERIAL ADD / EDIT MODAL -->
-<div
-    id="modal-store-material"
-    class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 custom-scrollbar overflow-y-auto"
->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative my-6">
-        <button
-            type="button"
-            onclick="closeStoreMaterialModal()"
-            class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg cursor-pointer"
-        >
-            <i class="fa-solid fa-xmark text-white"></i>
-        </button>
-
-        <h3 class="font-bold text-amber-400 text-base mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-boxes-stacked text-white"></i>
-            <span id="store-material-modal-title">Add Material to Site Store</span>
-        </h3>
-
-        <form id="store-material-form" onsubmit="saveStoreMaterial(event)" class="space-y-4">
-            <input type="hidden" id="store-mat-id">
-
-            <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Material Description / Name *</label>
-                <input
-                    type="text"
-                    id="store-mat-item"
-                    required
-                    placeholder="e.g., Cement (OPC Falcon / Lucky), Deformed Steel 60-Grade, Sand Chenab"
-                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
-                >
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Category</label>
-                    <select
-                        id="store-mat-category"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 cursor-pointer"
-                    >
-                        <option value="Civil & Structural">Civil & Structural</option>
-                        <option value="Steel & Rebar">Steel & Rebar</option>
-                        <option value="Finishing & Tiles">Finishing & Tiles</option>
-                        <option value="MEP & Electrical">MEP & Electrical</option>
-                        <option value="Plumbing & Sanitary">Plumbing & Sanitary</option>
-                        <option value="Safety & PPE">Safety & PPE</option>
-                        <option value="General Tools">General Tools</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Measurement Unit *</label>
-                    <select
-                        id="store-mat-unit"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 cursor-pointer"
-                    >
-                        <option value="Bags">Bags (e.g. Cement)</option>
-                        <option value="Tons">Tons (e.g. Steel)</option>
-                        <option value="Cft">Cft (e.g. Sand, Crush)</option>
-                        <option value="Nos">Nos (e.g. Bricks, Blocks)</option>
-                        <option value="Kg">Kg</option>
-                        <option value="Liters">Liters</option>
-                        <option value="Sq.ft">Sq.ft (e.g. Tiles)</option>
-                        <option value="Rft">Rft (Pipes / Cables)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Receipt / Transaction Date *</label>
-                <input
-                    type="date"
-                    id="store-mat-date"
-                    required
-                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 cursor-pointer"
-                >
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 bg-slate-850/80 p-3 rounded-xl border border-slate-800">
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 mb-1">Opening Stock</label>
-                    <input
-                        type="number"
-                        step="any"
-                        id="store-mat-opening"
-                        value="0"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-2 text-slate-100 text-xs text-center focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
-                    >
-                </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-cyan-300 mb-1">Received (+In)</label>
-                    <input
-                        type="number"
-                        step="any"
-                        id="store-mat-received"
-                        value="0"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-2 text-cyan-300 text-xs text-center font-bold focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
-                    >
-                </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-amber-300 mb-1">Used (−Out)</label>
-                    <input
-                        type="number"
-                        step="any"
-                        id="store-mat-used"
-                        value="0"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-2 text-amber-300 text-xs text-center font-bold focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
-                    >
-                </div>
-                <div>
-                    <label class="block text-[11px] font-semibold text-rose-300 mb-1">Min Alert Limit</label>
-                    <input
-                        type="number"
-                        step="any"
-                        id="store-mat-min-alert"
-                        value="50"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-2 text-rose-300 text-xs text-center font-bold focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
-                    >
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Supplier / Vendor Name</label>
-                    <input
-                        type="text"
-                        id="store-mat-supplier"
-                        placeholder="e.g., Lucky Cement Hub / Mughal Steel"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
-                    >
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Storage Location / Note</label>
-                    <input
-                        type="text"
-                        id="store-mat-notes"
-                        placeholder="e.g., Godown Shed A-2 / Batching Plant"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
-                    >
-                </div>
-            </div>
-
-            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                <button
-                    type="button"
-                    onclick="closeStoreMaterialModal()"
-                    class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2.5 rounded-xl cursor-pointer"
-                >
-                    Cancel
-                </button>
-                <button
-                    type="submit"
-                    id="store-material-submit-btn"
-                    class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs px-6 py-2.5 rounded-xl shadow-md transition cursor-pointer active:scale-95"
-                >
-                    <span id="store-material-save-btn-text">Save Material</span>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- QUICK STOCK INFLOW / OUTFLOW MODAL -->
-<div
-    id="modal-quick-stock"
-    class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden flex items-start justify-center p-3 sm:p-5 custom-scrollbar overflow-y-auto"
->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative my-3 sm:my-6 shrink-0">
-        <button
-            type="button"
-            onclick="closeQuickStockModal()"
-            class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg cursor-pointer"
-        >
-            <i class="fa-solid fa-xmark text-white"></i>
-        </button>
-
-        <h3 id="quick-stock-title" class="font-bold text-cyan-400 text-base mb-1 flex items-center gap-2">
-            <i class="fa-solid fa-plus text-cyan-400"></i>
-            Quick Stock Transaction
-        </h3>
-        <p id="quick-stock-sub" class="text-xs text-slate-400 mb-4">Update inventory balance immediately.</p>
-
-        <form id="quick-stock-form" onsubmit="submitQuickStock(event)" class="space-y-4">
-            <input type="hidden" id="quick-stock-action" value="receive">
-
-            <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Select Material *</label>
-                <select
-                    id="quick-stock-material-select"
-                    onchange="onQuickStockMaterialChange()"
-                    required
-                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 cursor-pointer"
-                >
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Transaction / Delivery Date *</label>
-                <input
-                    type="date"
-                    id="quick-stock-date"
-                    required
-                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 cursor-pointer"
-                >
-            </div>
-
-            <div id="quick-stock-current-info" class="p-2.5 bg-slate-800/70 border border-slate-700/60 rounded-xl text-xs text-slate-300">
-                Current Balance: <strong class="text-white">--</strong>
-            </div>
-
-            <div>
-                <label id="quick-stock-qty-label" class="block text-xs font-semibold text-cyan-300 mb-1">Quantity Received *</label>
-                <div class="flex items-center gap-2">
-                    <input
-                        type="number"
-                        step="any"
-                        min="0.01"
-                        id="quick-stock-qty"
-                        required
-                        placeholder="e.g. 100"
-                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-sm font-bold focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
-                    >
-                    <span id="quick-stock-unit-badge" class="bg-slate-800 border border-slate-700 px-3 py-2.5 rounded-xl text-xs text-slate-300 font-semibold whitespace-nowrap">Bags</span>
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Challan / Bill No. or Usage Description</label>
-                <input
-                    type="text"
-                    id="quick-stock-ref"
-                    placeholder="e.g., Bilty #7840 Lucky / Foundation raft pouring"
-                    class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
-                >
-            </div>
-
-            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                <button
-                    type="button"
-                    onclick="closeQuickStockModal()"
-                    class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2.5 rounded-xl cursor-pointer"
-                >
-                    Cancel
-                </button>
-                <button
-                    type="submit"
-                    id="quick-stock-submit-btn"
-                    class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95"
-                >
-                    <i class="fa-solid fa-plus text-slate-950 font-bold"></i>
-                    <span class="text-slate-950 font-bold tracking-wide">Confirm Inflow (+ Receive)</span>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- DEDICATED STORE BALANCE SHEET VIEWER MODAL -->
-<div
-    id="modal-balance-sheet"
-    class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-5 custom-scrollbar overflow-y-auto"
->
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 sm:p-6 shadow-2xl relative my-3 sm:my-6 shrink-0 text-slate-100">
-        <!-- Header: Clean, spacious, with title and single close button (PDF option removed) -->
-        <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-800">
-            <div class="flex items-center gap-3 min-w-0">
-                <span class="w-10 h-10 rounded-xl bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-table-list text-base"></i>
-                </span>
-                <div class="min-w-0">
-                    <h3 class="text-base sm:text-lg font-bold text-white truncate">Site Store Balance Sheet</h3>
-                    <p class="text-xs text-slate-400 mt-0.5 truncate">
-                        Site: <strong id="balance-sheet-modal-site" class="text-amber-400 font-semibold">--</strong> • As of <span id="balance-sheet-modal-date" class="text-slate-300 font-mono">--</span>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Only Close Button (PDF option completely removed as requested) -->
-            <button
-                type="button"
-                onclick="closeBalanceSheetModal()"
-                class="text-slate-400 hover:text-white hover:bg-slate-800 p-2 rounded-xl transition cursor-pointer shrink-0"
-                title="Close"
-            >
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-        </div>
-
-        <!-- Search & Filter Controls: Icon inside box, plenty of space between text & icon and before material list (KPI strip removed) -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-5 mt-3">
-            <div class="relative flex-1">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-cyan-400">
-                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
-                </div>
-                <input
-                    type="text"
-                    id="balance-sheet-search-input"
-                    oninput="onBalanceSheetSearchInput(this.value)"
-                    placeholder="Search material name, category, supplier, location..."
-                    class="w-full bg-slate-800/90 border border-slate-700 rounded-xl pl-11 pr-4 py-2.5 text-slate-100 text-xs sm:text-sm placeholder:text-slate-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 transition"
-                >
-            </div>
-
-            <!-- Filters: All and Low Stock -->
-            <div class="flex items-center gap-2 shrink-0">
-                <button
-                    type="button"
-                    id="bs-filter-all-btn"
-                    onclick="setBalanceSheetFilter('all')"
-                    class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow transition cursor-pointer"
-                >
-                    All (<span id="bs-filter-all-count">0</span>)
-                </button>
-                <button
-                    type="button"
-                    id="bs-filter-low-btn"
-                    onclick="setBalanceSheetFilter('low')"
-                    class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 transition flex items-center gap-1.5 cursor-pointer"
-                >
-                    <i class="fa-solid fa-triangle-exclamation text-rose-400 text-xs"></i>
-                    Low Stock (<span id="bs-filter-low-count">0</span>)
-                </button>
-            </div>
-        </div>
-
-        <!-- Cards Container -->
-        <div id="balance-sheet-modal-cards" class="space-y-3 max-h-[54vh] overflow-y-auto pr-1 custom-scrollbar">
-            <!-- Dynamically populated -->
-        </div>
-
-        <!-- Footer -->
-        <div class="flex flex-wrap justify-between items-center gap-3 pt-4 mt-4 border-t border-slate-800">
-            <div class="text-[11px] text-slate-400 font-mono">
-                Formula: Opening + Received − Used = Balance
-            </div>
-            <button
-                type="button"
-                onclick="closeBalanceSheetModal()"
-                class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-md transition flex items-center gap-1.5 cursor-pointer active:scale-95"
-            >
-                Done / Close Viewer
-            </button>
-        </div>
     </div>
 </div>
 
@@ -5843,9 +5232,6 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
 
 
 
-        editingLogId = null;
-        if (typeof resetFormAfterSave === "function") resetFormAfterSave();
-        if (typeof clearDailyLogDraft === "function") clearDailyLogDraft();
         activeSite = matchedSite;
         saveActiveSession();
 
@@ -6254,9 +5640,6 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
 
 
         localStorage.removeItem('AE_ACTIVE_USER_SESSION_V2');
-        editingLogId = null;
-        if (typeof resetFormAfterSave === 'function') resetFormAfterSave();
-        if (typeof clearDailyLogDraft === 'function') clearDailyLogDraft();
         activeSite = null;
         currentUser = null;
 
@@ -6939,61 +6322,109 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
 
 
 
-    function addMaterialRow(data = {}) {
-        const container = document.getElementById('material-rows-container');
+    function addMaterialRow(
+        data = {}
+    ) {
+
+        const container =
+            document.getElementById(
+                'material-rows-container'
+            );
+
+
+
         if (!container) return;
 
-        const tr = document.createElement('tr');
-        tr.className = 'material-row border-b border-slate-800/60 hover:bg-slate-850/40 transition';
+
+
+        const tr =
+            document.createElement(
+                'tr'
+            );
+
+
+
+        tr.className =
+            'material-row border-b border-slate-800/60';
+
+
+
         tr.innerHTML = `
+
             <td class="py-2 pr-2">
+
                 <input
                     type="text"
-                    list="construction-materials-list"
-                    placeholder="e.g., Cement Bags / Steel Rebar / Sand"
+                    placeholder="e.g., Cement Bags / Steel Rebar"
                     value="${data.item || ''}"
-                    class="mat-item w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
+                    class="mat-item w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
                 >
+
             </td>
-            <td class="py-2 px-2 w-24">
+
+
+
+            <td class="py-2 px-2 w-20 sm:w-24">
+
                 <input
                     type="number"
                     min="0"
-                    step="any"
                     placeholder="Qty"
                     value="${data.qty || ''}"
-                    class="mat-qty w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 font-semibold text-cyan-300"
+                    class="mat-qty w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
                 >
+
             </td>
-            <td class="py-2 px-2 w-28">
+
+
+
+            <td class="py-2 px-2 w-24 sm:w-28">
+
                 <input
                     type="text"
-                    placeholder="Bags/Tons/Cft"
-                    value="${data.unit || 'Bags'}"
-                    class="mat-unit w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 text-center"
+                    placeholder="Unit (Bags/Tons)"
+                    value="${data.unit || ''}"
+                    class="mat-unit w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
                 >
+
             </td>
+
+
+
             <td class="py-2 px-2">
+
                 <input
                     type="text"
-                    placeholder="Supplier / Challan / DC #"
+                    placeholder="Supplier / Note"
                     value="${data.note || ''}"
-                    class="mat-note w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40"
+                    class="mat-note w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
                 >
+
             </td>
+
+
+
             <td class="py-2 pl-2 text-center w-10">
+
                 <button
                     type="button"
                     onclick="removeRow(this)"
-                    class="text-rose-400 hover:text-rose-300 p-1.5 rounded transition"
+                    class="text-rose-400 hover:text-rose-300 p-1 rounded transition"
                 >
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
+
             </td>
+
         `;
-        container.appendChild(tr);
-        if (typeof debouncedDraftSave === 'function') debouncedDraftSave();
-    };
+
+
+
+        container.appendChild(
+            tr
+        );
+
+    }
 
 
 
@@ -7438,33 +6869,65 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
 
 
 
-        // Read any manual material rows if present
         document
-            .querySelectorAll('.material-row')
-            .forEach(row => {
-                const item = row.querySelector('.mat-item')?.value.trim() || '';
-                const qty = row.querySelector('.mat-qty')?.value.trim() || '';
-                const unit = row.querySelector('.mat-unit')?.value.trim() || '';
-                const note = row.querySelector('.mat-note')?.value.trim() || '';
+            .querySelectorAll(
+                '.material-row'
+            )
+            .forEach(
+                row => {
 
-                if (item || qty) {
-                    materials.push({
-                        item,
-                        qty,
-                        unit: unit || 'Bags',
-                        note
-                    });
+                    const item =
+                        row
+                            .querySelector(
+                                '.mat-item'
+                            )
+                            .value
+                            .trim();
+
+
+
+                    const qty =
+                        row
+                            .querySelector(
+                                '.mat-qty'
+                            )
+                            .value;
+
+
+
+                    const unit =
+                        row
+                            .querySelector(
+                                '.mat-unit'
+                            )
+                            .value
+                            .trim();
+
+
+
+                    const note =
+                        row
+                            .querySelector(
+                                '.mat-note'
+                            )
+                            .value
+                            .trim();
+
+
+
+                    if (item) {
+
+                        materials.push({
+                            item,
+                            qty,
+                            unit,
+                            note
+                        });
+
+                    }
+
                 }
-            });
-
-        // If no rows were in the form (since manual card was removed), retain materials received via Site Store for this date
-        if (materials.length === 0 && dateVal) {
-            const existingLogs = getActiveSiteLogs();
-            const existingLog = existingLogs.find(l => (editingLogId && l.id === editingLogId) || l.date === dateVal);
-            if (existingLog && Array.isArray(existingLog.materials) && existingLog.materials.length > 0) {
-                materials.push(...existingLog.materials);
-            }
-        }
+            );
 
 
 
@@ -7869,14 +7332,12 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
 
 
     function switchTab(tab) {
-        if (typeof toggleMobileSidebar === "function") toggleMobileSidebar(false);
         setTimeout(saveActiveSession, 50);
 
         const pageMeta = {
             entry: ['Daily Site Log', 'Capture the work completed, resources deployed, and what comes next.', 'DAILY SITE LOG'],
             history: ['Log Archive', 'Find, review, and manage previously submitted site reports.', 'LOG ARCHIVE'],
             machinery: ['Plant & Machinery', 'Track equipment usage, operating hours, and fuel records.', 'PLANT & MACHINERY'],
-            materials: ['Site Store & Materials', 'Track opening stock, daily arrivals, usage, and re-order balances.', 'SITE STORE & MATERIALS'],
             milestones: ['Project Milestones', 'Monitor planned activities and overall project completion.', 'PROJECT MILESTONES'],
             analytics: ['Insights & Analytics', 'Turn daily field activity into a clear project performance picture.', 'INSIGHTS & ANALYTICS']
         };
@@ -7902,24 +7363,36 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
             );
             
         const machineryBtn = document.getElementById('tab-btn-machinery');
-        const materialsBtn = document.getElementById('tab-btn-materials');
         const milestonesBtn = document.getElementById('tab-btn-milestones');
         const analyticsBtn = document.getElementById('tab-btn-analytics');
 
-        const entryContent = document.getElementById('tab-content-entry');
-        const historyContent = document.getElementById('tab-content-history');
+
+
+        const entryContent =
+            document.getElementById(
+                'tab-content-entry'
+            );
+
+
+
+        const historyContent =
+            document.getElementById(
+                'tab-content-history'
+            );
+            
         const machineryContent = document.getElementById('tab-content-machinery');
-        const materialsContent = document.getElementById('tab-content-materials');
         const milestonesContent = document.getElementById('tab-content-milestones');
         const analyticsContent = document.getElementById('tab-content-analytics');
 
+
+
         // Reset all buttons
-        [entryBtn, historyBtn, machineryBtn, materialsBtn, milestonesBtn, analyticsBtn].forEach(btn => {
+        [entryBtn, historyBtn, machineryBtn, milestonesBtn, analyticsBtn].forEach(btn => {
             if (btn) btn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
         });
 
         // Hide all contents
-        [entryContent, historyContent, machineryContent, materialsContent, milestonesContent, analyticsContent].forEach(content => {
+        [entryContent, historyContent, machineryContent, milestonesContent, analyticsContent].forEach(content => {
             if (content) content.classList.add('hidden');
         });
 
@@ -7934,12 +7407,6 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
             machineryBtn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
             machineryContent.classList.remove('hidden');
             renderMachineryLogs();
-        } else if (tab === 'materials') {
-            const logDetailModal = document.getElementById('modal-log-detail');
-            if (logDetailModal) logDetailModal.classList.add('hidden');
-            if (materialsBtn) materialsBtn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
-            if (materialsContent) materialsContent.classList.remove('hidden');
-            if (typeof renderSiteStore === 'function') renderSiteStore();
         } else if (tab === 'milestones') {
             milestonesBtn.className = "flex-shrink-0 px-4 py-2.5 rounded-lg font-semibold text-xs transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md";
             milestonesContent.classList.remove('hidden');
@@ -8362,17 +7829,13 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                     "Total Labour":
                         l.totalLabor,
 
-                    "Material Stock & Consumption":
+                    "Materials Received":
                         l.materials
                             ? l.materials
-                                .map(m => {
-                                    const op = m.opening !== undefined ? m.opening : '-';
-                                    const rc = m.received !== undefined ? m.received : (m.qty !== undefined ? m.qty : '-');
-                                    const us = m.used !== undefined ? m.used : 0;
-                                    const bl = m.balance !== undefined ? m.balance : (m.qty !== undefined ? m.qty : '-');
-                                    const isLow = m.isLowStock || (m.minAlert > 0 && bl <= m.minAlert);
-                                    return `${m.item || 'Item'} [Opening: ${op}, Received: ${rc}, Used: ${us}, Balance: ${bl} ${m.unit || ''}${isLow ? ' ⚠️LOW STOCK' : ''}]`;
-                                })
+                                .map(
+                                    m =>
+                                        `${m.item} (${m.qty} ${m.unit})`
+                                )
                                 .join('; ')
                             : '',
 
@@ -8845,74 +8308,48 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
 
 
 
-            <div class="space-y-3 mt-4">
-                <!-- Deliveries Received on this Date -->
-                <div class="p-3.5 bg-slate-850/80 border border-slate-800 rounded-xl space-y-2">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                        <strong class="text-amber-400 text-xs sm:text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-truck-ramp-box text-white"></i>
-                            MATERIAL DELIVERIES RECEIVED ON ${log.date}
-                        </strong>
-                        <span class="text-[10px] text-cyan-300 font-bold bg-cyan-950/70 border border-cyan-800/60 px-2.5 py-0.5 rounded-full">
-                            ${(() => {
-                                const dItems = (log.materials && Array.isArray(log.materials) && log.materials.length > 0)
-                                    ? log.materials
-                                    : (typeof getActiveSiteStore === 'function' ? getActiveSiteStore().filter(m => (m.date === log.date) && parseFloat(m.received) > 0) : []);
-                                return (dItems.length || 0) + ' Delivery Item(s)';
-                            })()}
-                        </span>
-                    </div>
-                    ${(() => {
-                        let dayDeliveries = log.materials && Array.isArray(log.materials) ? log.materials : [];
-                        if (dayDeliveries.length === 0 && typeof getActiveSiteStore === 'function') {
-                            const storeItems = getActiveSiteStore().filter(m => (m.date === log.date) && parseFloat(m.received) > 0);
-                            if (storeItems.length > 0) {
-                                dayDeliveries = storeItems.map(m => ({
-                                    item: m.item,
-                                    qty: m.received,
-                                    unit: m.unit,
-                                    note: m.supplier || m.notes || 'Store Inventory'
-                                }));
-                            }
-                        }
-                        if (dayDeliveries.length === 0) {
-                            return '<p class="text-slate-500 text-xs italic py-1">No material deliveries received on ' + (log.date || 'this date') + '.</p>';
-                        }
-                        return '<div class="overflow-x-auto custom-scrollbar"><table class="w-full text-xs text-left min-w-[500px]"><thead class="bg-slate-900/90 text-slate-400 text-[10px] uppercase font-semibold"><tr><th class="p-2">Material / Description</th><th class="p-2 text-center text-cyan-300">Quantity Received</th><th class="p-2 text-center">Unit</th><th class="p-2">Supplier / Challan Note</th></tr></thead><tbody class="divide-y divide-slate-800">' +
-                        dayDeliveries.map(m => {
-                            const qtyVal = m.qty !== undefined ? m.qty : (m.received !== undefined ? m.received : '-');
-                            return '<tr class="border-b border-slate-800/40 hover:bg-slate-800/30"><td class="p-2 font-bold text-slate-100">' + (m.item || '-') + '</td><td class="p-2 text-center text-cyan-300 font-bold">' + qtyVal + '</td><td class="p-2 text-center text-slate-300">' + (m.unit || 'Bags') + '</td><td class="p-2 text-slate-400">' + (m.note || '-') + '</td></tr>';
-                        }).join('') + '</tbody></table></div>';
-                    })()}
-                </div>
+            <div class="space-y-1.5">
 
-                <!-- Live Site Store Balances -->
-                <div class="p-3.5 bg-slate-850/50 border border-slate-800 rounded-xl space-y-2">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                        <strong class="text-cyan-400 text-xs sm:text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-boxes-stacked"></i>
-                            CURRENT SITE STORE STOCK & BALANCES
-                        </strong>
-                        <button type="button" onclick="if(typeof closeLogDetailModal==='function')closeLogDetailModal(); if(typeof closeLogModal==='function')closeLogModal(); switchTab('materials');" class="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-sm">
-                            <i class="fa-solid fa-boxes-stacked text-[11px]"></i>
-                            <span>Open Store Tab →</span>
-                        </button>
-                    </div>
-                    ${(() => {
-                        const store = typeof getActiveSiteStore === 'function' ? getActiveSiteStore() : [];
-                        if (store.length === 0) return '<p class="text-slate-500 text-xs py-1">No store inventory items configured for this site.</p>';
-                        const lowItems = store.filter(m => parseFloat(m.minAlert) > 0 && parseFloat(m.balance) <= parseFloat(m.minAlert));
-                        let alertH = '';
-                        if (lowItems.length > 0) {
-                            alertH = '<div class="p-2 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-200 text-xs mb-2 flex items-center gap-2 font-semibold"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i> Low Stock Alert: ' + lowItems.map(m => m.item + ' (' + m.balance + ' ' + m.unit + ')').join(', ') + '</div>';
-                        }
-                        return alertH + '<div class="overflow-x-auto custom-scrollbar border border-slate-800/80 rounded-xl"><table class="w-full text-xs text-left min-w-[560px]"><thead class="bg-slate-900/90 text-slate-400 text-[10px] uppercase font-semibold"><tr><th class="p-2">Material / Description</th><th class="p-2 text-center">Unit</th><th class="p-2 text-center">Opening</th><th class="p-2 text-center text-cyan-300">Total In</th><th class="p-2 text-center text-amber-300">Total Used</th><th class="p-2 text-center text-emerald-300 font-bold">Live Balance</th><th class="p-2 text-center">Status</th><th class="p-2">Supplier / Note</th></tr></thead><tbody class="divide-y divide-slate-800">' +
-                        store.map(m => {
-                            const isLow = parseFloat(m.minAlert) > 0 && parseFloat(m.balance) <= parseFloat(m.minAlert);
-                            return '<tr class="border-b border-slate-800/40 hover:bg-slate-800/30"><td class="p-2 font-semibold text-slate-100">' + (m.item || '-') + '</td><td class="p-2 text-center text-slate-300">' + (m.unit || 'Bags') + '</td><td class="p-2 text-center text-slate-300">' + (m.opening || 0) + '</td><td class="p-2 text-center text-cyan-300 font-semibold">' + (m.received || 0) + '</td><td class="p-2 text-center text-amber-300 font-semibold">' + (m.used || 0) + '</td><td class="p-2 text-center text-emerald-300 font-black">' + (m.balance || 0) + '</td><td class="p-2 text-center">' + (isLow ? '<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[9px] px-1.5 py-0.5 rounded font-bold">⚠️ LOW</span>' : '<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[9px] px-1.5 py-0.5 rounded font-bold">OK</span>') + '</td><td class="p-2 text-slate-400">' + (m.notes || m.supplier || '-') + '</td></tr>';
-                        }).join('') + '</tbody></table></div>';
-                    })()}
-                </div>
+                <strong class="text-amber-400 block border-b border-slate-800 pb-1">
+                    MATERIAL DELIVERIES (MAAL RECEIVED)
+                </strong>
+
+
+
+                ${
+                    log.materials &&
+                    log.materials.length > 0
+
+                        ? `
+
+                            <ul class="list-disc list-inside space-y-1 text-slate-300">
+
+                                ${
+                                    log.materials
+                                        .map(
+                                            m =>
+                                                `<li>
+                                                    <strong>${m.item}</strong>
+                                                    -
+                                                    ${m.qty}
+                                                    ${m.unit}
+                                                    ${
+                                                        m.note
+                                                            ? `(Supplier/Note: ${m.note})`
+                                                            : ''
+                                                    }
+                                                </li>`
+                                        )
+                                        .join('')
+                                }
+
+                            </ul>
+
+                        `
+
+                        : '<p class="text-slate-500">No materials delivered today.</p>'
+                }
+
             </div>
 
 
@@ -9799,1040 +9236,6 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
 
     
     // ============================================================
-    // MOBILE NAVIGATION DRAWER TOGGLE
-    // ============================================================
-    window.toggleMobileSidebar = function(force) {
-        const sidebar = document.getElementById('saas-sidebar');
-        const backdrop = document.getElementById('mobile-sidebar-backdrop');
-        if (!sidebar) return;
-        const shouldOpen = typeof force === 'boolean' ? force : !sidebar.classList.contains('drawer-open');
-        if (shouldOpen) {
-            sidebar.classList.add('drawer-open');
-            if (backdrop) backdrop.classList.add('active');
-            if (window.innerWidth <= 1100) {
-                document.body.style.overflow = 'hidden';
-            }
-        } else {
-            sidebar.classList.remove('drawer-open');
-            if (backdrop) backdrop.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    };
-
-    // ============================================================
-    // DEDICATED SITE STORE & MATERIAL STOCK & CONSUMPTION TRACKER
-    // Formula: Opening Stock + Received Today − Used Today = Current Balance Stock
-    // Low Stock Alert: triggered when Balance <= Min Alert Limit
-    // ============================================================
-    const STORAGE_SITE_STORE_PREFIX = 'AE_SITE_STORE_';
-    let siteStoreFilter = 'all'; // 'all' or 'low'
-    let siteStoreSearchQuery = '';
-
-    window.getSiteStoreKey = function(siteId) {
-        return STORAGE_SITE_STORE_PREFIX + (siteId || (activeSite ? activeSite.id : 'default'));
-    };
-
-    window.getDefaultSiteStore = function() {
-        return [
-            {
-                id: 'mat_seed_1',
-                item: 'Cement (OPC - 50kg Bags)',
-                category: 'Civil & Structural',
-                unit: 'Bags',
-                opening: 200,
-                received: 100,
-                used: 80,
-                balance: 220,
-                minAlert: 100,
-                supplier: 'Fauji / Lucky Cement Ltd.',
-                notes: 'Store Room A (Covered & Dry)'
-            },
-            {
-                id: 'mat_seed_2',
-                item: 'Steel Rebar Grade 60 (1/2")',
-                category: 'Steel & Rebar',
-                unit: 'Tons',
-                opening: 5.5,
-                received: 0,
-                used: 3.8,
-                balance: 1.7,
-                minAlert: 2.5,
-                supplier: 'Mughal / Ittehad Steels',
-                notes: 'Rebar Yard (Raised Wooden Sleepers)'
-            },
-            {
-                id: 'mat_seed_3',
-                item: 'River Sand (Ravi / Fine)',
-                category: 'Aggregates & Sand',
-                unit: 'Cft',
-                opening: 1200,
-                received: 800,
-                used: 600,
-                balance: 1400,
-                minAlert: 500,
-                supplier: 'Malik Trucking Corp',
-                notes: 'Batching Area Stockpile 1'
-            },
-            {
-                id: 'mat_seed_4',
-                item: 'Crush / Aggregate (1/2" Margalla)',
-                category: 'Aggregates & Sand',
-                unit: 'Cft',
-                opening: 900,
-                received: 0,
-                used: 650,
-                balance: 250,
-                minAlert: 400,
-                supplier: 'Margalla Quarry Suppliers',
-                notes: 'Aggregate Bay B'
-            },
-            {
-                id: 'mat_seed_5',
-                item: 'Red Clay Bricks (Class-A)',
-                category: 'Civil & Structural',
-                unit: 'Nos',
-                opening: 15000,
-                received: 5000,
-                used: 4500,
-                balance: 15500,
-                minAlert: 5000,
-                supplier: 'Khan Bhatta Company',
-                notes: 'Masonry Work Area Stacks'
-            }
-        ];
-    };
-
-    window.getActiveSiteStore = function() {
-        if (!activeSite) return getDefaultSiteStore();
-        const key = getSiteStoreKey(activeSite.id);
-        let list = [];
-        try {
-            const raw = localStorage.getItem(key);
-            if (raw) {
-                list = JSON.parse(raw);
-            } else {
-                list = getDefaultSiteStore();
-                localStorage.setItem(key, JSON.stringify(list));
-            }
-        } catch (_) {
-            list = getDefaultSiteStore();
-        }
-        if (!Array.isArray(list) || list.length === 0) {
-            list = getDefaultSiteStore();
-            try { localStorage.setItem(key, JSON.stringify(list)); } catch (_) {}
-        }
-        list.forEach(m => {
-            const op = parseFloat(m.opening) || 0;
-            const rc = parseFloat(m.received) || 0;
-            const us = parseFloat(m.used) || 0;
-            m.balance = Math.round((op + rc - us) * 100) / 100;
-            const limit = parseFloat(m.minAlert) || 0;
-            m.isLowStock = (limit > 0) && (m.balance <= limit);
-        });
-        return list;
-    };
-
-    window.saveActiveSiteStore = function(list) {
-        if (!activeSite) return;
-        const key = getSiteStoreKey(activeSite.id);
-        list.forEach(m => {
-            const op = parseFloat(m.opening) || 0;
-            const rc = parseFloat(m.received) || 0;
-            const us = parseFloat(m.used) || 0;
-            m.balance = Math.round((op + rc - us) * 100) / 100;
-            const limit = parseFloat(m.minAlert) || 0;
-            m.isLowStock = (limit > 0) && (m.balance <= limit);
-        });
-        try {
-            localStorage.setItem(key, JSON.stringify(list));
-        } catch (e) {
-            console.warn('Site store storage error', e);
-        }
-        if (typeof db !== 'undefined' && db && activeSite && activeSite.id) {
-            try {
-                db.collection('sites').doc(activeSite.id).collection('materials_store').doc('inventory').set({
-                    items: list,
-                    updatedAt: new Date().toISOString()
-                }, { merge: true }).catch(() => {});
-            } catch (_) {}
-        }
-    };
-
-    window.renderSiteStore = function() {
-        const list = getActiveSiteStore();
-
-        let totalRecv = 0;
-        let totalUsed = 0;
-        const lowStockItems = [];
-
-        list.forEach(m => {
-            totalRecv += (parseFloat(m.received) || 0);
-            totalUsed += (parseFloat(m.used) || 0);
-            if (m.isLowStock) lowStockItems.push(m);
-        });
-
-        // Update KPI Counters
-        const statTotal = document.getElementById('store-stat-total-items');
-        const statLow = document.getElementById('store-stat-low-count');
-        const statLowSub = document.getElementById('store-stat-low-sub');
-        const statLowBox = document.getElementById('store-stat-low-box');
-        const statRecv = document.getElementById('store-stat-recv-units');
-        const statUsed = document.getElementById('store-stat-used-units');
-        const filterAllCount = document.getElementById('store-filter-all-count');
-        const filterLowCount = document.getElementById('store-filter-low-count');
-
-        if (statTotal) statTotal.textContent = list.length;
-        if (statLow) statLow.textContent = lowStockItems.length;
-        if (statRecv) statRecv.textContent = (Math.round(totalRecv * 10) / 10);
-        if (statUsed) statUsed.textContent = (Math.round(totalUsed * 10) / 10);
-        if (filterAllCount) filterAllCount.textContent = list.length;
-        if (filterLowCount) filterLowCount.textContent = lowStockItems.length;
-
-        if (statLowBox) {
-            if (lowStockItems.length > 0) {
-                statLowBox.className = 'bg-rose-950/40 border border-rose-500/50 rounded-2xl p-4 shadow-xl transition';
-                if (statLowSub) statLowSub.textContent = lowStockItems.length + ' Re-order Needed';
-            } else {
-                statLowBox.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl transition';
-                if (statLowSub) statLowSub.textContent = 'All Stocks Healthy';
-            }
-        }
-
-        // Low Stock Urgent Alert Banner
-        const banner = document.getElementById('store-alert-banner');
-        const bannerText = document.getElementById('store-alert-items-text');
-        if (banner && bannerText) {
-            if (lowStockItems.length > 0) {
-                banner.classList.remove('hidden');
-                bannerText.innerHTML = lowStockItems.map(m =>
-                    '• <strong class="text-rose-200">' + m.item + '</strong>: Only <span class="text-white font-bold">' + m.balance + ' ' + m.unit + '</span> remaining (Minimum re-order limit: ' + m.minAlert + ' ' + m.unit + ')'
-                ).join('<br>');
-            } else {
-                banner.classList.add('hidden');
-            }
-        }
-
-        // Apply filters & search
-        let filtered = list;
-        if (siteStoreFilter === 'low') {
-            filtered = filtered.filter(m => m.isLowStock);
-        }
-        if (siteStoreSearchQuery) {
-            const q = siteStoreSearchQuery.toLowerCase();
-            filtered = filtered.filter(m =>
-                (m.item && m.item.toLowerCase().includes(q)) ||
-                (m.category && m.category.toLowerCase().includes(q)) ||
-                (m.supplier && m.supplier.toLowerCase().includes(q)) ||
-                (m.notes && m.notes.toLowerCase().includes(q))
-            );
-        }
-
-        const activeDateEl = document.getElementById('site-store-active-date');
-        if (activeDateEl && !activeDateEl.value) {
-            activeDateEl.value = new Date().toISOString().split('T')[0];
-        }
-
-        // Refresh balance sheet modal if active
-        if (typeof renderBalanceSheetModal === 'function') {
-            const bsModal = document.getElementById('modal-balance-sheet');
-            if (bsModal && !bsModal.classList.contains('hidden')) {
-                renderBalanceSheetModal(balanceSheetSearchQuery);
-            }
-        }
-
-        const tbody = document.getElementById('store-materials-table-body');
-        const mobileContainer = document.getElementById('store-materials-mobile-cards');
-        if (!tbody && !mobileContainer) return;
-
-        if (filtered.length === 0) {
-            if (tbody) {
-                tbody.innerHTML = '<tr><td colspan="9" class="p-8 text-center text-slate-400">' +
-                    '<i class="fa-solid fa-boxes-stacked text-3xl mb-2 text-slate-600 block"></i>' +
-                    '<p class="font-medium text-sm">No materials matching your search or filter.</p>' +
-                    '<p class="text-xs text-slate-500 mt-1">Click &quot;Add New Material&quot; to add an item to the site store.</p>' +
-                    '</td></tr>';
-            }
-            if (mobileContainer) {
-                mobileContainer.innerHTML = '<div class="p-6 text-center text-slate-400 bg-slate-900 border border-slate-800 rounded-xl"><i class="fa-solid fa-boxes-stacked text-3xl mb-2 text-slate-600 block"></i><p class="font-medium text-sm">No materials matching your search or filter.</p><p class="text-xs text-slate-500 mt-1">Click &quot;Add New Material&quot; to add an item.</p></div>';
-            }
-            return;
-        }
-
-        if (tbody) {
-            tbody.innerHTML = filtered.map(m => {
-            const op = m.opening !== undefined ? m.opening : 0;
-            const rc = m.received !== undefined ? m.received : 0;
-            const us = m.used !== undefined ? m.used : 0;
-            const bl = m.balance !== undefined ? m.balance : (op + rc - us);
-            const isLow = m.isLowStock;
-
-            return '<tr class="border-b border-slate-800/60 hover:bg-slate-850/40 transition">' +
-                '<td class="p-3">' +
-                    '<div class="font-bold text-white text-xs sm:text-sm">' + (m.item || '') + '</div>' +
-                    '<div class="text-[11px] text-slate-400 flex flex-wrap items-center gap-2 mt-0.5">' +
-                        '<span class="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded text-[10px] font-medium">' + (m.category || 'Civil & Structural') + '</span>' +
-                        (m.notes ? '<span class="text-slate-400"><i class="fa-solid fa-location-dot text-slate-500 mr-1"></i>' + m.notes + '</span>' : '') +
-                        (m.supplier ? '<span class="text-slate-400">• ' + m.supplier + '</span>' : '') +
-                    '</div>' +
-                '</td>' +
-                '<td class="p-3 text-center text-slate-300 font-medium">' + (m.unit || 'Bags') + '</td>' +
-                '<td class="p-3 text-center text-slate-300 font-semibold">' + op + '</td>' +
-                '<td class="p-3 text-center text-cyan-400 font-bold">+' + rc + '</td>' +
-                '<td class="p-3 text-center text-amber-400 font-bold">−' + us + '</td>' +
-                '<td class="p-3 text-center font-black ' + (isLow ? 'text-rose-400 bg-rose-500/10 rounded-lg' : 'text-emerald-400 font-bold') + '">' +
-                    '<span class="text-sm sm:text-base">' + bl + '</span>' +
-                    '<span class="text-[10px] block font-normal text-slate-400">' + (m.unit || '') + '</span>' +
-                '</td>' +
-                '<td class="p-3 text-center text-slate-400">' +
-                    '<span class="text-xs font-semibold text-rose-300/90">' + (m.minAlert || 0) + '</span>' +
-                '</td>' +
-                '<td class="p-3 text-center">' +
-                    (isLow
-                        ? '<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[11px] font-bold px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 shadow-sm"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i> Low Stock</span>'
-                        : '<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold px-2.5 py-1 rounded-full inline-flex items-center gap-1.5 shadow-sm"><i class="fa-solid fa-circle-check text-emerald-400"></i> Adequate</span>'
-                    ) +
-                '</td>' +
-                '<td class="p-3 text-center">' +
-                    '<div class="flex items-center justify-center gap-1.5">' +
-                        '<button type="button" onclick="openQuickStockModal(&quot;receive&quot;, &quot;' + m.id + '&quot;)" title="Quick Receive (+ In)" class="bg-cyan-500/15 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 text-[11px] px-2 py-1 rounded-lg font-bold transition flex items-center gap-1">' +
-                            '<i class="fa-solid fa-plus text-[10px]"></i> In' +
-                        '</button>' +
-                        '<button type="button" onclick="openQuickStockModal(&quot;use&quot;, &quot;' + m.id + '&quot;)" title="Quick Record Usage (− Out)" class="bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-[11px] px-2 py-1 rounded-lg font-bold transition flex items-center gap-1">' +
-                            '<i class="fa-solid fa-minus text-[10px]"></i> Out' +
-                        '</button>' +
-                        '<button type="button" onclick="openEditStoreMaterialModal(&quot;' + m.id + '&quot;)" title="Edit Material" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-1.5 rounded-lg border border-slate-700 transition">' +
-                            '<i class="fa-solid fa-pen-to-square"></i>' +
-                        '</button>' +
-                        '<button type="button" onclick="deleteStoreMaterial(&quot;' + m.id + '&quot;)" title="Delete Material" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 p-1.5 rounded-lg border border-rose-500/30 transition">' +
-                            '<i class="fa-solid fa-trash-can"></i>' +
-                        '</button>' +
-                    '</div>' +
-                '</td>' +
-            '</tr>';
-        }).join('');
-        }
-
-        // Mobile Cards rendering for high usability on phones
-        if (mobileContainer) {
-            mobileContainer.innerHTML = filtered.map(m => {
-                const op = m.opening !== undefined ? m.opening : 0;
-                const rc = m.received !== undefined ? m.received : 0;
-                const us = m.used !== undefined ? m.used : 0;
-                const bl = m.balance !== undefined ? m.balance : (op + rc - us);
-                const isLow = m.isLowStock;
-
-                return '<div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-md space-y-3 hover:border-slate-700 transition">' +
-                    '<div class="flex items-start justify-between gap-2 border-b border-slate-800/80 pb-2.5">' +
-                        '<div>' +
-                            '<div class="font-bold text-white text-sm">' + (m.item || '') + '</div>' +
-                            '<div class="text-[11px] text-slate-400 flex flex-wrap items-center gap-1.5 mt-1">' +
-                                '<span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded-md text-[10px] font-medium border border-slate-700/60">' + (m.category || 'Civil & Structural') + '</span>' +
-                                (m.notes ? '<span class="text-slate-400 text-[10px]"><i class="fa-solid fa-location-dot text-slate-500 mr-1"></i>' + m.notes + '</span>' : '') +
-                                (m.supplier ? '<span class="text-slate-400 text-[10px]">• ' + m.supplier + '</span>' : '') +
-                            '</div>' +
-                        '</div>' +
-                        '<div>' +
-                            (isLow 
-                                ? '<span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation text-rose-400 text-[9px]"></i> Low Stock</span>'
-                                : '<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1"><i class="fa-solid fa-circle-check text-emerald-400 text-[9px]"></i> In Stock</span>'
-                            ) +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="grid grid-cols-4 gap-1.5 text-center">' +
-                        '<div class="bg-slate-850 border border-slate-800 p-2 rounded-lg">' +
-                            '<div class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Opening</div>' +
-                            '<div class="text-xs font-bold text-slate-200 mt-0.5">' + op + '</div>' +
-                            '<div class="text-[9px] text-slate-500 truncate">' + (m.unit || '') + '</div>' +
-                        '</div>' +
-                        '<div class="bg-cyan-950/30 border border-cyan-800/40 p-2 rounded-lg">' +
-                            '<div class="text-[9px] uppercase tracking-wider text-cyan-300 font-semibold">+ In</div>' +
-                            '<div class="text-xs font-black text-cyan-400 mt-0.5">+' + rc + '</div>' +
-                            '<div class="text-[9px] text-cyan-300/60 truncate">' + (m.unit || '') + '</div>' +
-                        '</div>' +
-                        '<div class="bg-amber-950/30 border border-amber-800/40 p-2 rounded-lg">' +
-                            '<div class="text-[9px] uppercase tracking-wider text-amber-300 font-semibold">− Used</div>' +
-                            '<div class="text-xs font-black text-amber-400 mt-0.5">−' + us + '</div>' +
-                            '<div class="text-[9px] text-amber-300/60 truncate">' + (m.unit || '') + '</div>' +
-                        '</div>' +
-                        '<div class="bg-slate-800/90 border ' + (isLow ? 'border-rose-500/50 bg-rose-950/30' : 'border-emerald-500/40 bg-emerald-950/30') + ' p-2 rounded-lg">' +
-                            '<div class="text-[9px] uppercase tracking-wider ' + (isLow ? 'text-rose-300' : 'text-emerald-300') + ' font-bold">Balance</div>' +
-                            '<div class="text-sm font-black ' + (isLow ? 'text-rose-400' : 'text-emerald-400') + ' mt-0.5">' + bl + '</div>' +
-                            '<div class="text-[9px] ' + (isLow ? 'text-rose-300/70' : 'text-emerald-300/70') + ' truncate">' + (m.unit || '') + '</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-800/60">' +
-                        '<div class="flex items-center gap-1.5">' +
-                            '<button type="button" onclick="openQuickStockModal(&quot;receive&quot;, &quot;' + m.id + '&quot;)" class="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1 active:scale-95">' +
-                                '<i class="fa-solid fa-arrow-down text-[10px]"></i> + Inflow' +
-                            '</button>' +
-                            '<button type="button" onclick="openQuickStockModal(&quot;use&quot;, &quot;' + m.id + '&quot;)" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1 active:scale-95">' +
-                                '<i class="fa-solid fa-arrow-up text-[10px]"></i> − Usage' +
-                            '</button>' +
-                        '</div>' +
-                        '<div class="flex items-center gap-1">' +
-                            '<button type="button" onclick="openEditStoreMaterialModal(&quot;' + m.id + '&quot;)" title="Edit" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg border border-slate-700 transition active:scale-95 text-xs">' +
-                                '<i class="fa-solid fa-pen-to-square"></i>' +
-                            '</button>' +
-                            '<button type="button" onclick="deleteStoreMaterial(&quot;' + m.id + '&quot;)" title="Delete" class="bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 p-2 rounded-lg border border-rose-500/30 transition active:scale-95 text-xs">' +
-                                '<i class="fa-solid fa-trash-can"></i>' +
-                            '</button>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>';
-            }).join('');
-        }
-    };
-
-    window.onSiteStoreActiveDateChange = function(newDate) {
-        if (!newDate) return;
-        const quickDateEl = document.getElementById('quick-stock-date');
-        if (quickDateEl) quickDateEl.value = newDate;
-        const matDateEl = document.getElementById('store-mat-date');
-        if (matDateEl) matDateEl.value = newDate;
-    };
-
-    window.setStoreFilter = function(filter) {
-        siteStoreFilter = filter;
-        const allBtn = document.getElementById('store-filter-all-btn');
-        const lowBtn = document.getElementById('store-filter-low-btn');
-        if (allBtn && lowBtn) {
-            if (filter === 'all') {
-                allBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-slate-950 transition';
-                lowBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 transition flex items-center gap-1.5';
-            } else {
-                lowBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-500 text-slate-950 transition flex items-center gap-1.5';
-                allBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition';
-            }
-        }
-        renderSiteStore();
-    };
-
-    window.onStoreSearchInput = function(val) {
-        siteStoreSearchQuery = String(val || '').trim();
-        renderSiteStore();
-    };
-
-    window.openAddStoreMaterialModal = function() {
-        const form = document.getElementById('store-material-form');
-        if (form) form.reset();
-        document.getElementById('store-mat-id').value = '';
-        const activeDateEl = document.getElementById('site-store-active-date');
-        const matDateEl = document.getElementById('store-mat-date');
-        if (matDateEl) {
-            matDateEl.value = (activeDateEl && activeDateEl.value) ? activeDateEl.value : new Date().toISOString().split('T')[0];
-        }
-        document.getElementById('store-material-modal-title').textContent = 'Add Material to Site Store';
-        const saveBtnText = document.getElementById('store-material-save-btn-text');
-        if (saveBtnText) saveBtnText.textContent = 'Save Material';
-        const submitBtn = document.getElementById('store-material-submit-btn');
-        if (submitBtn) {
-            submitBtn.removeAttribute('style');
-            submitBtn.className = 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs px-6 py-2.5 rounded-xl shadow-md transition cursor-pointer active:scale-95';
-        }
-        const modal = document.getElementById('modal-store-material');
-        if (modal) {
-            modal.classList.remove('hidden');
-            modal.scrollTop = 0;
-        }
-    };
-
-    window.openEditStoreMaterialModal = function(id) {
-        const list = getActiveSiteStore();
-        const m = list.find(item => item.id === id);
-        if (!m) return;
-
-        document.getElementById('store-mat-id').value = m.id;
-        document.getElementById('store-mat-item').value = m.item || '';
-        document.getElementById('store-mat-category').value = m.category || 'Civil & Structural';
-        document.getElementById('store-mat-unit').value = m.unit || 'Bags';
-        document.getElementById('store-mat-opening').value = m.opening !== undefined ? m.opening : 0;
-        document.getElementById('store-mat-received').value = m.received !== undefined ? m.received : 0;
-        document.getElementById('store-mat-used').value = m.used !== undefined ? m.used : 0;
-        document.getElementById('store-mat-min-alert').value = m.minAlert !== undefined ? m.minAlert : 50;
-        document.getElementById('store-mat-notes').value = m.notes || '';
-        document.getElementById('store-mat-supplier').value = m.supplier || '';
-
-        const activeDateEl = document.getElementById('site-store-active-date');
-        const matDateEl = document.getElementById('store-mat-date');
-        if (matDateEl) {
-            matDateEl.value = (activeDateEl && activeDateEl.value) ? activeDateEl.value : new Date().toISOString().split('T')[0];
-        }
-
-        document.getElementById('store-material-modal-title').textContent = 'Edit Material: ' + m.item;
-        const updateBtnText = document.getElementById('store-material-save-btn-text');
-        if (updateBtnText) updateBtnText.textContent = 'Update Material';
-        const submitBtn = document.getElementById('store-material-submit-btn');
-        if (submitBtn) {
-            submitBtn.removeAttribute('style');
-            submitBtn.className = 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs px-6 py-2.5 rounded-xl shadow-md transition cursor-pointer active:scale-95';
-        }
-        const modal = document.getElementById('modal-store-material');
-        if (modal) {
-            modal.classList.remove('hidden');
-            modal.scrollTop = 0;
-        }
-    };
-
-    window.closeStoreMaterialModal = function() {
-        const modal = document.getElementById('modal-store-material');
-        if (modal) modal.classList.add('hidden');
-    };
-
-    window.saveStoreMaterial = function(event) {
-        if (event) {
-            if (event.preventDefault) event.preventDefault();
-            if (event.stopPropagation) event.stopPropagation();
-        }
-        const id = document.getElementById('store-mat-id').value;
-        const item = document.getElementById('store-mat-item').value.trim();
-        const category = document.getElementById('store-mat-category').value;
-        const unit = document.getElementById('store-mat-unit').value;
-        const opening = parseFloat(document.getElementById('store-mat-opening').value) || 0;
-        const received = parseFloat(document.getElementById('store-mat-received').value) || 0;
-        const used = parseFloat(document.getElementById('store-mat-used').value) || 0;
-        const minAlert = parseFloat(document.getElementById('store-mat-min-alert').value) || 0;
-        const notes = document.getElementById('store-mat-notes').value.trim();
-        const supplier = document.getElementById('store-mat-supplier').value.trim();
-        const matDateEl = document.getElementById('store-mat-date');
-        const activeDateEl = document.getElementById('site-store-active-date');
-        const targetDate = (matDateEl && matDateEl.value) ? matDateEl.value : ((activeDateEl && activeDateEl.value) ? activeDateEl.value : new Date().toISOString().split('T')[0]);
-
-        if (!item) {
-            alert('Please specify the material description / name');
-            const itemInput = document.getElementById('store-mat-item');
-            if (itemInput) itemInput.focus();
-            return;
-        }
-
-        try {
-            const list = getActiveSiteStore();
-            if (id) {
-                const index = list.findIndex(m => m.id === id);
-                if (index >= 0) {
-                    const prevItemName = list[index].item;
-                    list[index] = {
-                        ...list[index],
-                        item, category, unit, opening, received, used, minAlert, notes, supplier, date: targetDate
-                    };
-                    if (received > 0) {
-                        recordStoreDeliveryToLog(targetDate, {
-                            item,
-                            prevItem: prevItemName,
-                            qty: received,
-                            unit,
-                            note: supplier || notes || 'Store Inventory'
-                        }, true);
-                    }
-                }
-            } else {
-                list.push({
-                    id: 'mat_' + Date.now(),
-                    item, category, unit, opening, received, used, minAlert, notes, supplier, date: targetDate
-                });
-                if (received > 0) {
-                    recordStoreDeliveryToLog(targetDate, {
-                        item,
-                        qty: received,
-                        unit,
-                        note: supplier || notes || 'Initial Store Delivery'
-                    }, false);
-                }
-            }
-
-            saveActiveSiteStore(list);
-            closeStoreMaterialModal();
-            renderSiteStore();
-            if (typeof showToast === 'function') {
-                showToast(id ? ('Material updated & logged for ' + targetDate) : ('New material added & logged for ' + targetDate));
-            }
-        } catch (err) {
-            console.error('saveStoreMaterial error:', err);
-            alert('Error saving material: ' + (err.message || err));
-        }
-    };
-
-    window.confirmDeleteStoreMaterial = function(id) {
-        const list = getActiveSiteStore();
-        const m = list.find(item => item.id === id);
-        const name = m ? m.item : 'this material';
-        if (!confirm('Are you sure you want to delete "' + name + '"?\n\nThis material and its detail will be deleted, action can\'t be undo.')) return;
-
-        const updated = list.filter(item => item.id !== id);
-        saveActiveSiteStore(updated);
-        renderSiteStore();
-        renderBalanceSheetModal();
-        if (typeof showToast === 'function') showToast('Material deleted successfully.');
-    };
-
-    window.deleteStoreMaterial = window.confirmDeleteStoreMaterial;
-
-    window.openQuickStockModal = function(action = 'receive', preselectId = null) {
-        const list = getActiveSiteStore();
-        const select = document.getElementById('quick-stock-material-select');
-        if (!select) return;
-
-        select.innerHTML = list.map(m =>
-            '<option value="' + m.id + '" data-unit="' + m.unit + '" data-balance="' + m.balance + '">' +
-            m.item + ' (Balance: ' + m.balance + ' ' + m.unit + ')' +
-            '</option>'
-        ).join('');
-
-        if (preselectId) {
-            select.value = preselectId;
-        }
-
-        const actionInput = document.getElementById('quick-stock-action');
-        const titleEl = document.getElementById('quick-stock-title');
-        const subEl = document.getElementById('quick-stock-sub');
-        const qtyLabel = document.getElementById('quick-stock-qty-label');
-        const submitBtn = document.getElementById('quick-stock-submit-btn');
-
-        if (actionInput) actionInput.value = action;
-        if (action === 'receive') {
-            if (titleEl) {
-                titleEl.className = 'font-bold text-cyan-400 text-base mb-1 flex items-center gap-2';
-                titleEl.innerHTML = '<i class="fa-solid fa-plus text-cyan-400"></i> Quick Stock Inflow (Maal Aaya / Received)';
-            }
-            if (subEl) subEl.textContent = 'Record incoming delivery or challan to increase store stock and log in daily archive.';
-            if (qtyLabel) {
-                qtyLabel.className = 'block text-xs font-semibold text-cyan-300 mb-1';
-                qtyLabel.textContent = 'Quantity Received *';
-            }
-            if (submitBtn) {
-                submitBtn.removeAttribute('style');
-                submitBtn.className = 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95';
-                submitBtn.innerHTML = '<i class="fa-solid fa-plus text-slate-950 font-bold"></i> <span class="text-slate-950 font-bold tracking-wide">Confirm Inflow (+ Receive)</span>';
-            }
-        } else {
-            if (titleEl) {
-                titleEl.className = 'font-bold text-amber-400 text-base mb-1 flex items-center gap-2';
-                titleEl.innerHTML = '<i class="fa-solid fa-minus text-amber-400"></i> Record Material Consumption (Maal Istemal Hua)';
-            }
-            if (subEl) subEl.textContent = 'Log materials issued or used on site to deduct from store stock.';
-            if (qtyLabel) {
-                qtyLabel.className = 'block text-xs font-semibold text-amber-300 mb-1';
-                qtyLabel.textContent = 'Quantity Consumed / Used *';
-            }
-            if (submitBtn) {
-                submitBtn.removeAttribute('style');
-                submitBtn.className = 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer active:scale-95';
-                submitBtn.innerHTML = '<i class="fa-solid fa-minus text-slate-950 font-bold"></i> <span class="text-slate-950 font-bold tracking-wide">Confirm Usage (− Deduct)</span>';
-            }
-        }
-
-        document.getElementById('quick-stock-qty').value = '';
-        document.getElementById('quick-stock-ref').value = '';
-        const activeDateEl = document.getElementById('site-store-active-date');
-        const dtInput = document.getElementById('quick-stock-date');
-        if (dtInput) {
-            dtInput.value = (activeDateEl && activeDateEl.value) ? activeDateEl.value : new Date().toISOString().split('T')[0];
-        }
-        onQuickStockMaterialChange();
-        const quickModal = document.getElementById('modal-quick-stock');
-        if (quickModal) {
-            quickModal.classList.remove('hidden');
-            quickModal.scrollTop = 0;
-        }
-    };
-
-    window.closeQuickStockModal = function() {
-        const modal = document.getElementById('modal-quick-stock');
-        if (modal) modal.classList.add('hidden');
-    };
-
-    window.onQuickStockMaterialChange = function() {
-        const select = document.getElementById('quick-stock-material-select');
-        const selected = select ? select.options[select.selectedIndex] : null;
-        if (!selected) return;
-
-        const unit = selected.getAttribute('data-unit') || 'Bags';
-        const balance = selected.getAttribute('data-balance') || '0';
-        const unitBadge = document.getElementById('quick-stock-unit-badge');
-        const infoDiv = document.getElementById('quick-stock-current-info');
-
-        if (unitBadge) unitBadge.textContent = unit;
-        if (infoDiv) infoDiv.innerHTML = 'Current Balance: <strong class="text-white">' + balance + ' ' + unit + '</strong>';
-    };
-
-    window.submitQuickStock = function(event) {
-        if (event && event.preventDefault) event.preventDefault();
-        const select = document.getElementById('quick-stock-material-select');
-        const matId = select ? select.value : null;
-        const action = document.getElementById('quick-stock-action').value;
-        const qty = parseFloat(document.getElementById('quick-stock-qty').value) || 0;
-        const ref = document.getElementById('quick-stock-ref').value.trim();
-        const dateInput = document.getElementById('quick-stock-date');
-        const activeDateEl = document.getElementById('site-store-active-date');
-        const receiptDate = (dateInput && dateInput.value) ? dateInput.value : ((activeDateEl && activeDateEl.value) ? activeDateEl.value : new Date().toISOString().split('T')[0]);
-
-        if (!matId || qty <= 0) {
-            alert('Please enter a valid quantity greater than zero');
-            return;
-        }
-
-        const list = getActiveSiteStore();
-        const m = list.find(item => item.id === matId);
-        if (!m) return;
-
-        if (action === 'receive') {
-            m.received = (parseFloat(m.received) || 0) + qty;
-            m.date = receiptDate;
-            if (ref) m.notes = (m.notes ? m.notes + '; ' : '') + 'Rcv: ' + ref;
-            // Record this delivery into the daily log for receiptDate so it appears in log archive, view log, and PDF report!
-            recordStoreDeliveryToLog(receiptDate, {
-                item: m.item,
-                qty: qty,
-                unit: m.unit,
-                note: ref || (m.supplier ? 'Supplier: ' + m.supplier : 'Store Delivery')
-            }, false);
-        } else {
-            m.used = (parseFloat(m.used) || 0) + qty;
-            m.date = receiptDate;
-            if (ref) m.notes = (m.notes ? m.notes + '; ' : '') + 'Used: ' + ref;
-        }
-
-        saveActiveSiteStore(list);
-        closeQuickStockModal();
-        renderSiteStore();
-
-        const newBal = m.balance;
-        const isLow = m.isLowStock;
-        let msg = (action === 'receive' ? 'Received ' : 'Consumed ') + qty + ' ' + m.unit + ' for ' + m.item + ' on ' + receiptDate + '. New Balance: ' + newBal + ' ' + m.unit;
-        if (isLow) msg += ' [!] (Low Stock Warning!)';
-        if (typeof showToast === 'function') showToast(msg);
-    };
-
-    window.saveActiveSiteLogs = function(logs) {
-        if (!activeSite || !activeSite.id) return;
-        const siteKey = getSiteLogKey(activeSite.id);
-        try {
-            localStorage.setItem(siteKey, JSON.stringify(logs));
-        } catch (e) {
-            console.warn('LocalStorage save error:', e);
-        }
-        siteLogsCache = logs;
-        if (typeof renderHistoryLogs === 'function') {
-            try { renderHistoryLogs(); } catch (_) {}
-        }
-        if (typeof loadLogForSelectedDate === 'function') {
-            try { loadLogForSelectedDate(); } catch (_) {}
-        }
-    };
-
-    window.recordStoreDeliveryToLog = function(date, delivery, isUpdate = false) {
-        if (!activeSite || !activeSite.id) return;
-        if (!date || !delivery || !delivery.item) return;
-
-        const logs = getActiveSiteLogs();
-        let log = logs.find(l => l.date === date);
-        if (!log) {
-            log = {
-                id: 'log_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                siteId: activeSite.id,
-                date: date,
-                weather: 'Sunny / Clear',
-                supervisor: (typeof currentUser !== 'undefined' && currentUser) ? currentUser : 'Site Store Incharge',
-                totalLabor: 0,
-                laborBreakdown: {},
-                materials: [],
-                completedTasks: [],
-                pendingTasks: [],
-                delays: [],
-                images: [],
-                createdAt: new Date().toISOString()
-            };
-            logs.push(log);
-        }
-        if (!Array.isArray(log.materials)) log.materials = [];
-
-        const dItem = String(delivery.item || '').trim().toLowerCase();
-        const prevItem = delivery.prevItem ? String(delivery.prevItem).trim().toLowerCase() : '';
-        const existingIdx = log.materials.findIndex(m => {
-            const mItem = String(m.item || '').trim().toLowerCase();
-            return mItem === dItem || (prevItem && mItem === prevItem);
-        });
-
-        const dQty = parseFloat(delivery.qty) || 0;
-        const dUnit = delivery.unit || 'Bags';
-        const dNote = delivery.note || '';
-
-        if (existingIdx >= 0) {
-            if (isUpdate) {
-                log.materials[existingIdx].item = delivery.item;
-                log.materials[existingIdx].qty = dQty;
-                log.materials[existingIdx].unit = dUnit;
-                if (dNote) log.materials[existingIdx].note = dNote;
-            } else {
-                const currentQty = parseFloat(log.materials[existingIdx].qty) || 0;
-                log.materials[existingIdx].qty = currentQty + dQty;
-                if (dNote) {
-                    const prevNote = log.materials[existingIdx].note || '';
-                    log.materials[existingIdx].note = prevNote ? (prevNote + '; ' + dNote) : dNote;
-                }
-            }
-        } else {
-            log.materials.push({
-                item: delivery.item,
-                qty: dQty,
-                unit: dUnit,
-                note: dNote
-            });
-        }
-
-        saveActiveSiteLogs(logs);
-
-        // Sync to Firestore if online
-        try {
-            if (typeof db !== 'undefined' && db && activeSite && activeSite.id) {
-                db.collection('sites').doc(activeSite.id).collection('logs').doc(log.id).set(log, { merge: true }).catch(() => {});
-            }
-        } catch (_) {}
-
-        // If the viewLogDetails modal is currently open for this date, refresh view immediately!
-        try {
-            const detailModal = document.getElementById('modal-log-detail');
-            if (detailModal && !detailModal.classList.contains('hidden')) {
-                const modalDateEl = document.getElementById('modal-log-date');
-                if (modalDateEl && modalDateEl.textContent.trim() === date) {
-                    if (typeof viewLogDetails === 'function') viewLogDetails(log.id);
-                }
-            }
-        } catch (_) {}
-    };
-
-    window.closeLogModal = function() {
-        if (typeof closeLogDetailModal === 'function') closeLogDetailModal();
-    };
-
-    // Backward-compatibility shims
-    window.calculateMaterialBalance = function() { if (typeof renderSiteStore === 'function') renderSiteStore(); };
-    window.updateLowStockSummaryBadge = function() { if (typeof renderSiteStore === 'function') renderSiteStore(); };
-
-    // ============================================================
-    // DEDICATED STORE BALANCE SHEET VIEWER MODAL
-    // ============================================================
-    let balanceSheetFilterMode = 'all'; // 'all' | 'low'
-    let balanceSheetSearchQuery = '';
-
-    window.openBalanceSheetModal = function() {
-        renderBalanceSheetModal(balanceSheetSearchQuery);
-        const modal = document.getElementById('modal-balance-sheet');
-        if (modal) {
-            modal.classList.remove('hidden');
-            modal.scrollTop = 0;
-        }
-    };
-
-    window.closeBalanceSheetModal = function() {
-        const modal = document.getElementById('modal-balance-sheet');
-        if (modal) modal.classList.add('hidden');
-    };
-
-    window.setBalanceSheetFilter = function(mode) {
-        balanceSheetFilterMode = mode;
-        const allBtn = document.getElementById('bs-filter-all-btn');
-        const lowBtn = document.getElementById('bs-filter-low-btn');
-        if (allBtn && lowBtn) {
-            if (mode === 'low') {
-                allBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer';
-                lowBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-500 text-white shadow transition flex items-center gap-1.5 cursor-pointer';
-            } else {
-                allBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow transition cursor-pointer';
-                lowBtn.className = 'px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 transition flex items-center gap-1.5 cursor-pointer';
-            }
-        }
-        renderBalanceSheetModal(balanceSheetSearchQuery);
-    };
-
-    window.onBalanceSheetSearchInput = function(val) {
-        balanceSheetSearchQuery = String(val || '');
-        renderBalanceSheetModal(balanceSheetSearchQuery);
-    };
-
-    window.printBalanceSheetModal = function() {
-        window.print();
-    };
-
-    window.renderBalanceSheetModal = function(query = balanceSheetSearchQuery) {
-        const list = getActiveSiteStore();
-        const siteName = (activeSite && activeSite.name) ? activeSite.name : 'All Sites';
-        const activeDateEl = document.getElementById('site-store-active-date');
-        const activeDate = (activeDateEl && activeDateEl.value) ? activeDateEl.value : new Date().toISOString().split('T')[0];
-
-        const siteEl = document.getElementById('balance-sheet-modal-site');
-        const dateEl = document.getElementById('balance-sheet-modal-date');
-        if (siteEl) siteEl.textContent = siteName;
-        if (dateEl) dateEl.textContent = activeDate;
-
-        const totalItems = list.length;
-        const lowStockItems = list.filter(m => (parseFloat(m.minAlert) > 0) && (parseFloat(m.balance) <= parseFloat(m.minAlert)));
-        const totalReceived = list.reduce((acc, m) => acc + (parseFloat(m.received) || 0), 0);
-        const totalUsed = list.reduce((acc, m) => acc + (parseFloat(m.used) || 0), 0);
-
-        const statTotal = document.getElementById('bs-stat-total');
-        const statLow = document.getElementById('bs-stat-low');
-        const statRecv = document.getElementById('bs-stat-recv');
-        const statUsed = document.getElementById('bs-stat-used');
-
-        if (statTotal) statTotal.textContent = totalItems;
-        if (statLow) statLow.textContent = lowStockItems.length;
-        if (statRecv) statRecv.textContent = (Math.round(totalReceived * 10) / 10).toLocaleString();
-        if (statUsed) statUsed.textContent = (Math.round(totalUsed * 10) / 10).toLocaleString();
-
-        const bsAllCount = document.getElementById('bs-filter-all-count');
-        const bsLowCount = document.getElementById('bs-filter-low-count');
-        if (bsAllCount) bsAllCount.textContent = totalItems;
-        if (bsLowCount) bsLowCount.textContent = lowStockItems.length;
-
-        let filtered = list;
-        if (balanceSheetFilterMode === 'low') {
-            filtered = filtered.filter(m => (parseFloat(m.minAlert) > 0) && (parseFloat(m.balance) <= parseFloat(m.minAlert)));
-        }
-
-        const q = String(query || '').trim().toLowerCase();
-        if (q) {
-            filtered = filtered.filter(m =>
-                (m.item && m.item.toLowerCase().includes(q)) ||
-                (m.category && m.category.toLowerCase().includes(q)) ||
-                (m.supplier && m.supplier.toLowerCase().includes(q)) ||
-                (m.notes && m.notes.toLowerCase().includes(q))
-            );
-        }
-
-        const container = document.getElementById('balance-sheet-modal-cards');
-        if (!container) return;
-
-        if (filtered.length === 0) {
-            container.innerHTML = '<div class="p-8 text-center text-slate-400 bg-slate-800/40 rounded-xl border border-slate-700/50"><i class="fa-solid fa-boxes-stacked text-3xl mb-2 text-slate-500"></i><p class="text-sm font-semibold">No materials match your search or filter.</p></div>';
-            return;
-        }
-
-        const desktopRows = filtered.map(m => {
-            const isLow = (parseFloat(m.minAlert) > 0) && (parseFloat(m.balance) <= parseFloat(m.minAlert));
-            const statusBadge = isLow 
-                ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-500/15 text-rose-300 border border-rose-500/40 shrink-0"><i class="fa-solid fa-triangle-exclamation text-[8px]"></i> Low Stock</span>'
-                : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 shrink-0"><i class="fa-solid fa-circle-check text-[8px]"></i> In Stock</span>';
-            const balColor = isLow ? 'text-rose-400' : 'text-emerald-400';
-            const rowBg = isLow ? 'bg-rose-950/20 hover:bg-rose-900/30' : 'hover:bg-slate-800/40';
-
-            const suppLoc = [
-                m.supplier ? '<span class="text-slate-400"><i class="fa-solid fa-truck-field text-slate-500 mr-1"></i>' + m.supplier + '</span>' : '',
-                m.notes ? '<span class="text-slate-400"><i class="fa-solid fa-location-dot text-slate-500 mr-1"></i>' + m.notes + '</span>' : ''
-            ].filter(Boolean).join(' • ');
-
-            return '<tr class="transition ' + rowBg + '">' +
-                '<td class="py-2.5 px-3">' +
-                    '<div class="font-bold text-white text-xs truncate max-w-[210px]">' + (m.item || 'Item') + '</div>' +
-                    '<div class="text-[10px] text-cyan-400 font-semibold">' + (m.category || 'Civil & Structural') + '</div>' +
-                    (suppLoc ? '<div class="text-[10px] text-slate-400 mt-0.5 truncate max-w-[260px]">' + suppLoc + '</div>' : '') +
-                '</td>' +
-                '<td class="py-2.5 px-2 text-center text-slate-300 text-xs font-medium">' + (m.unit || '') + '</td>' +
-                '<td class="py-2.5 px-2 text-right font-mono text-slate-300 text-xs">' + (m.opening !== undefined ? m.opening : 0) + '</td>' +
-                '<td class="py-2.5 px-2 text-right font-mono text-cyan-300 font-bold text-xs">+' + (m.received !== undefined ? m.received : 0) + '</td>' +
-                '<td class="py-2.5 px-2 text-right font-mono text-amber-300 font-bold text-xs">−' + (m.used !== undefined ? m.used : 0) + '</td>' +
-                '<td class="py-2.5 px-3 text-right font-mono font-black text-sm ' + balColor + '">' + m.balance + '</td>' +
-                '<td class="py-2.5 px-2 text-center">' + statusBadge + '</td>' +
-                '<td class="py-2.5 px-3 text-right whitespace-nowrap">' +
-                    '<div class="inline-flex items-center gap-1.5">' +
-                        '<button type="button" onclick="closeBalanceSheetModal(); openQuickStockModal(&quot;receive&quot;, &quot;' + m.id + '&quot;);" class="bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 text-[11px] px-2 py-1 rounded-lg font-bold transition cursor-pointer" title="Quick Inflow">+ In</button>' +
-                        '<button type="button" onclick="closeBalanceSheetModal(); openQuickStockModal(&quot;use&quot;, &quot;' + m.id + '&quot;);" class="bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-[11px] px-2 py-1 rounded-lg font-bold transition cursor-pointer" title="Record Usage">− Use</button>' +
-                        '<button type="button" onclick="closeBalanceSheetModal(); openEditStoreMaterialModal(&quot;' + m.id + '&quot;);" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] p-1 px-2 rounded-lg transition cursor-pointer" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>' +
-                        '<button type="button" onclick="confirmDeleteStoreMaterial(&quot;' + m.id + '&quot;);" class="bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-[11px] p-1 px-2 rounded-lg transition cursor-pointer" title="Delete Material"><i class="fa-solid fa-trash-can"></i></button>' +
-                    '</div>' +
-                '</td>' +
-            '</tr>';
-        }).join('');
-
-        const mobileCards = filtered.map(m => {
-            const isLow = (parseFloat(m.minAlert) > 0) && (parseFloat(m.balance) <= parseFloat(m.minAlert));
-            const statusBadge = isLow 
-                ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-500/15 text-rose-300 border border-rose-500/40 shrink-0"><i class="fa-solid fa-triangle-exclamation text-[8px]"></i> Low Stock</span>'
-                : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 shrink-0"><i class="fa-solid fa-circle-check text-[8px]"></i> In Stock</span>';
-
-            const balColor = isLow ? 'text-rose-400' : 'text-emerald-400';
-            const cardBorder = isLow ? 'border-rose-500/40 bg-rose-950/20' : 'border-slate-800 bg-slate-850/80';
-
-            const suppLoc = [
-                m.supplier ? '<span class="truncate"><i class="fa-solid fa-truck-field text-slate-500 mr-1"></i>' + m.supplier + '</span>' : '',
-                m.notes ? '<span class="truncate"><i class="fa-solid fa-location-dot text-slate-500 mr-1"></i>' + m.notes + '</span>' : ''
-            ].filter(Boolean).join(' • ');
-
-            return '<div class="p-3 rounded-xl border ' + cardBorder + ' shadow-sm transition space-y-2">' +
-                '<div class="flex items-start justify-between gap-2">' +
-                    '<div class="min-w-0 flex-1">' +
-                        '<div class="flex items-center gap-2 flex-wrap mb-1">' +
-                            '<span class="text-[9px] text-cyan-400 font-bold uppercase tracking-wider truncate max-w-[130px]">' + (m.category || 'Civil') + '</span>' +
-                            statusBadge +
-                        '</div>' +
-                        '<h4 class="text-xs sm:text-sm font-bold text-white truncate">' + (m.item || 'Item') + '</h4>' +
-                        (suppLoc ? '<div class="text-[10px] text-slate-400 mt-0.5 truncate">' + suppLoc + '</div>' : '') +
-                    '</div>' +
-                    '<div class="text-right shrink-0">' +
-                        '<span class="text-base sm:text-lg font-black ' + balColor + '">' + m.balance + '</span>' +
-                        '<span class="text-[10px] font-semibold text-slate-400 ml-1">' + (m.unit || '') + '</span>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/80 text-[10px]">' +
-                    '<div class="flex items-center gap-2 font-mono text-slate-400 flex-wrap">' +
-                        '<span>Op: <strong class="text-slate-200">' + (m.opening !== undefined ? m.opening : 0) + '</strong></span>' +
-                        '<span>+In: <strong class="text-cyan-300 font-bold">' + (m.received !== undefined ? m.received : 0) + '</strong></span>' +
-                        '<span>−Use: <strong class="text-amber-300 font-bold">' + (m.used !== undefined ? m.used : 0) + '</strong></span>' +
-                    '</div>' +
-                    '<div class="flex items-center gap-1 shrink-0">' +
-                        '<button type="button" onclick="closeBalanceSheetModal(); openQuickStockModal(&quot;receive&quot;, &quot;' + m.id + '&quot;);" class="bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 text-[10px] px-2 py-0.5 rounded-md font-bold cursor-pointer">+ In</button>' +
-                        '<button type="button" onclick="closeBalanceSheetModal(); openQuickStockModal(&quot;use&quot;, &quot;' + m.id + '&quot;);" class="bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-[10px] px-2 py-0.5 rounded-md font-bold cursor-pointer">− Use</button>' +
-                        '<button type="button" onclick="closeBalanceSheetModal(); openEditStoreMaterialModal(&quot;' + m.id + '&quot;);" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] p-1 px-1.5 rounded-md cursor-pointer" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>' +
-                        '<button type="button" onclick="confirmDeleteStoreMaterial(&quot;' + m.id + '&quot;);" class="bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-[10px] p-1 px-1.5 rounded-md cursor-pointer" title="Delete Material"><i class="fa-solid fa-trash-can"></i></button>' +
-                    '</div>' +
-                '</div>' +
-            '</div>';
-        }).join('');
-
-        container.innerHTML = 
-            '<div class="hidden md:block overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/60 shadow-inner">' +
-                '<table class="w-full text-left border-collapse">' +
-                    '<thead>' +
-                        '<tr class="border-b border-slate-800 bg-slate-850/90 text-[10px] uppercase font-bold text-slate-400 tracking-wider">' +
-                            '<th class="py-2.5 px-3">Material, Supplier & Location</th>' +
-                            '<th class="py-2.5 px-2 text-center">Unit</th>' +
-                            '<th class="py-2.5 px-2 text-right">Opening</th>' +
-                            '<th class="py-2.5 px-2 text-right text-cyan-400">+ Received</th>' +
-                            '<th class="py-2.5 px-2 text-right text-amber-400">− Used</th>' +
-                            '<th class="py-2.5 px-3 text-right">Balance</th>' +
-                            '<th class="py-2.5 px-2 text-center">Status</th>' +
-                            '<th class="py-2.5 px-3 text-right">Actions</th>' +
-                        '</tr>' +
-                    '</thead>' +
-                    '<tbody class="divide-y divide-slate-800/60 text-xs">' +
-                        desktopRows +
-                    '</tbody>' +
-                '</table>' +
-            '</div>' +
-            '<div class="md:hidden space-y-2">' +
-                mobileCards +
-            '</div>';
-    };
-
-    // Clean exit from Editing Mode to New Entry Mode
-    window.cancelEditingLog = function() {
-        editingLogId = null;
-        const ind = document.getElementById('editing-indicator');
-        if (ind) ind.classList.add('hidden');
-        const modeBadge = document.getElementById('form-mode-badge');
-        if (modeBadge) {
-            modeBadge.textContent = "New Entry Mode";
-            modeBadge.className = "text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-md";
-        }
-        const saveBtn = document.getElementById('save-log-btn');
-        const updateBtn = document.getElementById('update-log-btn');
-        if (saveBtn) saveBtn.classList.remove('hidden');
-        if (updateBtn) updateBtn.classList.add('hidden');
-        if (typeof resetFormAfterSave === 'function') resetFormAfterSave();
-        if (typeof clearDailyLogDraft === 'function') clearDailyLogDraft();
-        if (typeof showToast === 'function') showToast('Exited edit mode. Ready for new log entry.');
-    };
-
-    // ============================================================
     // SESSION PERSISTENCE (FIXES AUTO-LOGOUT ISSUE)
     // ============================================================
     const STORAGE_SESSION_KEY = 'AE_ACTIVE_USER_SESSION_V2';
@@ -10876,9 +9279,6 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                 if (userDisp) userDisp.textContent = currentUser;
                 if (supInput) supInput.value = currentUser;
                 if (histTitle) histTitle.textContent = activeSite.name;
-
-                editingLogId = null;
-                if (typeof resetFormAfterSave === 'function') resetFormAfterSave();
 
                 setupFirestoreRealtimeListener();
                 setupMachineryListener();
@@ -10936,32 +9336,15 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                 });
             }
 
-            // Collect materials with stock tracking
+            // Collect materials
             const materials = [];
             document.querySelectorAll('.material-row').forEach(row => {
                 const item = (row.querySelector('.mat-item')?.value || '').trim();
+                const qty = row.querySelector('.mat-qty')?.value || '';
                 const unit = (row.querySelector('.mat-unit')?.value || '').trim();
-                const opening = parseFloat(row.querySelector('.mat-opening')?.value) || 0;
-                const received = parseFloat(row.querySelector('.mat-received')?.value) || 0;
-                const used = parseFloat(row.querySelector('.mat-used')?.value) || 0;
-                const balance = parseFloat(row.querySelector('.mat-balance')?.value) || (opening + received - used);
-                const minAlert = parseFloat(row.querySelector('.mat-min-alert')?.value) || 0;
                 const note = (row.querySelector('.mat-note')?.value || '').trim();
-                const isLowStock = minAlert > 0 && balance <= minAlert;
-
-                if (item || received || opening) {
-                    materials.push({
-                        item,
-                        unit,
-                        opening,
-                        received,
-                        qty: received,
-                        used,
-                        balance,
-                        minAlert,
-                        isLowStock,
-                        note
-                    });
+                if (item || qty) {
+                    materials.push({ item, qty, unit, note });
                 }
             });
 
@@ -10990,7 +9373,7 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
             });
 
             const draftData = {
-                editingLogId: null,
+                editingLogId: editingLogId || null,
                 date: dateInput.value,
                 weather: weatherInput ? weatherInput.value : 'Clear',
                 supervisor: supervisorInput ? supervisorInput.value : (currentUser || ''),
@@ -11024,19 +9407,26 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
             const dateInput = document.getElementById('log-date');
             if (!dateInput) return false;
 
-            // Never restore editing mode on refresh or login - ensure fresh entry mode
-            editingLogId = null;
-            const ind = document.getElementById('editing-indicator');
-            const modeBadge = document.getElementById('form-mode-badge');
-            const saveBtn = document.getElementById('save-log-btn');
-            const updateBtn = document.getElementById('update-log-btn');
-            if (ind) ind.classList.add('hidden');
-            if (modeBadge) {
-                modeBadge.textContent = "New Entry Mode";
-                modeBadge.className = "text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-md";
+            // Restore editing mode state if was editing
+            if (draft.editingLogId) {
+                editingLogId = draft.editingLogId;
+                const ind = document.getElementById('editing-indicator');
+                const dateDisp = document.getElementById('editing-date-display');
+                const modeBadge = document.getElementById('form-mode-badge');
+                const saveBtn = document.getElementById('save-log-btn');
+                const updateBtn = document.getElementById('update-log-btn');
+                const notice = document.getElementById('log-exists-notice');
+
+                if (ind) ind.classList.remove('hidden');
+                if (dateDisp) dateDisp.textContent = draft.date;
+                if (modeBadge) {
+                    modeBadge.textContent = "Editing Mode";
+                    modeBadge.className = "text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-md font-bold";
+                }
+                if (saveBtn) saveBtn.classList.add('hidden');
+                if (updateBtn) updateBtn.classList.remove('hidden');
+                if (notice) notice.classList.add('hidden');
             }
-            if (saveBtn) saveBtn.classList.remove('hidden');
-            if (updateBtn) updateBtn.classList.add('hidden');
 
             dateInput.value = draft.date;
 
@@ -11319,122 +9709,47 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                 y += 3;
             }
 
-            // 2. Material Stock & Consumption (Site Store Tracker)
-            checkBreak(30);
+            // 2. Materials
+            checkBreak(25);
             doc.setFontSize(10.5);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(18, 50, 100);
-            doc.text("2. MATERIAL STOCK & CONSUMPTION (SITE STORE TRACKER)", margin, y);
+            doc.text("2. MATERIAL DELIVERIES (MAAL RECEIVED)", margin, y);
             y += 4;
 
-            const siteStore = typeof getActiveSiteStore === 'function' ? getActiveSiteStore() : [];
-            const lowStockItems = siteStore.filter(m => (parseFloat(m.minAlert) > 0) && (parseFloat(m.balance) <= parseFloat(m.minAlert)));
-
-            if (lowStockItems.length > 0) {
-                const alertText = "[!] LOW STOCK WARNING: " + lowStockItems.map(m => (m.item || 'Item') + ' (Remaining: ' + m.balance + ' ' + (m.unit || '') + ' vs Min: ' + m.minAlert + ' ' + (m.unit || '') + ')').join(' | ') + " -- Advance purchase order recommended immediately!";
-                const wrappedLines = doc.splitTextToSize(alertText, contentWidth - 8);
-                const boxHeight = Math.max(10, wrappedLines.length * 4.2 + 5);
-                checkBreak(boxHeight + 5);
-                doc.setFillColor(254, 242, 242);
-                doc.setDrawColor(239, 68, 68);
-                doc.roundedRect(margin, y, contentWidth, boxHeight, 1.5, 1.5, 'FD');
-                doc.setFontSize(8);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(185, 28, 28);
-                doc.text(wrappedLines, margin + 4, y + 4.5);
-                y += boxHeight + 4;
-            }
-
-            if (siteStore.length === 0) {
+            const mats = log.materials && Array.isArray(log.materials) ? log.materials : [];
+            if (mats.length === 0) {
                 doc.setFontSize(8.5);
                 doc.setFont('helvetica', 'italic');
                 doc.setTextColor(100, 110, 130);
-                doc.text("No material inventory configured for this site.", margin + 4, y + 4);
+                doc.text("No incoming materials delivered today.", margin + 4, y + 4);
                 y += 8;
             } else {
                 doc.setFillColor(230, 238, 250);
                 doc.rect(margin, y, contentWidth, 6, 'F');
-                doc.setFontSize(7.5);
+                doc.setFontSize(8);
                 doc.setFont('helvetica', 'bold');
                 doc.setTextColor(30, 45, 75);
-                doc.text("Material Description", margin + 2, y + 4.2);
-                doc.text("Unit", margin + 54, y + 4.2);
-                doc.text("Opening", margin + 70, y + 4.2);
-                doc.text("Received", margin + 87, y + 4.2);
-                doc.text("Used", margin + 105, y + 4.2);
-                doc.text("Balance", margin + 120, y + 4.2);
-                doc.text("Status", margin + 138, y + 4.2);
-                doc.text("Supplier / Note", margin + 155, y + 4.2);
+                doc.text("Item / Description", margin + 4, y + 4.5);
+                doc.text("Qty", margin + 75, y + 4.5);
+                doc.text("Unit", margin + 95, y + 4.5);
+                doc.text("Supplier / Note", margin + 120, y + 4.5);
                 y += 6;
 
                 doc.setFont('helvetica', 'normal');
-                siteStore.forEach((m, i) => {
+                mats.forEach((m, i) => {
                     checkBreak(7);
                     if (i % 2 === 1) {
                         doc.setFillColor(248, 250, 254);
                         doc.rect(margin, y, contentWidth, 5.5, 'F');
                     }
-                    const openingVal = m.opening !== undefined ? m.opening : '-';
-                    const recvVal = m.received !== undefined ? m.received : (m.qty !== undefined ? m.qty : '-');
-                    const usedVal = m.used !== undefined ? m.used : 0;
-                    const balVal = m.balance !== undefined ? m.balance : (typeof m.qty === 'number' ? m.qty : '-');
-                    const isLow = m.isLowStock || (m.minAlert > 0 && balVal <= m.minAlert);
-
-                    doc.setFontSize(7.5);
-                    doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(30, 40, 60);
-                    doc.text(String(m.item || '').substring(0, 30), margin + 2, y + 4);
-                    doc.text(String(m.unit || 'Bags'), margin + 54, y + 4);
-                    doc.text(String(openingVal), margin + 70, y + 4);
-                    doc.text(String(recvVal), margin + 87, y + 4);
-                    doc.text(String(usedVal), margin + 105, y + 4);
-
-                    doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(16, 120, 60);
-                    doc.text(String(balVal), margin + 120, y + 4);
-
-                    if (isLow) {
-                        doc.setTextColor(190, 25, 25);
-                        doc.text("LOW STOCK", margin + 138, y + 4);
-                    } else {
-                        doc.setTextColor(40, 100, 70);
-                        doc.text("In Stock", margin + 138, y + 4);
-                    }
-
-                    doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(80, 90, 110);
-                    doc.text(String(m.note || '-').substring(0, 20), margin + 155, y + 4);
+                    doc.text(String(m.item || ''), margin + 4, y + 4);
+                    doc.text(String(m.qty || ''), margin + 75, y + 4);
+                    doc.text(String(m.unit || ''), margin + 95, y + 4);
+                    doc.text(String(m.note || '-'), margin + 120, y + 4);
                     y += 5.5;
                 });
                 y += 3;
-            }
-
-            // Specific Daily Deliveries (logged on this date)
-            const dayDeliveries = log.materials && Array.isArray(log.materials) ? log.materials : [];
-            if (dayDeliveries.length > 0) {
-                checkBreak(18);
-                doc.setFontSize(8.5);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(18, 50, 100);
-                doc.text("Material Deliveries Received on " + (log.date || 'Today') + ":", margin + 2, y + 4);
-                y += 5.5;
-                dayDeliveries.forEach(dm => {
-                    checkBreak(6);
-                    doc.setFontSize(8);
-                    doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(40, 50, 70);
-                    const noteStr = dm.note ? " (Supplier / Challan: " + dm.note + ")" : "";
-                    doc.text("- " + (dm.item || 'Item') + ": " + (dm.qty || '0') + " " + (dm.unit || '') + noteStr, margin + 4, y + 3.5);
-                    y += 4.8;
-                });
-                y += 2.5;
-            } else {
-                checkBreak(10);
-                doc.setFontSize(8);
-                doc.setFont('helvetica', 'italic');
-                doc.setTextColor(100, 110, 130);
-                doc.text("No material deliveries received on " + (log.date || 'this date') + ".", margin + 2, y + 3.5);
-                y += 5;
             }
 
             // 3. Plant & Machinery Log
@@ -11501,7 +9816,7 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                 doc.setTextColor(30, 40, 60);
                 comps.forEach(c => {
                     checkBreak(6);
-                    doc.text(`- ${c.task}${c.location ? ` [Zone: ${c.location}]` : ''}`, margin + 4, y + 4);
+                    doc.text(`• ${c.task}${c.location ? ` [Zone: ${c.location}]` : ''}`, margin + 4, y + 4);
                     y += 5;
                 });
                 y += 3;
@@ -11528,7 +9843,7 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                 doc.setTextColor(30, 40, 60);
                 pends.forEach(p => {
                     checkBreak(6);
-                    doc.text(`- ${p.task}${p.targetDate ? ` (Target: ${p.targetDate})` : ''}`, margin + 4, y + 4);
+                    doc.text(`• ${p.task}${p.targetDate ? ` (Target: ${p.targetDate})` : ''}`, margin + 4, y + 4);
                     y += 5;
                 });
                 y += 3;
@@ -11542,14 +9857,8 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
             doc.text("6. DELAYS & REASONS ANALYSIS", margin, y);
             y += 4;
 
-            const rawDelays = log.delays && Array.isArray(log.delays) ? log.delays : [];
-            const validDelays = rawDelays.filter(d => {
-                if (!d || !d.task) return false;
-                const t = d.task.trim().toLowerCase();
-                return !['no delay', 'no delays', 'none', 'n/a', '--', '-', 'nil'].includes(t);
-            });
-
-            if (validDelays.length === 0) {
+            const delays = log.delays && Array.isArray(log.delays) ? log.delays : [];
+            if (delays.length === 0) {
                 doc.setFontSize(8.5);
                 doc.setFont('helvetica', 'italic');
                 doc.setTextColor(100, 110, 130);
@@ -11559,9 +9868,9 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, 
                 doc.setFontSize(8.5);
                 doc.setFont('helvetica', 'normal');
                 doc.setTextColor(160, 20, 30);
-                validDelays.forEach(d => {
+                delays.forEach(d => {
                     checkBreak(6);
-                    doc.text(`[DELAY] ${d.task} - Reason: ${d.reason || 'None specified'}`, margin + 4, y + 4);
+                    doc.text(`⚠ ${d.task} -> Reason: ${d.reason}`, margin + 4, y + 4);
                     y += 5;
                 });
                 y += 3;
