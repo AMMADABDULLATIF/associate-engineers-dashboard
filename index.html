@@ -2576,6 +2576,7 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 #history-records-list button{border-radius:10px!important;min-height:36px;padding:7px 12px!important}
 #history-records-list .hist-date-group{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:12px!important}
 #history-records-list .hist-weather-badge{padding:4px 11px!important;border-radius:9px!important}
+#history-records-list .hist-badges{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .hist-stat-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;background:rgba(10,16,32,.62);border:1px solid var(--ae-line);border-radius:13px;padding:12px}
 .hist-stat-strip>div{min-width:0}
 /* AE worksite sidebar brand mark: clean AE monogram badge */
@@ -2583,7 +2584,19 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 .sidebar-brand-icon svg{width:36px!important;height:36px!important}
 @media(min-width:1080px){#history-hero-header{flex-direction:row;align-items:center}#history-hero-actions{width:auto;flex:0 0 auto}}
 @media(max-width:900px){#history-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}}
-@media(max-width:760px){#history-records-list{grid-template-columns:1fr!important}#history-main-view>div:first-child{padding:16px!important}.hist-stat-strip{grid-template-columns:1fr!important}}
+@media(max-width:760px){
+ #history-main-view{gap:14px!important}
+ #history-records-list{grid-template-columns:1fr!important;gap:12px!important}
+ #history-main-view>div:first-child{padding:15px!important}
+ #history-main-view>div:not(:first-child){padding:14px!important}
+ #history-records-list>div{padding:14px!important;gap:10px!important}
+ #history-records-list .hist-badges span{padding:4px 8px!important;font-size:10.5px!important;border-radius:8px!important}
+ .hist-stat-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;padding:10px!important}
+ .hist-stat-strip .hist-stat-full{grid-column:1/-1!important;padding-bottom:6px;border-bottom:1px solid var(--ae-line)}
+ .hist-stat-strip p{line-height:1.4!important;font-size:11px!important}
+ #history-records-list .hist-actions{width:100%!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
+ #history-records-list .hist-actions button{justify-content:center!important;padding:6px 4px!important;font-size:10.5px!important;min-height:34px!important;gap:4px!important;white-space:nowrap!important}
+}
 @media(max-width:560px){#history-kpi-grid{gap:10px!important}#history-kpi-grid>div{padding:14px!important}}
 @media print{#modal-log-detail{padding:0!important}#modal-log-detail .print-card{width:auto!important;max-width:none!important;max-height:none!important;background:#fff!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:0!important}#modal-log-detail #modal-detail-content>div{background:#fff!important;border:0!important;padding:0!important}}
 
@@ -2618,7 +2631,7 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 #tab-content-milestones #milestone-form button{border-radius:11px!important}
 #tab-content-milestones #milestones-list button{border-radius:10px!important;min-height:34px!important}
 /* View Log responsive action bar on small screens */
-@media(max-width:760px){#tab-content-milestones #milestones-list{grid-template-columns:1fr!important}#tab-content-milestones>div:first-child{padding:16px!important}#tab-content-milestones .grid.grid-cols-3{gap:7px!important}#tab-content-milestones .grid.grid-cols-3>div{padding:9px 5px!important}#modal-log-detail .no-print button{flex:1 1 auto!important}}
+@media(max-width:760px){#tab-content-milestones #milestones-list{grid-template-columns:1fr!important}#tab-content-milestones>div:first-child{padding:16px!important}#tab-content-milestones .grid.grid-cols-3{gap:7px!important}#tab-content-milestones .grid.grid-cols-3>div{padding:9px 5px!important}#modal-log-detail .ae-editor-actions button{flex:1 1 auto!important}}
 
 </style>
 
@@ -2650,28 +2663,56 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 /* View Log: inline Milestone-style full-page report workspace */
 @media screen{
 #modal-log-detail{background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#modal-log-detail .ae-editor-hero{justify-content:space-between;flex-wrap:wrap}
-#modal-log-detail .ae-report-hero-meta{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
-#modal-log-detail .ae-report-date-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:10px 14px;background:rgba(98,229,245,.1);border:1px solid rgba(98,229,245,.26);color:var(--ae-cyan);font-family:'Space Grotesk','DM Sans',sans-serif;font-size:13px;font-weight:800;white-space:nowrap}
-#modal-log-detail .ae-report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
-#modal-log-detail .ae-report-section{min-width:0;padding:18px;border-radius:18px;background:rgba(12,18,36,.58);border:1px solid var(--ae-line);display:flex;flex-direction:column;gap:14px}
+#modal-log-detail .ae-editor-back{flex:0 0 auto!important;width:auto!important}
+#modal-log-detail .ae-editor-hero{justify-content:space-between;flex-wrap:wrap;gap:16px}
+#modal-log-detail .ae-report-hero-main{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
+#modal-log-detail .ae-report-hero-meta{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0}
+#modal-log-detail .ae-report-date-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:11px;padding:8px 13px;background:rgba(98,229,245,.1);border:1px solid rgba(98,229,245,.26);color:var(--ae-cyan);font-family:'Space Grotesk','DM Sans',sans-serif;font-size:12.5px;font-weight:800;white-space:nowrap}
+#modal-log-detail .ae-report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+#modal-log-detail .ae-report-section{min-width:0;padding:16px 18px;border-radius:18px;background:rgba(12,18,36,.58);border:1px solid var(--ae-line);display:flex;flex-direction:column;gap:12px}
 #modal-log-detail .ae-report-section.ae-report-full{grid-column:1/-1}
-#modal-log-detail .ae-report-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--ae-line)}
-#modal-log-detail .ae-report-section-title{display:flex;align-items:center;gap:12px;min-width:0}
-#modal-log-detail .ae-report-section-title>span{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:rgba(98,229,245,.1);border:1px solid rgba(98,229,245,.2);color:var(--ae-cyan);font:700 11px 'Space Grotesk',sans-serif}
-#modal-log-detail .ae-report-section-title h3{margin:0;color:#f4f7ff;font:700 14px 'Space Grotesk',sans-serif}
-#modal-log-detail .ae-report-section-title p{margin:2px 0 0;color:var(--ae-muted);font-size:11px}
-#modal-log-detail .ae-labor-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:10px;background:#16203d;border:1px solid rgba(153,174,226,.2);color:#e2e8f0;font-size:11px;font-weight:500}
-#modal-log-detail .ae-labor-chip strong{color:var(--ae-cyan);font-weight:800}
-#modal-log-detail .ae-report-mach-card{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:13px;background:rgba(18,26,49,.82);border:1px solid var(--ae-line)}
-#modal-log-detail .ae-report-subcard{padding:12px 14px;border-radius:13px;background:rgba(18,26,49,.72);border:1px solid var(--ae-line)}
-#modal-log-detail .ae-report-delay-card{padding:12px 14px;border-radius:13px;background:rgba(139,124,255,.1);border:1px solid rgba(139,124,255,.28)}
+#modal-log-detail .ae-report-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid var(--ae-line)}
+#modal-log-detail .ae-report-section-title{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
+#modal-log-detail .ae-report-section-title>span{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border-radius:10px;background:rgba(98,229,245,.1);border:1px solid rgba(98,229,245,.2);color:var(--ae-cyan);font:700 11px 'Space Grotesk',sans-serif}
+#modal-log-detail .ae-report-section-title h3{margin:0;color:#f4f7ff;font:700 13.5px 'Space Grotesk',sans-serif;line-height:1.25}
+#modal-log-detail .ae-report-section-title p{margin:2px 0 0;color:var(--ae-muted);font-size:10.5px;line-height:1.35}
+#modal-log-detail .ae-labor-grid{display:flex;flex-wrap:wrap;gap:7px}
+#modal-log-detail .ae-labor-chip{display:inline-flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 11px;border-radius:10px;background:#16203d;border:1px solid rgba(153,174,226,.2);color:#e2e8f0;font-size:11px;font-weight:500;min-width:0}
+#modal-log-detail .ae-labor-chip .ae-labor-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#modal-log-detail .ae-labor-chip .ae-labor-name small{color:var(--ae-muted);font-size:10px;font-weight:500}
+#modal-log-detail .ae-labor-chip strong{color:var(--ae-cyan);font-weight:800;flex-shrink:0}
+#modal-log-detail .ae-report-mach-card{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding:10px 13px;border-radius:12px;background:rgba(18,26,49,.82);border:1px solid var(--ae-line)}
+#modal-log-detail .ae-report-subcard{padding:10px 13px;border-radius:12px;background:rgba(18,26,49,.72);border:1px solid var(--ae-line)}
+#modal-log-detail .ae-report-delay-card{padding:10px 13px;border-radius:12px;background:rgba(139,124,255,.1);border:1px solid rgba(139,124,255,.28)}
 #modal-log-detail #modal-detail-content table{width:100%!important;border-collapse:separate!important;border-spacing:0!important;border:1px solid var(--ae-line)!important;border-radius:12px!important;overflow:hidden!important}
-#modal-log-detail #modal-detail-content th{background:#1b2544!important;color:#c2d1ee!important;font-size:10px!important;text-transform:uppercase!important;letter-spacing:.06em!important;padding:11px 12px!important;border-bottom:1px solid var(--ae-line)!important}
-#modal-log-detail #modal-detail-content td{background:rgba(8,14,29,.45)!important;color:#dce6fa!important;font-size:11px!important;padding:10px 12px!important;border-bottom:1px solid rgba(153,174,226,.08)!important}
+#modal-log-detail #modal-detail-content th{background:#1b2544!important;color:#c2d1ee!important;font-size:10px!important;text-transform:uppercase!important;letter-spacing:.06em!important;padding:10px 11px!important;border-bottom:1px solid var(--ae-line)!important}
+#modal-log-detail #modal-detail-content td{background:rgba(8,14,29,.45)!important;color:#dce6fa!important;font-size:11px!important;padding:9px 11px!important;border-bottom:1px solid rgba(153,174,226,.08)!important}
 #modal-log-detail #modal-detail-content tr:last-child td{border-bottom:0!important}
 }
-@media(max-width:760px){#machinery-records-list{grid-template-columns:1fr!important}#machinery-main-view>div{padding:16px!important;border-radius:18px!important}#machinery-main-view>div>div:first-child{align-items:flex-start!important}#machinery-main-view button[onclick="openMachineryModal()"]{width:100%!important;justify-content:center!important}#modal-log-detail .ae-report-grid{grid-template-columns:1fr!important}#modal-log-detail .ae-report-section.ae-report-full{grid-column:1!important}#modal-log-detail .ae-report-hero-meta{align-items:flex-start}}
+@media(max-width:760px){
+ #machinery-records-list{grid-template-columns:1fr!important}
+ #machinery-main-view>div{padding:16px!important;border-radius:18px!important}
+ #machinery-main-view>div>div:first-child{align-items:flex-start!important}
+ #machinery-main-view button[onclick="openMachineryModal()"]{width:100%!important;justify-content:center!important}
+ #modal-log-detail{gap:14px!important}
+ #modal-log-detail .ae-editor-hero{flex-direction:column!important;align-items:stretch!important;gap:12px!important;padding:15px!important;border-radius:18px!important}
+ #modal-log-detail .ae-report-hero-main{align-items:flex-start!important;gap:12px!important}
+ #modal-log-detail .ae-editor-hero h2{font-size:21px!important;line-height:1.15!important;margin:3px 0 4px!important}
+ #modal-log-detail .ae-editor-description{font-size:11px!important;line-height:1.45!important}
+ #modal-log-detail .ae-report-hero-meta{flex-direction:row!important;align-items:center!important;justify-content:space-between!important;width:100%;padding-top:10px;border-top:1px solid var(--ae-line)}
+ #modal-log-detail .ae-report-date-pill{padding:6px 11px!important;font-size:11.5px!important;border-radius:9px!important}
+ #modal-log-detail .ae-editor-form{padding:13px!important;border-radius:18px!important}
+ #modal-log-detail .ae-report-grid{grid-template-columns:1fr!important;gap:11px!important}
+ #modal-log-detail .ae-report-section.ae-report-full{grid-column:1!important}
+ #modal-log-detail .ae-report-section{padding:12px 13px!important;border-radius:14px!important;gap:10px!important}
+ #modal-log-detail .ae-report-section-head{padding-bottom:8px!important;flex-wrap:nowrap!important}
+ #modal-log-detail .ae-report-section-title>span{width:28px!important;height:28px!important;flex-basis:28px!important;border-radius:8px!important;font-size:10px!important}
+ #modal-log-detail .ae-report-section-title h3{font-size:12.5px!important}
+ #modal-log-detail .ae-report-section-title p{display:none!important}
+ #modal-log-detail .ae-labor-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+ #modal-log-detail .ae-labor-chip{padding:6px 9px!important;font-size:10.5px!important;border-radius:9px!important}
+ #modal-log-detail .ae-editor-footer{margin-top:16px!important;padding-top:14px!important;gap:10px!important}
+}
 @media print{#modal-log-detail .ae-report-grid{display:block!important}#modal-log-detail .ae-report-section{background:#fff!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;margin-bottom:10px!important}#modal-log-detail .ae-labor-chip,#modal-log-detail .ae-report-mach-card,#modal-log-detail .ae-report-subcard,#modal-log-detail .ae-report-delay-card{background:#fff!important;border-color:#cbd5e1!important;color:#172033!important}}
 </style>
 
@@ -2701,7 +2742,7 @@ i.fa-solid,i.fa-regular,i.fa-brands{line-height:1;vertical-align:middle}
 .ae-icon-polished{font-size:1em!important;line-height:1!important;vertical-align:-.07em!important;transition:color .18s ease,transform .18s ease!important}
 #dashboard-view button:hover .ae-icon-polished,#modal-log-detail button:hover .ae-icon-polished{transform:translateY(-1px)!important}
 #dashboard-view button[onclick*="delete"] i,#dashboard-view button[onclick*="Delete"] i{border:0!important;outline:0!important;box-shadow:none!important;text-shadow:none!important}
-@media(max-width:640px){#modal-log-detail .ae-report-section{padding:14px!important}#modal-log-detail #modal-detail-content th,#modal-log-detail #modal-detail-content td{padding:9px!important}}
+@media(max-width:640px){#modal-log-detail #modal-detail-content th,#modal-log-detail #modal-detail-content td{padding:8px 9px!important}}
 @media print{#modal-log-detail .ae-report-section{transform:none!important;box-shadow:none!important}}
 </style>
 
@@ -2920,6 +2961,58 @@ img,video,canvas,svg{max-width:100%;}
   #mat-category-filter,#mat-full-balance-btn { font-size:11px!important;padding:0 8px!important; }
   #material-balance-screen .ae-bs-filters { grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important; }
 }
+/* Cross-browser empty date placeholders, edit-bar spacing, and Recent Material card containment */
+.min-w-0 { min-width:0; }
+.ae-save-controls-row { gap:14px!important; }
+.ae-edit-status-bar { display:flex;flex-wrap:wrap;align-items:center;gap:12px!important; }
+#editing-indicator { min-height:38px;padding:8px 14px!important; }
+#cancel-edit-btn { min-height:38px;padding:8px 15px!important;border-radius:12px!important;gap:7px!important; }
+@media (max-width: 640px) {
+  .ae-edit-status-bar { width:100%;gap:10px!important; }
+  #cancel-edit-btn { padding:8px 14px!important; }
+}
+.ae-date-wrap { position:relative;display:flex;align-items:center;width:100%;min-width:0; }
+.ae-hist-filter-group { display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto; }
+.ae-hist-date-wrap { flex:1 1 155px;min-width:145px; }
+.ae-date-wrap input[type="date"] { position:relative;width:100%!important;min-width:0!important;padding-right:36px!important;z-index:1; }
+.ae-date-wrap input[type="date"]::-webkit-calendar-picker-indicator {
+  position:absolute;right:0;top:0;width:38px;height:100%;margin:0;padding:0;opacity:0!important;cursor:pointer;z-index:3;
+}
+@media (hover: none), (pointer: coarse) {
+  .ae-date-wrap input[type="date"]::-webkit-calendar-picker-indicator { inset:0;width:100%;height:100%; }
+}
+.ae-date-placeholder {
+  position:absolute;left:13px;right:34px;top:50%;transform:translateY(-50%);
+  font-size:12px;font-weight:500;color:#8c98b8;pointer-events:none;
+  opacity:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2;
+  font-family:'DM Sans',sans-serif;
+}
+.ae-date-icon {
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  color:var(--ae-cyan,#62e5f5);font-size:13px;pointer-events:none;z-index:2;
+}
+.ae-date-wrap.is-empty input[type="date"] { color:transparent!important; }
+.ae-date-wrap.is-empty input[type="date"]::-webkit-datetime-edit,
+.ae-date-wrap.is-empty input[type="date"]::-webkit-date-and-time-value { color:transparent!important; }
+.ae-date-wrap.is-empty .ae-date-placeholder { opacity:1; }
+@media (hover: hover) and (pointer: fine) {
+  .ae-date-wrap.is-empty input[type="date"]:focus { color:var(--ae-text,#f2f6ff)!important; }
+  .ae-date-wrap.is-empty input[type="date"]:focus::-webkit-datetime-edit,
+  .ae-date-wrap.is-empty input[type="date"]:focus::-webkit-date-and-time-value { color:var(--ae-text,#f2f6ff)!important; }
+  .ae-date-wrap.is-empty input[type="date"]:focus ~ .ae-date-placeholder { opacity:0; }
+}
+@media (max-width: 640px) {
+  .ae-hist-filter-group { flex:1 1 100%; }
+  .ae-date-placeholder { font-size:13px; }
+}
+#materials-recent-list>div.mat-entry-card,#bs-mobile-cards>div { overflow:hidden;max-width:100%;box-sizing:border-box; }
+.mat-entry-head { display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-width:0;width:100%; }
+.mat-entry-title-wrap { flex:1 1 0%;min-width:0;overflow:hidden; }
+.mat-entry-title,.bs-card-title { margin:0;font-weight:700;font-size:14px;line-height:1.35;color:#ffffff;overflow-wrap:anywhere;word-break:break-word; }
+.mat-entry-actions { display:flex;align-items:center;gap:6px;flex:0 0 auto;flex-shrink:0; }
+.mat-entry-actions button { width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:9px!important; }
+.mat-entry-footer { display:flex;flex-direction:column;gap:4px;font-size:11px;color:#94a3b8;padding-top:8px;border-top:1px solid rgba(153,174,226,.16);min-width:0; }
+.mat-entry-note { font-style:italic;line-height:1.48;white-space:normal;overflow-wrap:anywhere;word-break:break-word;padding:1px 4px 3px 0;overflow:visible;display:block;margin:0; }
 </style>
 
 <style id="ae-auto-update-notice-styles">
@@ -3474,6 +3567,22 @@ img,video,canvas,svg{max-width:100%;}
     filter: none !important;
     opacity: 0.72;
   }
+  html[data-theme="light"] #dashboard-view .ae-date-wrap.is-empty input[type="date"] {
+    color: transparent !important;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    html[data-theme="light"] #dashboard-view .ae-date-wrap.is-empty input[type="date"]:focus {
+      color: #0f172a !important;
+    }
+  }
+  html[data-theme="light"] .ae-date-placeholder { color: #64748b !important; }
+  html[data-theme="light"] .ae-date-icon { color: #0284c7 !important; }
+  html[data-theme="light"] #cancel-edit-btn {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+    border-color: rgba(15, 23, 42, 0.16) !important;
+  }
+  html[data-theme="light"] #cancel-edit-btn:hover { background: #e2e8f0 !important; }
   html[data-theme="light"] #milestone-status,
   html[data-theme="light"] #milestone-status option,
   html[data-theme="light"] #dashboard-view select option {
@@ -4276,9 +4385,9 @@ img,video,canvas,svg{max-width:100%;}
 
 
                 <!-- Save & Submit Controls -->
-                <div class="flex flex-wrap justify-between items-center gap-3 pt-2">
+                <div class="ae-save-controls-row flex flex-wrap justify-between items-center gap-3 pt-2">
 
-                    <div class="flex flex-wrap items-center gap-2.5">
+                    <div class="ae-edit-status-bar flex flex-wrap items-center gap-3">
                         <div
                             id="editing-indicator"
                             class="hidden text-xs text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3.5 py-2 rounded-xl flex items-center gap-2"
@@ -4292,7 +4401,7 @@ img,video,canvas,svg{max-width:100%;}
                             type="button"
                             id="cancel-edit-btn"
                             onclick="cancelLogEdit()"
-                            class="hidden bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs px-3.5 py-2 rounded-xl font-semibold transition inline-flex items-center gap-1.5"
+                            class="hidden bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs px-4 py-2 rounded-xl font-semibold transition inline-flex items-center gap-2"
                         >
                             <i class="fa-solid fa-xmark"></i>
                             <span>Cancel Edit</span>
@@ -4372,16 +4481,21 @@ img,video,canvas,svg{max-width:100%;}
                         </div>
 
                         <div id="history-hero-actions">
-                            <div class="flex items-center gap-2 flex-1 sm:flex-initial">
+                            <div class="ae-hist-filter-group">
                                 <label for="history-filter-date" class="text-xs text-slate-400 whitespace-nowrap font-medium">
                                     Filter Date:
                                 </label>
-                                <input
-                                    type="date"
-                                    id="history-filter-date"
-                                    onchange="renderHistoryLogs()"
-                                    class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500 min-w-0 flex-1"
-                                />
+                                <div class="ae-date-wrap ae-hist-date-wrap is-empty">
+                                    <input
+                                        type="date"
+                                        id="history-filter-date"
+                                        onchange="syncDatePlaceholder(this); renderHistoryLogs()"
+                                        oninput="syncDatePlaceholder(this)"
+                                        class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-amber-500 min-w-0 w-full"
+                                    />
+                                    <span class="ae-date-placeholder" aria-hidden="true">mm/dd/yyyy</span>
+                                    <i class="fa-regular fa-calendar ae-date-icon" aria-hidden="true"></i>
+                                </div>
                             </div>
 
                             <button
@@ -4464,18 +4578,19 @@ img,video,canvas,svg{max-width:100%;}
                         <i class="fa-solid fa-arrow-left"></i>
                         <span>Back to Log Archive</span>
                     </button>
+                    <span class="ae-editor-kicker">LOG ARCHIVE REPORT</span>
                 </div>
 
                 <div class="ae-editor-hero">
-                    <div class="flex items-center gap-4 min-w-0 flex-1">
+                    <div class="ae-report-hero-main">
                         <div class="ae-editor-icon">
                             <i class="fa-solid fa-clipboard-check"></i>
                         </div>
-                        <div class="min-w-0">
+                        <div class="min-w-0 flex-1">
                             <p class="ae-editor-eyebrow">ASSOCIATE ENGINEERS · SITE REPORT</p>
                             <h2 id="modal-site-title">--</h2>
                             <p class="ae-editor-description">
-                                Daily Construction Site Activity, Materials &amp; Machinery Report
+                                Daily construction site activity, materials &amp; machinery report
                             </p>
                         </div>
                     </div>
@@ -4867,8 +4982,8 @@ img,video,canvas,svg{max-width:100%;}
                     <div class="ae-editor-section-title"><span>01</span><div><h3>Milestone details</h3><p>Review and update the activity information.</p></div></div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div class="sm:col-span-2"><label for="milestone-screen-name">Milestone Name <b>*</b></label><input id="milestone-screen-name" type="text" required maxlength="180" placeholder="e.g. Foundation & Excavation"></div>
-                        <div><label for="milestone-screen-start-date">Start Date</label><input id="milestone-screen-start-date" type="date"></div>
-                        <div><label for="milestone-screen-target-date">Target Completion Date</label><input id="milestone-screen-target-date" type="date"></div>
+                        <div><label for="milestone-screen-start-date">Start Date</label><div class="ae-date-wrap is-empty"><input id="milestone-screen-start-date" type="date" onchange="syncDatePlaceholder(this)" oninput="syncDatePlaceholder(this)"><span class="ae-date-placeholder" aria-hidden="true">mm/dd/yyyy</span><i class="fa-regular fa-calendar ae-date-icon" aria-hidden="true"></i></div></div>
+                        <div><label for="milestone-screen-target-date">Target Completion Date</label><div class="ae-date-wrap is-empty"><input id="milestone-screen-target-date" type="date" onchange="syncDatePlaceholder(this)" oninput="syncDatePlaceholder(this)"><span class="ae-date-placeholder" aria-hidden="true">mm/dd/yyyy</span><i class="fa-regular fa-calendar ae-date-icon" aria-hidden="true"></i></div></div>
                         <div><label for="milestone-screen-progress-range">Progress <span id="milestone-screen-progress-label">0%</span></label><input id="milestone-screen-progress-range" type="range" min="0" max="100" value="0" oninput="document.getElementById('milestone-screen-progress-input').value=this.value;document.getElementById('milestone-screen-progress-label').textContent=this.value+'%'" class="ae-editor-range"><div class="ae-range-scale"><span>0% · Not started</span><span>100% · Complete</span></div></div>
                         <div><label for="milestone-screen-progress-input">Progress (%)</label><input id="milestone-screen-progress-input" type="number" min="0" max="100" value="0" oninput="const v=Math.max(0,Math.min(100,Number(this.value)||0));document.getElementById('milestone-screen-progress-range').value=v;document.getElementById('milestone-screen-progress-label').textContent=v+'%'"></div>
                         <div class="sm:col-span-2"><label for="milestone-screen-status">Current Status</label><select id="milestone-screen-status"><option value="Pending">Pending</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select></div>
@@ -5407,12 +5522,17 @@ img,video,canvas,svg{max-width:100%;}
                                 >
                             </div>
 
-                            <input
-                                type="date"
-                                id="bs-filter-date"
-                                onchange="renderBalanceSheetTable()"
-                                title="Filter by date"
-                            >
+                            <div class="ae-date-wrap is-empty">
+                                <input
+                                    type="date"
+                                    id="bs-filter-date"
+                                    onchange="syncDatePlaceholder(this); renderBalanceSheetTable()"
+                                    oninput="syncDatePlaceholder(this)"
+                                    title="Filter by date"
+                                >
+                                <span class="ae-date-placeholder" aria-hidden="true">mm/dd/yyyy</span>
+                                <i class="fa-regular fa-calendar ae-date-icon" aria-hidden="true"></i>
+                            </div>
 
                             <select id="bs-filter-category" onchange="renderBalanceSheetTable()">
                                 <option value="">All Categories</option>
@@ -7585,6 +7705,9 @@ img,video,canvas,svg{max-width:100%;}
     });
 
     function removeUploadedImage(index) {
+        const confirmed = confirm("Are you sure you want to remove this site photo?");
+        if (!confirmed) return;
+
         const viewer = document.getElementById('site-image-viewer');
         if (!viewer.classList.contains('hidden')) {
             if (index === imageViewerIndex) {
@@ -7603,6 +7726,9 @@ img,video,canvas,svg{max-width:100%;}
             currentUploadedImages.splice(index, 1);
         }
         renderImagePreviews();
+        if (typeof editingLogId === 'undefined' || !editingLogId) {
+            saveDailyLogDraft();
+        }
     }
 
 
@@ -8595,17 +8721,12 @@ img,video,canvas,svg{max-width:100%;}
 
 
     function clearHistoryFilter() {
-
-        document
-            .getElementById(
-                'history-filter-date'
-            )
-            .value = '';
-
-
-
+        const dateEl = document.getElementById('history-filter-date');
+        if (dateEl) {
+            dateEl.value = '';
+            syncDatePlaceholder(dateEl);
+        }
         renderHistoryLogs();
-
     }
 
 
@@ -8751,12 +8872,12 @@ img,video,canvas,svg{max-width:100%;}
                 : 'None logged';
 
             card.innerHTML = `
-                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-3">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-2.5">
                     <div class="hist-date-group">
                         <span class="text-base sm:text-lg font-bold text-white">${escMatHtml(log.date)}</span>
                         <span class="hist-weather-badge text-xs text-slate-400 bg-slate-800 px-2.5 py-1 rounded-lg font-medium">${escMatHtml(log.weather || 'Clear')}</span>
                     </div>
-                    <div class="flex flex-wrap items-center gap-1.5">
+                    <div class="hist-badges">
                         ${imagesCount}
                         ${laborBadge}
                         ${machBadge}
@@ -8765,21 +8886,21 @@ img,video,canvas,svg{max-width:100%;}
                 </div>
 
                 <div class="hist-stat-strip text-xs text-slate-300">
-                    <div>
-                        <strong class="text-slate-400 block mb-1">Site Store Materials:</strong>
-                        <p class="leading-relaxed">${matSummary}</p>
+                    <div class="hist-stat-full">
+                        <strong class="text-slate-400 block mb-0.5 text-[11px]">Site Store Materials:</strong>
+                        <p class="leading-snug">${matSummary}</p>
                     </div>
                     <div>
-                        <strong class="text-slate-400 block mb-1">Work Completed:</strong>
-                        <p class="leading-relaxed">
+                        <strong class="text-slate-400 block mb-0.5 text-[11px]">Work Completed:</strong>
+                        <p class="leading-snug">
                             ${log.completedTasks && log.completedTasks.length > 0
                                 ? log.completedTasks.map(c => escMatHtml(c.task)).join(', ')
                                 : 'None logged'}
                         </p>
                     </div>
                     <div>
-                        <strong class="text-slate-400 block mb-1">Delays / Issues:</strong>
-                        <p class="text-rose-300 leading-relaxed">
+                        <strong class="text-slate-400 block mb-0.5 text-[11px]">Delays / Issues:</strong>
+                        <p class="text-rose-300 leading-snug">
                             ${log.delays && log.delays.length > 0
                                 ? log.delays.map(d => escMatHtml(`${d.task}: ${d.reason}`)).join('; ')
                                 : 'None'}
@@ -8793,7 +8914,7 @@ img,video,canvas,svg{max-width:100%;}
                         <strong class="text-slate-300">${escMatHtml(log.supervisor || '')}</strong>
                     </span>
 
-                    <div class="flex flex-wrap gap-2">
+                    <div class="hist-actions flex flex-wrap gap-2">
                         <button
                             type="button"
                             onclick="editLogEntry('${log.id}')"
@@ -9184,7 +9305,7 @@ img,video,canvas,svg{max-width:100%;}
                 const count = (typeof data === 'object' && data !== null) ? (data.count || 0) : data;
                 const shift = (typeof data === 'object' && data !== null) ? (data.shift || 'Day') : 'Day';
                 if (count > 0) {
-                    laborRows += `<span class="ae-labor-chip">${escMatHtml(trade)} (${escMatHtml(shift)}): <strong>${count}</strong></span>`;
+                    laborRows += `<span class="ae-labor-chip"><span class="ae-labor-name">${escMatHtml(trade)} <small>(${escMatHtml(shift)})</small></span><strong>${count}</strong></span>`;
                 }
             });
         }
@@ -9294,7 +9415,7 @@ img,video,canvas,svg{max-width:100%;}
                             Total: ${log.totalLabor} Workers
                         </span>
                     </div>
-                    <div class="flex flex-wrap gap-2">
+                    <div class="ae-labor-grid">
                         ${laborRows || '<span class="text-slate-400 text-xs">No labor counted</span>'}
                     </div>
                 </div>
@@ -9844,6 +9965,7 @@ img,video,canvas,svg{max-width:100%;}
         document.getElementById('milestone-screen-name').value = item.name || '';
         document.getElementById('milestone-screen-start-date').value = item.startDate || '';
         document.getElementById('milestone-screen-target-date').value = item.targetDate || '';
+        syncAllDatePlaceholders();
         const progress = Math.max(0, Math.min(100, parseInt(item.progress, 10) || 0));
         document.getElementById('milestone-screen-progress-range').value = progress;
         document.getElementById('milestone-screen-progress-input').value = progress;
@@ -11133,20 +11255,20 @@ img,video,canvas,svg{max-width:100%;}
 
                     return `
                         <div class="mat-entry-card space-y-3">
-                            <div class="flex justify-between items-start gap-2">
-                                <div class="min-w-0">
-                                    <h4 class="font-bold text-white text-sm truncate">${escMatHtml(m.materialName)}</h4>
+                            <div class="mat-entry-head">
+                                <div class="mat-entry-title-wrap">
+                                    <h4 class="mat-entry-title">${escMatHtml(m.materialName)}</h4>
                                     <div class="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-slate-400">
                                         <span>${escMatHtml(m.date || '--')}</span>
                                         <span class="ae-cat-tag">${escMatHtml(m.category || 'General')}</span>
                                         ${statusBadge}
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-1 flex-shrink-0">
-                                    <button type="button" onclick="editMaterial('${safeId}', 'main')" class="text-amber-400 hover:text-amber-300 p-1.5 rounded transition" title="Edit Material">
+                                <div class="mat-entry-actions">
+                                    <button type="button" onclick="editMaterial('${safeId}', 'main')" class="text-amber-400 hover:text-amber-300 rounded transition" title="Edit Material">
                                         <i class="fa-solid fa-pen-to-square text-xs"></i>
                                     </button>
-                                    <button type="button" onclick="confirmDeleteMaterial('${safeId}')" class="text-rose-400 hover:text-rose-300 p-1.5 rounded transition" title="Delete Material">
+                                    <button type="button" onclick="confirmDeleteMaterial('${safeId}')" class="text-rose-400 hover:text-rose-300 rounded transition" title="Delete Material">
                                         <i class="fa-solid fa-trash-can text-xs"></i>
                                     </button>
                                 </div>
@@ -11172,9 +11294,9 @@ img,video,canvas,svg{max-width:100%;}
                             </div>
 
                             ${(m.supplier || m.note) ? `
-                                <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 pt-1 border-t border-slate-800/80">
-                                    ${m.supplier ? `<span>Supplier: <strong class="text-slate-200">${escMatHtml(m.supplier)}</strong></span>` : '<span></span>'}
-                                    ${m.note ? `<span class="italic truncate max-w-full">${escMatHtml(m.note)}</span>` : ''}
+                                <div class="mat-entry-footer">
+                                    ${m.supplier ? `<span>Supplier: <strong class="text-slate-200">${escMatHtml(m.supplier)}</strong></span>` : ''}
+                                    ${m.note ? `<p class="mat-entry-note">${escMatHtml(m.note)}</p>` : ''}
                                 </div>
                             ` : ''}
                         </div>
@@ -11586,6 +11708,18 @@ img,video,canvas,svg{max-width:100%;}
         showMaterialsMainScreen(silent);
     }
 
+    function syncDatePlaceholder(input) {
+        if (!input) return;
+        const wrap = input.closest('.ae-date-wrap');
+        if (wrap) wrap.classList.toggle('is-empty', !input.value);
+    }
+
+    function syncAllDatePlaceholders() {
+        document.querySelectorAll('.ae-date-wrap input[type="date"]').forEach(syncDatePlaceholder);
+    }
+
+    document.addEventListener('DOMContentLoaded', syncAllDatePlaceholders);
+
     function clearBalanceSheetFilters() {
         const searchInput = document.getElementById('bs-search-input');
         const dateInput = document.getElementById('bs-filter-date');
@@ -11593,7 +11727,10 @@ img,video,canvas,svg{max-width:100%;}
         const suppSelect = document.getElementById('bs-filter-supplier');
 
         if (searchInput) searchInput.value = '';
-        if (dateInput) dateInput.value = '';
+        if (dateInput) {
+            dateInput.value = '';
+            syncDatePlaceholder(dateInput);
+        }
         if (catSelect) catSelect.value = '';
         if (suppSelect) suppSelect.value = '';
 
@@ -11700,9 +11837,9 @@ img,video,canvas,svg{max-width:100%;}
 
                     return `
                         <div class="space-y-3">
-                            <div class="flex justify-between items-start gap-2">
-                                <div class="min-w-0">
-                                    <h4 class="font-bold text-white text-sm">${escMatHtml(m.materialName)}</h4>
+                            <div class="flex justify-between items-start gap-2 min-w-0">
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="bs-card-title">${escMatHtml(m.materialName)}</h4>
                                     <div class="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-slate-400">
                                         <span>${escMatHtml(m.date || '--')}</span>
                                         <span class="ae-cat-tag">${escMatHtml(m.category || 'General')}</span>
@@ -11731,9 +11868,9 @@ img,video,canvas,svg{max-width:100%;}
                             </div>
 
                             ${(m.supplier || m.note) ? `
-                                <div class="text-[11px] text-slate-400 space-y-0.5">
-                                    ${m.supplier ? `<div>Supplier: <strong class="text-slate-200">${escMatHtml(m.supplier)}</strong></div>` : ''}
-                                    ${m.note ? `<div class="italic">${escMatHtml(m.note)}</div>` : ''}
+                                <div class="mat-entry-footer">
+                                    ${m.supplier ? `<span>Supplier: <strong class="text-slate-200">${escMatHtml(m.supplier)}</strong></span>` : ''}
+                                    ${m.note ? `<p class="mat-entry-note">${escMatHtml(m.note)}</p>` : ''}
                                 </div>
                             ` : ''}
 

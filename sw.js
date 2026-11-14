@@ -1,5 +1,5 @@
 /* ASSOCIATE ENGINEERS PWA Service Worker — Offline First Shell & CDN Asset Cache */
-const CACHE_NAME = 'associate-engineers-v32';
+const CACHE_NAME = 'associate-engineers-v33';
 
 // Core assets to pre-cache on install
 const PRECACHE_ASSETS = [
