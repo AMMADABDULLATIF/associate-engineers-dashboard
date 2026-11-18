@@ -635,7 +635,7 @@ export const DailyLogTab: React.FC = () => {
               {completedTasks.map((row, idx) => (
                 <div
                   key={idx}
-                  className="completed-row flex items-center gap-2"
+                  className="completed-row flex flex-wrap sm:flex-nowrap items-center gap-2"
                 >
                   <input
                     type="text"
@@ -649,7 +649,7 @@ export const DailyLogTab: React.FC = () => {
                         )
                       );
                     }}
-                    className="comp-task flex-grow bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-emerald-500"
+                    className="comp-task min-w-0 w-full sm:w-auto sm:flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-emerald-500"
                   />
                   <input
                     type="text"
@@ -663,7 +663,7 @@ export const DailyLogTab: React.FC = () => {
                         )
                       );
                     }}
-                    className="comp-loc w-1/3 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-emerald-500"
+                    className="comp-loc min-w-0 flex-1 sm:flex-none sm:w-1/3 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-emerald-500"
                   />
                   <button
                     type="button"
@@ -672,7 +672,7 @@ export const DailyLogTab: React.FC = () => {
                         prev.filter((_, i) => i !== idx)
                       )
                     }
-                    className="ae-btn-delete text-rose-400 hover:text-rose-300 p-1 rounded transition"
+                    className="ae-btn-delete shrink-0 text-rose-400 hover:text-rose-300 p-1.5 rounded transition"
                     aria-label="Remove task row"
                   >
                     <i className="fa-solid fa-trash-can ae-icon-polished" />
@@ -711,7 +711,10 @@ export const DailyLogTab: React.FC = () => {
 
             <div id="pending-tasks-container" className="space-y-2.5">
               {pendingTasks.map((row, idx) => (
-                <div key={idx} className="pending-row flex items-center gap-2">
+                <div
+                  key={idx}
+                  className="pending-row flex flex-wrap sm:flex-nowrap items-center gap-2"
+                >
                   <input
                     type="text"
                     placeholder="Pending work description..."
@@ -724,7 +727,7 @@ export const DailyLogTab: React.FC = () => {
                         )
                       );
                     }}
-                    className="pend-task flex-grow bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
+                    className="pend-task min-w-0 w-full sm:w-auto sm:flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
                   />
                   <input
                     type="date"
@@ -737,7 +740,7 @@ export const DailyLogTab: React.FC = () => {
                         )
                       );
                     }}
-                    className="pend-target bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
+                    className="pend-target min-w-0 flex-1 sm:flex-none sm:w-auto bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 text-xs focus:outline-none focus:border-amber-500"
                   />
                   <button
                     type="button"
@@ -746,7 +749,7 @@ export const DailyLogTab: React.FC = () => {
                         prev.filter((_, i) => i !== idx)
                       )
                     }
-                    className="ae-btn-delete text-rose-400 hover:text-rose-300 p-1 rounded transition"
+                    className="ae-btn-delete shrink-0 text-rose-400 hover:text-rose-300 p-1.5 rounded transition"
                     aria-label="Remove pending task"
                   >
                     <i className="fa-solid fa-trash-can ae-icon-polished" />
