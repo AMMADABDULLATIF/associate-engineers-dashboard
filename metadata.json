@@ -1,0 +1,6 @@
+{
+  "name": "ASSOCIATE ENGINEERS - Daily Site Log Dashboard",
+  "description": "Daily site log, machinery & fuel tracking, analytics, and site store & materials management for construction projects.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

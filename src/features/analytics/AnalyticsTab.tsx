@@ -1,0 +1,216 @@
+import React, { useMemo } from 'react';
+import { DEFAULT_TRADES } from '../../constants/defaults';
+import { useApp } from '../../context/AppContext';
+
+export const AnalyticsTab: React.FC = () => {
+  const { logs, machinery, materials, showToast } = useApp();
+
+  const summary = useMemo(() => {
+    let totalLabor = 0;
+    let totalDelays = 0;
+    const tradeTotals: Record<string, number> = {};
+    const materialTotals: Record<string, { totalQty: number; unit: string }> =
+      {};
+
+    DEFAULT_TRADES.forEach((t) => {
+      tradeTotals[t.label] = 0;
+    });
+
+    logs.forEach((log) => {
+      totalLabor += Number(log.totalLabor) || 0;
+      if (Array.isArray(log.delays)) {
+        totalDelays += log.delays.length;
+      }
+      if (log.laborBreakdown) {
+        Object.entries(log.laborBreakdown).forEach(([tradeName, data]) => {
+          const count =
+            typeof data === 'object' && data !== null
+              ? parseInt(String(data.count), 10) || 0
+              : parseInt(String(data), 10) || 0;
+          if (tradeTotals[tradeName] === undefined) {
+            tradeTotals[tradeName] = 0;
+          }
+          tradeTotals[tradeName] += count;
+        });
+      }
+    });
+
+    materials.forEach((mat) => {
+      const itemName = (mat.materialName || '').trim();
+      if (!itemName) return;
+      const recQty = Number(mat.receivedQty) || 0;
+      if (!materialTotals[itemName]) {
+        materialTotals[itemName] = { totalQty: 0, unit: mat.unit || '' };
+      }
+      materialTotals[itemName].totalQty += recQty;
+    });
+
+    const totalMachHours = machinery.reduce(
+      (sum, m) => sum + (Number(m.hours) || 0),
+      0
+    );
+
+    const sortedMaterials = Object.entries(materialTotals).sort(
+      (a, b) => b[1].totalQty - a[1].totalQty
+    );
+    const sortedTrades = Object.entries(tradeTotals).sort(
+      (a, b) => b[1] - a[1]
+    );
+
+    return {
+      totalLogs: logs.length,
+      totalLabor,
+      totalDelays,
+      totalMachHours: Math.round(totalMachHours * 100) / 100,
+      sortedMaterials,
+      sortedTrades,
+    };
+  }, [logs, machinery, materials]);
+
+  return (
+    <div id="tab-content-analytics" className="space-y-6">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-6">
+        <div className="flex flex-wrap justify-between items-center border-b border-slate-800 pb-4 gap-2">
+          <div>
+            <h3 className="font-bold text-amber-400 text-base sm:text-lg flex items-center gap-2">
+              <i className="fa-solid fa-chart-pie text-white ae-icon-polished" />
+              Site Analytics &amp; Performance Summary
+            </h3>
+            <p className="text-xs text-slate-400">
+              Real-time calculated totals for labour deployment, material
+              consumption, and project delays
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => showToast('Analytics refreshed')}
+            className="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5"
+          >
+            <i className="fa-solid fa-arrows-rotate ae-icon-polished" /> Refresh
+            Analytics
+          </button>
+        </div>
+
+        {/* Top Summary Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+            <span className="text-xs text-slate-400 font-medium block">
+              Total Recorded Logs
+            </span>
+            <h4
+              id="stat-total-logs"
+              className="text-2xl font-extrabold text-white"
+            >
+              {summary.totalLogs}
+            </h4>
+            <span className="text-[11px] text-emerald-400 flex items-center gap-1">
+              <i className="fa-solid fa-circle-check ae-icon-polished" /> Synced
+              with Cloud
+            </span>
+          </div>
+
+          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+            <span className="text-xs text-slate-400 font-medium block">
+              Total Labour Deployed
+            </span>
+            <h4
+              id="stat-total-labour"
+              className="text-2xl font-extrabold text-amber-400"
+            >
+              {summary.totalLabor}
+            </h4>
+            <span className="text-[11px] text-slate-400">
+              Cumulative worker count
+            </span>
+          </div>
+
+          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+            <span className="text-xs text-slate-400 font-medium block">
+              Total Delays / Issues
+            </span>
+            <h4
+              id="stat-total-delays"
+              className="text-2xl font-extrabold text-rose-400"
+            >
+              {summary.totalDelays}
+            </h4>
+            <span className="text-[11px] text-rose-300">
+              Bottlenecks recorded
+            </span>
+          </div>
+
+          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+            <span className="text-xs text-slate-400 font-medium block">
+              Machinery Hours Logged
+            </span>
+            <h4
+              id="stat-total-machinery-hrs"
+              className="text-2xl font-extrabold text-indigo-400"
+            >
+              {summary.totalMachHours} Hrs
+            </h4>
+            <span className="text-[11px] text-slate-400">
+              Total equipment run time
+            </span>
+          </div>
+        </div>
+
+        {/* Detailed Breakdown Sections */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+          <div className="bg-slate-800/50 border border-slate-800 p-4 sm:p-5 rounded-2xl space-y-3">
+            <h4 className="font-bold text-amber-400 text-sm flex items-center gap-2">
+              <i className="fa-solid fa-boxes-stacked text-white ae-icon-polished" />
+              Top Consumed Materials Summary
+            </h4>
+            <div id="analytics-materials-list" className="space-y-2">
+              {summary.sortedMaterials.length === 0 ? (
+                <p className="text-xs text-slate-500 py-2">
+                  No material delivery logs recorded yet.
+                </p>
+              ) : (
+                summary.sortedMaterials.map(([name, data]) => (
+                  <div
+                    key={name}
+                    className="bg-slate-900 border border-slate-700/60 p-2.5 rounded-xl flex justify-between items-center text-xs"
+                  >
+                    <span className="font-medium text-white">{name}</span>
+                    <span className="text-amber-400 font-bold">
+                      {data.totalQty} {data.unit}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          <div className="bg-slate-800/50 border border-slate-800 p-4 sm:p-5 rounded-2xl space-y-3">
+            <h4 className="font-bold text-amber-400 text-sm flex items-center gap-2">
+              <i className="fa-solid fa-users text-white ae-icon-polished" />
+              Labour Distribution by Trade
+            </h4>
+            <div id="analytics-trades-list" className="space-y-2">
+              {summary.sortedTrades.length === 0 ? (
+                <p className="text-xs text-slate-500 py-2">
+                  No labour counts recorded yet.
+                </p>
+              ) : (
+                summary.sortedTrades.map(([trade, count]) => (
+                  <div
+                    key={trade}
+                    className="bg-slate-900 border border-slate-700/60 p-2.5 rounded-xl flex justify-between items-center text-xs"
+                  >
+                    <span className="font-medium text-white">{trade}</span>
+                    <span className="text-amber-400 font-bold">
+                      {count} Total Workers
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default AnalyticsTab;
