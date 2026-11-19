@@ -74,10 +74,9 @@ const DashboardShell: React.FC = () => {
   const { activeSite, currentUser, activeTab, switchTab } = useApp();
   const isAuthenticated = Boolean(activeSite && currentUser);
 
-  // Warm inactive tab chunks during idle after authentication so offline PWA retains every module
+  // Warm all inactive tab chunks in parallel right after authentication for instant mobile tab switching
   useEffect(() => {
     if (!isAuthenticated) return;
-    let cancelled = false;
     const loaders = [
       TAB_LOADERS.history,
       TAB_LOADERS.materials,
@@ -86,22 +85,9 @@ const DashboardShell: React.FC = () => {
       TAB_LOADERS.analytics,
     ];
     const timer = window.setTimeout(() => {
-      const runNext = (idx: number) => {
-        if (cancelled || idx >= loaders.length) return;
-        loaders[idx]().catch(() => {});
-        const w = window as unknown as {
-          requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-        };
-        if (typeof w.requestIdleCallback === 'function') {
-          w.requestIdleCallback(() => runNext(idx + 1), { timeout: 600 });
-        } else {
-          window.setTimeout(() => runNext(idx + 1), 120);
-        }
-      };
-      runNext(0);
-    }, 650);
+      Promise.allSettled(loaders.map((load) => load())).catch(() => {});
+    }, 80);
     return () => {
-      cancelled = true;
       window.clearTimeout(timer);
     };
   }, [isAuthenticated]);

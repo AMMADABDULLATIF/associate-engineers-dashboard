@@ -212,6 +212,7 @@
   html[data-theme="light"] #dashboard-view .bg-slate-800\/40,
   html[data-theme="light"] #mat-kpi-grid > div,
   html[data-theme="light"] #history-kpi-grid > div,
+  html[data-theme="light"] #analytics-kpi-grid > div,
   html[data-theme="light"] .mat-stat-strip,
   html[data-theme="light"] .hist-stat-strip,
   html[data-theme="light"] .mat-balance-bar,

@@ -36,6 +36,41 @@ export const LogArchiveTab: React.FC = () => {
     [logs]
   );
 
+  const machineryCountByDate = useMemo(() => {
+    const map = new Map<string, number>();
+    machinery.forEach((m) => {
+      if (!m.date) return;
+      map.set(m.date, (map.get(m.date) || 0) + 1);
+    });
+    return map;
+  }, [machinery]);
+
+  const materialSummaryByDate = useMemo(() => {
+    const grouped = new Map<string, string[]>();
+    materials.forEach((m) => {
+      if (!m.date) return;
+      const name = m.materialName || 'Material';
+      const unit = m.unit || '';
+      const rec = Number(m.receivedQty) || 0;
+      const used = Number(m.usedQty) || 0;
+      const parts: string[] = [];
+      if (rec > 0) parts.push(`+${rec} In`);
+      if (used > 0) parts.push(`-${used} Out`);
+      if (parts.length === 0) {
+        parts.push(`Bal: ${m.balance ?? 0}`);
+      }
+      const entry = `${name} (${parts.join(', ')}${unit ? ' ' + unit : ''})`;
+      const arr = grouped.get(m.date);
+      if (arr) arr.push(entry);
+      else grouped.set(m.date, [entry]);
+    });
+    const summaryMap = new Map<string, string>();
+    grouped.forEach((entries, dateKey) => {
+      summaryMap.set(dateKey, entries.join(', '));
+    });
+    return summaryMap;
+  }, [materials]);
+
   const filteredLogs = useMemo(() => {
     let list = [...logs];
     if (filterDate) {
@@ -229,32 +264,10 @@ export const LogArchiveTab: React.FC = () => {
               </div>
             ) : (
               paginatedItems.map((log) => {
-                const machCount = machinery.filter(
-                  (m) => m.date === log.date
-                ).length;
+                const machCount = machineryCountByDate.get(log.date) || 0;
                 const imagesCount = log.images ? log.images.length : 0;
-                const dayStoreMaterials = materials.filter(
-                  (m) => m.date === log.date
-                );
-                const matSummary = dayStoreMaterials.length
-                  ? dayStoreMaterials
-                      .map((m) => {
-                        const name = m.materialName || 'Material';
-                        const unit = m.unit || '';
-                        const rec = Number(m.receivedQty) || 0;
-                        const used = Number(m.usedQty) || 0;
-                        const parts: string[] = [];
-                        if (rec > 0) parts.push(`+${rec} In`);
-                        if (used > 0) parts.push(`-${used} Out`);
-                        if (parts.length === 0) {
-                          parts.push(`Bal: ${m.balance ?? 0}`);
-                        }
-                        return `${name} (${parts.join(', ')}${
-                          unit ? ' ' + unit : ''
-                        })`;
-                      })
-                      .join(', ')
-                  : 'None logged';
+                const matSummary =
+                  materialSummaryByDate.get(log.date) || 'None logged';
 
                 return (
                   <div

@@ -103,64 +103,64 @@ export const AnalyticsTab: React.FC = () => {
         </div>
 
         {/* Top Summary Cards Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1 min-w-0">
-            <span className="text-xs text-slate-400 font-medium block">
+        <div id="analytics-kpi-grid">
+          <div className="rounded-xl">
+            <span className="text-xs text-slate-400 font-medium">
               Total Recorded Logs
             </span>
-            <h4
+            <div
               id="stat-total-logs"
-              className="text-2xl font-extrabold text-white"
+              className="text-2xl font-bold text-white"
             >
               {summary.totalLogs}
-            </h4>
-            <span className="text-[11px] text-emerald-400 flex items-center gap-1">
+            </div>
+            <span className="text-[10px] text-emerald-400 uppercase tracking-wider flex items-center gap-1">
               <i className="fa-solid fa-circle-check ae-icon-polished" /> Synced
               with Cloud
             </span>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1 min-w-0">
-            <span className="text-xs text-slate-400 font-medium block">
+          <div className="rounded-xl">
+            <span className="text-xs text-slate-400 font-medium">
               Total Labour Deployed
             </span>
-            <h4
+            <div
               id="stat-total-labour"
-              className="text-2xl font-extrabold text-amber-400"
+              className="text-2xl font-bold text-amber-400"
             >
               {summary.totalLabor}
-            </h4>
-            <span className="text-[11px] text-slate-400">
+            </div>
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider">
               Cumulative worker count
             </span>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1 min-w-0">
-            <span className="text-xs text-slate-400 font-medium block">
+          <div className="rounded-xl">
+            <span className="text-xs text-slate-400 font-medium">
               Total Delays / Issues
             </span>
-            <h4
+            <div
               id="stat-total-delays"
-              className="text-2xl font-extrabold text-rose-400"
+              className="text-2xl font-bold text-rose-400"
             >
               {summary.totalDelays}
-            </h4>
-            <span className="text-[11px] text-rose-300">
+            </div>
+            <span className="text-[10px] text-rose-300 uppercase tracking-wider">
               Bottlenecks recorded
             </span>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1 min-w-0">
-            <span className="text-xs text-slate-400 font-medium block">
+          <div className="rounded-xl">
+            <span className="text-xs text-slate-400 font-medium">
               Machinery Hours Logged
             </span>
-            <h4
+            <div
               id="stat-total-machinery-hrs"
-              className="text-2xl font-extrabold text-indigo-400"
+              className="text-2xl font-bold text-indigo-400"
             >
               {summary.totalMachHours} Hrs
-            </h4>
-            <span className="text-[11px] text-slate-400">
+            </div>
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider">
               Total equipment run time
             </span>
           </div>

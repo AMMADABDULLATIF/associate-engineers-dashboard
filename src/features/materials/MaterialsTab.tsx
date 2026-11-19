@@ -377,7 +377,7 @@ export const MaterialsTab: React.FC = () => {
                         <h4 className="mat-entry-title">{m.materialName}</h4>
                         <div className="flex flex-wrap items-center gap-1.5 mt-1.5 text-[11px] text-slate-400">
                           <span>{m.date}</span>
-                          <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] text-slate-300">
+                          <span className="ae-cat-tag">
                             {m.category || 'General'}
                           </span>
                           {isLow ? (

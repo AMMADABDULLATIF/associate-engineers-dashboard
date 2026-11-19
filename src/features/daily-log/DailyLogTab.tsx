@@ -231,13 +231,20 @@ export const DailyLogTab: React.FC = () => {
     weather,
   ]);
 
-  // Debounced auto-draft save whenever form state changes
+  // Debounced + idle-deferred auto-draft save so typing with attached photos stays lag-free on mobile
   useEffect(() => {
     if (!activeSite) return;
     if (draftTimerRef.current) window.clearTimeout(draftTimerRef.current);
     draftTimerRef.current = window.setTimeout(() => {
-      flushDraftSave();
-    }, 200);
+      const w = window as Window & {
+        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      };
+      if (typeof w.requestIdleCallback === 'function') {
+        w.requestIdleCallback(() => flushDraftSave(), { timeout: 600 });
+      } else {
+        flushDraftSave();
+      }
+    }, 420);
     return () => {
       if (draftTimerRef.current) window.clearTimeout(draftTimerRef.current);
     };
@@ -610,9 +617,6 @@ export const DailyLogTab: React.FC = () => {
                 <h3 className="font-bold text-emerald-400 text-sm sm:text-base flex items-center gap-2">
                   <i className="fa-solid fa-circle-check text-white ae-icon-polished" />
                   Work Completed Today
-                  <span className="text-[10px] text-slate-400 font-normal">
-                    (Optional)
-                  </span>
                 </h3>
                 <p className="text-xs text-slate-400">Completed tasks today</p>
               </div>
@@ -892,6 +896,7 @@ export const DailyLogTab: React.FC = () => {
                   <img
                     src={imgSrc}
                     alt={`Site photo ${idx + 1}`}
+                    decoding="async"
                     className="w-full h-full object-cover cursor-zoom-in"
                     role="button"
                     tabIndex={0}

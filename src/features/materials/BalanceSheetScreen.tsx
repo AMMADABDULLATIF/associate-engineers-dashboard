@@ -225,8 +225,8 @@ export const BalanceSheetScreen: React.FC<BalanceSheetScreenProps> = ({
                     return (
                       <tr key={m.id}>
                         <td className="p-3 whitespace-nowrap">{m.date}</td>
-                        <td className="p-3">
-                          <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px]">
+                        <td className="p-3 whitespace-nowrap">
+                          <span className="ae-cat-tag">
                             {m.category || 'General'}
                           </span>
                         </td>
@@ -311,7 +311,7 @@ export const BalanceSheetScreen: React.FC<BalanceSheetScreenProps> = ({
                         <h4 className="bs-card-title">{m.materialName}</h4>
                         <div className="flex flex-wrap items-center gap-1.5 mt-1 text-[11px] text-slate-400">
                           <span>{m.date}</span>
-                          <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] text-slate-300">
+                          <span className="ae-cat-tag">
                             {m.category || 'General'}
                           </span>
                           {isLow ? (

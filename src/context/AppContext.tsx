@@ -1,6 +1,5 @@
 import React, {
   createContext,
-  startTransition,
   useCallback,
   useContext,
   useEffect,
@@ -415,23 +414,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const switchTab = useCallback((tab: TabKey) => {
     prefetchTabChunk(tab);
-    startTransition(() => {
-      setViewingLogId(null);
-      setPageHeaderOverride(null);
-      setActiveTab(tab);
-    });
+    setViewingLogId(null);
+    setPageHeaderOverride(null);
+    setActiveTab(tab);
     if (window.scrollY > 0) {
       window.scrollTo({ top: 0, behavior: 'auto' });
     }
   }, []);
 
   const startEditLog = useCallback((logId: string) => {
-    startTransition(() => {
-      setEditingLogId(logId);
-      setViewingLogId(null);
-      setPageHeaderOverride(null);
-      setActiveTab('entry');
-    });
+    setEditingLogId(logId);
+    setViewingLogId(null);
+    setPageHeaderOverride(null);
+    setActiveTab('entry');
     if (window.scrollY > 0) {
       window.scrollTo({ top: 0, behavior: 'auto' });
     }

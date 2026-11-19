@@ -1,5 +1,5 @@
 /* ASSOCIATE ENGINEERS PWA Service Worker — Offline First Shell, Vite Chunk Cache & CDN Asset Cache */
-const CACHE_NAME = 'associate-engineers-v47';
+const CACHE_NAME = 'associate-engineers-v48';
 
 const PRECACHE_ASSETS = [
   '/',

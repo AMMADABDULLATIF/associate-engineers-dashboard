@@ -60,6 +60,7 @@ export const MobileBottomNav: React.FC = React.memo(() => {
             data-bottom-tab={item.tab}
             aria-label={item.fullLabel}
             aria-current={isActive ? 'page' : undefined}
+            onTouchStart={() => prefetchTab(item.tab)}
             onPointerDown={() => prefetchTab(item.tab)}
             onClick={() => switchTab(item.tab)}
           >
