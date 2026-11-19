@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 
-export const Header: React.FC = () => {
+export const Header: React.FC = React.memo(() => {
   const {
     theme,
     toggleTheme,
@@ -10,8 +10,6 @@ export const Header: React.FC = () => {
     installPWA,
     activeSite,
     currentUser,
-    mobileMenuOpen,
-    toggleMobileMenu,
     logout,
   } = useApp();
 
@@ -37,7 +35,7 @@ export const Header: React.FC = () => {
     : 'fa-solid fa-hard-drive text-amber-400 ae-icon-polished';
 
   return (
-    <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-md bg-slate-900/95 no-print">
+    <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 no-print">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-3">
         <div className="flex items-center gap-3">
           <div className="ae-brandmark" aria-label="Associate Engineers logo">
@@ -153,18 +151,6 @@ export const Header: React.FC = () => {
 
               <button
                 type="button"
-                id="mobile-menu-toggle-btn"
-                onClick={toggleMobileMenu}
-                aria-label="Open navigation menu"
-                aria-expanded={mobileMenuOpen}
-                aria-controls="saas-sidebar"
-                className="ae-mobile-menu-btn"
-              >
-                <i className="fa-solid fa-bars ae-icon-polished" />
-              </button>
-
-              <button
-                type="button"
                 onClick={logout}
                 className="ae-btn-logout bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50 text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg transition flex items-center gap-1.5"
               >
@@ -177,4 +163,5 @@ export const Header: React.FC = () => {
       </div>
     </header>
   );
-};
+});
+Header.displayName = 'Header';

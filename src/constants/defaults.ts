@@ -183,9 +183,10 @@ export const PAGE_META: Record<
 };
 
 export const PAGE_SIZES = {
-  HISTORY: 12,
-  MATERIALS: 12,
-  BALANCE_SHEET: 20,
-  MACHINERY: 12,
-  MILESTONES: 12,
+  HISTORY: 8,
+  MATERIALS: 8,
+  BALANCE_SHEET: 15,
+  MACHINERY: 8,
+  MILESTONES: 8,
+  ANALYTICS: 10,
 } as const;

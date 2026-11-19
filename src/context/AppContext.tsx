@@ -1,12 +1,15 @@
 import React, {
   createContext,
+  startTransition,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 import { PAGE_META, STORAGE_KEYS } from '../constants/defaults';
+import { prefetchTabChunk } from '../constants/tabLoaders';
 import {
   deleteLogDoc,
   deleteMachineryDocAndSyncLogs,
@@ -86,10 +89,6 @@ interface AppContextValue {
   viewingLogId: string | null;
   setViewingLogId: (id: string | null) => void;
   startEditLog: (logId: string) => void;
-  mobileMenuOpen: boolean;
-  openMobileMenu: () => void;
-  closeMobileMenu: () => void;
-  toggleMobileMenu: () => void;
   toastMessage: string;
   toastVisible: boolean;
   showToast: (msg: string) => void;
@@ -129,6 +128,35 @@ interface AppContextValue {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
+interface NavigationContextValue {
+  activeTab: TabKey;
+  switchTab: (tab: TabKey) => void;
+  pageHeader: PageHeaderInfo;
+  prefetchTab: (tab: TabKey) => void;
+}
+
+const NavigationContext = createContext<NavigationContextValue>({
+  activeTab: 'entry',
+  switchTab: () => {},
+  pageHeader: PAGE_META.entry,
+  prefetchTab: () => {},
+});
+
+function scheduleIdleWrite(fn: () => void): void {
+  if (typeof window === 'undefined') {
+    fn();
+    return;
+  }
+  const win = window as Window & {
+    requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+  };
+  if (typeof win.requestIdleCallback === 'function') {
+    win.requestIdleCallback(fn, { timeout: 600 });
+  } else {
+    window.setTimeout(fn, 48);
+  }
+}
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -161,7 +189,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [editingLogId, setEditingLogId] = useState<string | null>(null);
   const [viewingLogId, setViewingLogId] = useState<string | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
   const [toastMessage, setToastMessage] = useState<string>('');
   const [toastVisible, setToastVisible] = useState<boolean>(false);
@@ -247,7 +274,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       const { unsubscribeAll } = subscribeToSiteCollections(siteId, {
         onLogs: (incomingLogs, meta) => {
           setLogs(incomingLogs);
-          saveSiteLogs(siteId, incomingLogs);
+          scheduleIdleWrite(() => saveSiteLogs(siteId, incomingLogs));
           if (meta.fromCache) {
             setSyncStatus({
               text: 'Firebase cache — waiting for server…',
@@ -275,15 +302,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         onMachinery: (incomingMachinery) => {
           setMachinery(incomingMachinery);
-          saveSiteMachinery(siteId, incomingMachinery);
+          scheduleIdleWrite(() => saveSiteMachinery(siteId, incomingMachinery));
         },
         onMilestones: (incomingMilestones) => {
           setMilestones(incomingMilestones);
-          saveSiteMilestones(siteId, incomingMilestones);
+          scheduleIdleWrite(() => saveSiteMilestones(siteId, incomingMilestones));
         },
         onMaterials: (incomingMaterials) => {
           setMaterials(incomingMaterials);
-          saveSiteMaterials(siteId, incomingMaterials);
+          scheduleIdleWrite(() => saveSiteMaterials(siteId, incomingMaterials));
         },
       });
 
@@ -364,56 +391,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [deferredInstallPrompt, showToast]);
 
-  // Lock body scroll when mobile drawer or lightbox is open
+  // Lock body scroll only when fullscreen lightbox is open (backdrop blocks touch-scroll without synchronous reflow on drawer toggle)
   useEffect(() => {
-    const shouldLock =
-      Boolean(lightboxState) ||
-      (mobileMenuOpen && window.matchMedia('(max-width: 1100px)').matches);
-    document.body.style.overflow = shouldLock ? 'hidden' : '';
-  }, [lightboxState, mobileMenuOpen]);
+    document.body.style.overflow = lightboxState ? 'hidden' : '';
+  }, [lightboxState]);
 
-  // Persist active session whenever site/user/tab changes
+  // Persist active session whenever site/user/tab changes (deferred off main tap path)
   useEffect(() => {
     if (activeSite && currentUser) {
-      saveStoredSession({
-        site: activeSite,
-        user: currentUser,
-        tab: activeTab,
+      scheduleIdleWrite(() => {
+        saveStoredSession({
+          site: activeSite,
+          user: currentUser,
+          tab: activeTab,
+        });
       });
     }
   }, [activeSite, currentUser, activeTab]);
 
-  // Handle Escape / resize for mobile drawer
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileMenuOpen(false);
-    };
-    const onResize = () => {
-      if (window.innerWidth > 1100) setMobileMenuOpen(false);
-    };
-    window.addEventListener('keydown', onKey);
-    window.addEventListener('resize', onResize);
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      window.removeEventListener('resize', onResize);
-    };
+  const prefetchTab = useCallback((tab: TabKey) => {
+    prefetchTabChunk(tab);
   }, []);
 
   const switchTab = useCallback((tab: TabKey) => {
-    setMobileMenuOpen(false);
-    setViewingLogId(null);
-    setPageHeaderOverride(null);
-    setActiveTab(tab);
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    prefetchTabChunk(tab);
+    startTransition(() => {
+      setViewingLogId(null);
+      setPageHeaderOverride(null);
+      setActiveTab(tab);
+    });
+    if (window.scrollY > 0) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
   }, []);
 
   const startEditLog = useCallback((logId: string) => {
-    setEditingLogId(logId);
-    setViewingLogId(null);
-    setPageHeaderOverride(null);
-    setMobileMenuOpen(false);
-    setActiveTab('entry');
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    startTransition(() => {
+      setEditingLogId(logId);
+      setViewingLogId(null);
+      setPageHeaderOverride(null);
+      setActiveTab('entry');
+    });
+    if (window.scrollY > 0) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
   }, []);
 
   const login = useCallback(
@@ -509,7 +530,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       unsubscribeRef.current();
       unsubscribeRef.current = null;
     }
-    setMobileMenuOpen(false);
     if (activeSite) {
       clearDailyDraft(activeSite.id);
     }
@@ -985,61 +1005,115 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const pageHeader = pageHeaderOverride || PAGE_META[activeTab];
 
+  const appValue = useMemo<AppContextValue>(
+    () => ({
+      theme,
+      toggleTheme,
+      sitesList,
+      activeSite,
+      currentUser,
+      activeTab,
+      switchTab,
+      pageHeader,
+      setPageHeaderOverride,
+      syncStatus,
+      isOnline,
+      isCloudMode,
+      logs,
+      machinery,
+      milestones,
+      materials,
+      editingLogId,
+      setEditingLogId,
+      viewingLogId,
+      setViewingLogId,
+      startEditLog,
+      toastMessage,
+      toastVisible,
+      showToast,
+      lightboxState,
+      openLightbox,
+      closeLightbox,
+      updateLightboxImages,
+      canInstallPWA: Boolean(deferredInstallPrompt),
+      installPWA,
+      login,
+      logout,
+      clearDeviceMemory,
+      saveDailyLogEntry,
+      deleteDailyLogEntry,
+      saveMachineryEntry,
+      deleteMachineryEntry,
+      saveMilestoneEntry,
+      deleteMilestoneEntry,
+      saveMaterialEntry,
+      deleteMaterialEntry,
+      setFormDirty,
+      setFormSaving,
+      adjustImageReads,
+      canAutoReloadSafely,
+    }),
+    [
+      theme,
+      toggleTheme,
+      sitesList,
+      activeSite,
+      currentUser,
+      activeTab,
+      switchTab,
+      pageHeader,
+      syncStatus,
+      isOnline,
+      isCloudMode,
+      logs,
+      machinery,
+      milestones,
+      materials,
+      editingLogId,
+      viewingLogId,
+      startEditLog,
+      toastMessage,
+      toastVisible,
+      showToast,
+      lightboxState,
+      openLightbox,
+      closeLightbox,
+      updateLightboxImages,
+      deferredInstallPrompt,
+      installPWA,
+      login,
+      logout,
+      clearDeviceMemory,
+      saveDailyLogEntry,
+      deleteDailyLogEntry,
+      saveMachineryEntry,
+      deleteMachineryEntry,
+      saveMilestoneEntry,
+      deleteMilestoneEntry,
+      saveMaterialEntry,
+      deleteMaterialEntry,
+      setFormDirty,
+      setFormSaving,
+      adjustImageReads,
+      canAutoReloadSafely,
+    ]
+  );
+
+  const navigationValue = useMemo<NavigationContextValue>(
+    () => ({
+      activeTab,
+      switchTab,
+      pageHeader,
+      prefetchTab,
+    }),
+    [activeTab, switchTab, pageHeader, prefetchTab]
+  );
+
   return (
-    <AppContext.Provider
-      value={{
-        theme,
-        toggleTheme,
-        sitesList,
-        activeSite,
-        currentUser,
-        activeTab,
-        switchTab,
-        pageHeader,
-        setPageHeaderOverride,
-        syncStatus,
-        isOnline,
-        isCloudMode,
-        logs,
-        machinery,
-        milestones,
-        materials,
-        editingLogId,
-        setEditingLogId,
-        viewingLogId,
-        setViewingLogId,
-        startEditLog,
-        mobileMenuOpen,
-        openMobileMenu: () => setMobileMenuOpen(true),
-        closeMobileMenu: () => setMobileMenuOpen(false),
-        toggleMobileMenu: () => setMobileMenuOpen((v) => !v),
-        toastMessage,
-        toastVisible,
-        showToast,
-        lightboxState,
-        openLightbox,
-        closeLightbox,
-        updateLightboxImages,
-        canInstallPWA: Boolean(deferredInstallPrompt),
-        installPWA,
-        login,
-        logout,
-        clearDeviceMemory,
-        saveDailyLogEntry,
-        deleteDailyLogEntry,
-        saveMachineryEntry,
-        deleteMachineryEntry,
-        saveMilestoneEntry,
-        deleteMilestoneEntry,
-        saveMaterialEntry,
-        deleteMaterialEntry,
-        setFormDirty,
-        setFormSaving,
-        adjustImageReads,
-        canAutoReloadSafely,
-      }}
-    >
-      {children}
+    <AppContext.Provider value={appValue}>
+      <NavigationContext.Provider value={navigationValue}>
+        {children}
+      </NavigationContext.Provider>
     </AppContext.Provider>
   );
 };
@@ -1050,4 +1124,8 @@ export function useApp(): AppContextValue {
     throw new Error('useApp must be used inside AppProvider');
   }
   return ctx;
+}
+
+export function useNavigation(): NavigationContextValue {
+  return useContext(NavigationContext);
 }

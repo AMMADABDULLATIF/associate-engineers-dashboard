@@ -426,12 +426,12 @@ export const MilestonesTab: React.FC = () => {
                   className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 space-y-3"
                 >
                   <div className="flex flex-wrap justify-between items-start gap-2">
-                    <div className="flex items-start gap-2">
+                    <div className="flex items-start gap-2 min-w-0">
                       <i
                         className={`fa-solid ${leadIcon} mt-0.5 ae-icon-polished`}
                       />
-                      <div>
-                        <h4 className="font-bold text-white text-sm">
+                      <div className="min-w-0">
+                        <h4 className="font-bold text-white text-sm break-words">
                           {milestone.name}
                         </h4>
                         <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-slate-400">
@@ -456,7 +456,7 @@ export const MilestonesTab: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                       <span
                         className={`text-xs px-2.5 py-1 rounded-lg font-semibold ${statusClass}`}
                       >
@@ -502,14 +502,14 @@ export const MilestonesTab: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-1">
+                  <div className="flex flex-wrap gap-2 pt-1">
                     {[25, 50, 75].map((pct) => (
                       <button
                         key={pct}
                         type="button"
                         disabled={prog >= pct}
                         onClick={() => handleQuickProgress(milestone, pct)}
-                        className="bg-slate-700 hover:bg-slate-600 text-slate-200 text-[10px] px-2.5 py-1 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="ae-quick-prog-btn bg-slate-700 hover:bg-slate-600 text-slate-200 text-[10px] px-2.5 py-1 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         +{pct}%
                       </button>
@@ -518,7 +518,7 @@ export const MilestonesTab: React.FC = () => {
                       type="button"
                       disabled={prog >= 100}
                       onClick={() => handleQuickProgress(milestone, 100)}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] px-2.5 py-1 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="ae-mark-complete-btn bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] px-2.5 py-1 rounded-lg transition disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       Mark Complete
                     </button>

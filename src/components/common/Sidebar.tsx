@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApp } from '../../context/AppContext';
+import { useNavigation } from '../../context/AppContext';
 import type { TabKey } from '../../types';
 
 const NAV_ITEMS: Array<{
@@ -41,86 +41,66 @@ const NAV_ITEMS: Array<{
   },
 ];
 
-export const Sidebar: React.FC = () => {
-  const { activeTab, switchTab, mobileMenuOpen, closeMobileMenu } = useApp();
+export const Sidebar: React.FC = React.memo(() => {
+  const { activeTab, switchTab, prefetchTab } = useNavigation();
 
   return (
-    <>
-      <div
-        id="mobile-sidebar-backdrop"
-        className={`ae-sidebar-backdrop no-print ${
-          mobileMenuOpen ? 'is-open' : ''
-        }`}
-        onClick={closeMobileMenu}
-        aria-hidden="true"
-      />
-      <aside
-        id="saas-sidebar"
-        className={`saas-sidebar no-print ${
-          mobileMenuOpen ? 'ae-mobile-drawer-open' : ''
-        }`}
-        aria-label="Main navigation"
-      >
-        <div className="sidebar-brand">
-          <span className="sidebar-brand-icon">
-            <svg viewBox="0 0 52 52" aria-label="AE logo">
-              <path
-                d="M7 39 18 13h6l11 26h-7l-2.2-5.5H16L13.8 39Z"
-                fill="currentColor"
-              />
-              <path
-                d="M18.4 27.8h5.8l-2.9-7.1Z"
-                fill="#10162a"
-              />
-              <path
-                d="M31 13h14v5.5H37v4.8h7.5v5.2H37v5h8V39H31Z"
-                fill="currentColor"
-              />
-            </svg>
-          </span>
+    <aside
+      id="saas-sidebar"
+      className="saas-sidebar no-print"
+      aria-label="Desktop workspace navigation"
+    >
+      <div className="sidebar-brand">
+        <span className="sidebar-brand-icon">
+          <svg viewBox="0 0 52 52" aria-label="AE logo">
+            <path
+              d="M7 39 18 13h6l11 26h-7l-2.2-5.5H16L13.8 39Z"
+              fill="currentColor"
+            />
+            <path d="M18.4 27.8h5.8l-2.9-7.1Z" fill="#10162a" />
+            <path
+              d="M31 13h14v5.5H37v4.8h7.5v5.2H37v5h8V39H31Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+        <span>
+          <strong>AE WORKSITE</strong>
+          <small>PROJECT OPERATIONS</small>
+        </span>
+      </div>
+
+      <div className="sidebar-label">WORKSPACE</div>
+
+      {NAV_ITEMS.map((item) => (
+        <button
+          key={item.tab}
+          type="button"
+          className={`side-link ${activeTab === item.tab ? 'active' : ''}`}
+          data-nav-tab={item.tab}
+          onPointerDown={() => prefetchTab(item.tab)}
+          onMouseEnter={() => prefetchTab(item.tab)}
+          onClick={() => switchTab(item.tab)}
+        >
+          <i className={`fa-solid ${item.icon} ae-icon-polished`} />
+          <span>{item.label}</span>
+          <b>{item.num}</b>
+        </button>
+      ))}
+
+      <div className="sidebar-bottom">
+        <div className="sidebar-status">
+          <span className="status-pulse" />
           <span>
-            <strong>AE WORKSITE</strong>
-            <small>PROJECT OPERATIONS</small>
+            <strong>Cloud workspace</strong>
+            <small id="sidebar-sync-label">Live data connection</small>
           </span>
-          <button
-            type="button"
-            className="ae-drawer-close"
-            onClick={closeMobileMenu}
-            aria-label="Close navigation menu"
-          >
-            <i className="fa-solid fa-xmark ae-icon-polished" />
-          </button>
         </div>
-
-        <div className="sidebar-label">WORKSPACE</div>
-
-        {NAV_ITEMS.map((item) => (
-          <button
-            key={item.tab}
-            type="button"
-            className={`side-link ${activeTab === item.tab ? 'active' : ''}`}
-            data-nav-tab={item.tab}
-            onClick={() => switchTab(item.tab)}
-          >
-            <i className={`fa-solid ${item.icon} ae-icon-polished`} />
-            <span>{item.label}</span>
-            <b>{item.num}</b>
-          </button>
-        ))}
-
-        <div className="sidebar-bottom">
-          <div className="sidebar-status">
-            <span className="status-pulse" />
-            <span>
-              <strong>Cloud workspace</strong>
-              <small id="sidebar-sync-label">Live data connection</small>
-            </span>
-          </div>
-          <div className="sidebar-footnote">
-            ASSOCIATE ENGINEERS <span>FIELD OPERATIONS SUITE</span>
-          </div>
+        <div className="sidebar-footnote">
+          ASSOCIATE ENGINEERS <span>FIELD OPERATIONS SUITE</span>
         </div>
-      </aside>
-    </>
+      </div>
+    </aside>
   );
-};
+});
+Sidebar.displayName = 'Sidebar';

@@ -25,11 +25,11 @@ export const LoginView: React.FC = () => {
   return (
     <section
       id="login-view"
-      className="max-w-md mx-auto my-6 sm:my-12 bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-8 shadow-2xl relative overflow-hidden"
+      className="w-full max-w-md mx-auto my-4 sm:my-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden"
     >
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 to-amber-600" />
 
-      <div className="text-center mb-6 sm:mb-8">
+      <div className="text-center mb-6">
         <div
           id="login-supervisor-badge"
           className="ae-supervisor-badge relative inline-flex items-center justify-center mb-4"
@@ -117,7 +117,7 @@ export const LoginView: React.FC = () => {
           type="submit"
           id="login-submit-btn"
           disabled={submitting}
-          className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2 mt-2"
+          className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2 mt-1"
         >
           <i className="fa-solid fa-cloud-arrow-down text-slate-950 ae-icon-polished" />
           <span>{submitting ? 'Syncing...' : 'Sync & Access Dashboard'}</span>
@@ -128,7 +128,7 @@ export const LoginView: React.FC = () => {
         <button
           type="button"
           onClick={clearDeviceMemory}
-          className="text-[11px] text-slate-500 hover:text-slate-400 transition flex items-center justify-center gap-1 mx-auto"
+          className="ae-clear-memory-btn text-[11px] text-slate-500 hover:text-slate-400 transition inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg"
         >
           <i className="fa-solid fa-rotate-left text-slate-500 ae-icon-polished" />
           Clear Local Device Memory

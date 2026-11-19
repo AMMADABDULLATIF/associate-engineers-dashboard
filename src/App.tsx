@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { AutoUpdateBanner } from './components/common/AutoUpdateBanner';
 import { Header } from './components/common/Header';
 import { ImageLightbox } from './components/common/ImageLightbox';
+import { MobileBottomNav } from './components/common/MobileBottomNav';
 import { PageHeader } from './components/common/PageHeader';
 import { Sidebar } from './components/common/Sidebar';
 import { Toast } from './components/common/Toast';
+import { TAB_LOADERS } from './constants/tabLoaders';
 import { AppProvider, useApp } from './context/AppContext';
-import { AnalyticsTab } from './features/analytics/AnalyticsTab';
 import { LoginView } from './features/auth/LoginView';
-import { DailyLogTab } from './features/daily-log/DailyLogTab';
-import { LogArchiveTab } from './features/history/LogArchiveTab';
-import { MachineryTab } from './features/machinery/MachineryTab';
-import { MaterialsTab } from './features/materials/MaterialsTab';
-import { MilestonesTab } from './features/milestones/MilestonesTab';
 import type { TabKey } from './types';
+
+const DailyLogTab = lazy(TAB_LOADERS.entry);
+const LogArchiveTab = lazy(TAB_LOADERS.history);
+const MachineryTab = lazy(TAB_LOADERS.machinery);
+const MilestonesTab = lazy(TAB_LOADERS.milestones);
+const AnalyticsTab = lazy(TAB_LOADERS.analytics);
+const MaterialsTab = lazy(TAB_LOADERS.materials);
 
 const LEGACY_TABS: Array<{
   tab: TabKey;
@@ -52,8 +55,56 @@ const LEGACY_TABS: Array<{
   },
 ];
 
+const TabLoadingFallback: React.FC = () => (
+  <div
+    className="ae-tab-loader bg-slate-900 border border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 text-center"
+    role="status"
+    aria-live="polite"
+  >
+    <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+      <i className="fa-solid fa-spinner fa-spin text-amber-400 text-base ae-icon-polished" />
+    </div>
+    <p className="text-xs font-semibold text-slate-400">
+      Loading workspace module...
+    </p>
+  </div>
+);
+
 const DashboardShell: React.FC = () => {
   const { activeSite, currentUser, activeTab, switchTab } = useApp();
+  const isAuthenticated = Boolean(activeSite && currentUser);
+
+  // Warm inactive tab chunks during idle after authentication so offline PWA retains every module
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    let cancelled = false;
+    const loaders = [
+      TAB_LOADERS.history,
+      TAB_LOADERS.materials,
+      TAB_LOADERS.machinery,
+      TAB_LOADERS.milestones,
+      TAB_LOADERS.analytics,
+    ];
+    const timer = window.setTimeout(() => {
+      const runNext = (idx: number) => {
+        if (cancelled || idx >= loaders.length) return;
+        loaders[idx]().catch(() => {});
+        const w = window as unknown as {
+          requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+        };
+        if (typeof w.requestIdleCallback === 'function') {
+          w.requestIdleCallback(() => runNext(idx + 1), { timeout: 600 });
+        } else {
+          window.setTimeout(() => runNext(idx + 1), 120);
+        }
+      };
+      runNext(0);
+    }, 650);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [isAuthenticated]);
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -79,7 +130,7 @@ const DashboardShell: React.FC = () => {
       <Header />
 
       <main className="flex-1 w-full">
-        {!activeSite || !currentUser ? (
+        {!isAuthenticated ? (
           <LoginView />
         ) : (
           <div id="dashboard-view" className="space-y-6">
@@ -114,11 +165,14 @@ const DashboardShell: React.FC = () => {
               </div>
             </div>
 
-            {renderActiveTab()}
+            <Suspense fallback={<TabLoadingFallback />}>
+              {renderActiveTab()}
+            </Suspense>
           </div>
         )}
       </main>
 
+      {isAuthenticated && <MobileBottomNav />}
       <ImageLightbox />
       <Toast />
       <AutoUpdateBanner />

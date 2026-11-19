@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
-import { DEFAULT_TRADES } from '../../constants/defaults';
+import { Pagination } from '../../components/common/Pagination';
+import { DEFAULT_TRADES, PAGE_SIZES } from '../../constants/defaults';
 import { useApp } from '../../context/AppContext';
+import { usePagination } from '../../hooks/usePagination';
 
 export const AnalyticsTab: React.FC = () => {
   const { logs, machinery, materials, showToast } = useApp();
@@ -67,11 +69,20 @@ export const AnalyticsTab: React.FC = () => {
     };
   }, [logs, machinery, materials]);
 
+  const materialsPagination = usePagination(
+    summary.sortedMaterials,
+    PAGE_SIZES.ANALYTICS
+  );
+  const tradesPagination = usePagination(
+    summary.sortedTrades,
+    PAGE_SIZES.ANALYTICS
+  );
+
   return (
     <div id="tab-content-analytics" className="space-y-6">
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl space-y-6">
         <div className="flex flex-wrap justify-between items-center border-b border-slate-800 pb-4 gap-2">
-          <div>
+          <div className="min-w-0">
             <h3 className="font-bold text-amber-400 text-base sm:text-lg flex items-center gap-2">
               <i className="fa-solid fa-chart-pie text-white ae-icon-polished" />
               Site Analytics &amp; Performance Summary
@@ -92,8 +103,8 @@ export const AnalyticsTab: React.FC = () => {
         </div>
 
         {/* Top Summary Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1 min-w-0">
             <span className="text-xs text-slate-400 font-medium block">
               Total Recorded Logs
             </span>
@@ -109,7 +120,7 @@ export const AnalyticsTab: React.FC = () => {
             </span>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1 min-w-0">
             <span className="text-xs text-slate-400 font-medium block">
               Total Labour Deployed
             </span>
@@ -124,7 +135,7 @@ export const AnalyticsTab: React.FC = () => {
             </span>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1 min-w-0">
             <span className="text-xs text-slate-400 font-medium block">
               Total Delays / Issues
             </span>
@@ -139,7 +150,7 @@ export const AnalyticsTab: React.FC = () => {
             </span>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1">
+          <div className="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl space-y-1 min-w-0">
             <span className="text-xs text-slate-400 font-medium block">
               Machinery Hours Logged
             </span>
@@ -157,56 +168,78 @@ export const AnalyticsTab: React.FC = () => {
 
         {/* Detailed Breakdown Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
-          <div className="bg-slate-800/50 border border-slate-800 p-4 sm:p-5 rounded-2xl space-y-3">
+          <div className="bg-slate-800/50 border border-slate-800 p-4 sm:p-5 rounded-2xl space-y-3 min-w-0">
             <h4 className="font-bold text-amber-400 text-sm flex items-center gap-2">
               <i className="fa-solid fa-boxes-stacked text-white ae-icon-polished" />
               Top Consumed Materials Summary
             </h4>
             <div id="analytics-materials-list" className="space-y-2">
-              {summary.sortedMaterials.length === 0 ? (
+              {materialsPagination.paginatedItems.length === 0 ? (
                 <p className="text-xs text-slate-500 py-2">
                   No material delivery logs recorded yet.
                 </p>
               ) : (
-                summary.sortedMaterials.map(([name, data]) => (
+                materialsPagination.paginatedItems.map(([name, data]) => (
                   <div
                     key={name}
-                    className="bg-slate-900 border border-slate-700/60 p-2.5 rounded-xl flex justify-between items-center text-xs"
+                    className="bg-slate-900 border border-slate-700/60 p-2.5 rounded-xl flex justify-between items-center gap-2 text-xs min-w-0"
                   >
-                    <span className="font-medium text-white">{name}</span>
-                    <span className="text-amber-400 font-bold">
+                    <span className="font-medium text-white truncate">
+                      {name}
+                    </span>
+                    <span className="text-amber-400 font-bold shrink-0">
                       {data.totalQty} {data.unit}
                     </span>
                   </div>
                 ))
               )}
             </div>
+            <Pagination
+              currentPage={materialsPagination.currentPage}
+              totalPages={materialsPagination.totalPages}
+              totalItems={materialsPagination.totalItems}
+              startIndex={materialsPagination.startIndex}
+              endIndex={materialsPagination.endIndex}
+              itemLabel="materials"
+              onPageChange={materialsPagination.setCurrentPage}
+            />
           </div>
 
-          <div className="bg-slate-800/50 border border-slate-800 p-4 sm:p-5 rounded-2xl space-y-3">
+          <div className="bg-slate-800/50 border border-slate-800 p-4 sm:p-5 rounded-2xl space-y-3 min-w-0">
             <h4 className="font-bold text-amber-400 text-sm flex items-center gap-2">
               <i className="fa-solid fa-users text-white ae-icon-polished" />
               Labour Distribution by Trade
             </h4>
             <div id="analytics-trades-list" className="space-y-2">
-              {summary.sortedTrades.length === 0 ? (
+              {tradesPagination.paginatedItems.length === 0 ? (
                 <p className="text-xs text-slate-500 py-2">
                   No labour counts recorded yet.
                 </p>
               ) : (
-                summary.sortedTrades.map(([trade, count]) => (
+                tradesPagination.paginatedItems.map(([trade, count]) => (
                   <div
                     key={trade}
-                    className="bg-slate-900 border border-slate-700/60 p-2.5 rounded-xl flex justify-between items-center text-xs"
+                    className="bg-slate-900 border border-slate-700/60 p-2.5 rounded-xl flex justify-between items-center gap-2 text-xs min-w-0"
                   >
-                    <span className="font-medium text-white">{trade}</span>
-                    <span className="text-amber-400 font-bold">
+                    <span className="font-medium text-white truncate">
+                      {trade}
+                    </span>
+                    <span className="text-amber-400 font-bold shrink-0">
                       {count} Total Workers
                     </span>
                   </div>
                 ))
               )}
             </div>
+            <Pagination
+              currentPage={tradesPagination.currentPage}
+              totalPages={tradesPagination.totalPages}
+              totalItems={tradesPagination.totalItems}
+              startIndex={tradesPagination.startIndex}
+              endIndex={tradesPagination.endIndex}
+              itemLabel="trades"
+              onPageChange={tradesPagination.setCurrentPage}
+            />
           </div>
         </div>
       </div>

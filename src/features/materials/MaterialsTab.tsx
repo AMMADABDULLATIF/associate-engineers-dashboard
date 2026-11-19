@@ -318,7 +318,7 @@ export const MaterialsTab: React.FC = () => {
                   id="mat-category-filter"
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="bg-slate-800 border border-slate-700 rounded-xl px-3 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                  className="bg-slate-800 border border-slate-700 rounded-xl px-3 text-xs text-slate-200 focus:outline-none focus:border-amber-500 truncate"
                 >
                   <option value="">All Categories</option>
                   {SITE_STORAGE_CATEGORIES.map((cat) => (
@@ -334,10 +334,10 @@ export const MaterialsTab: React.FC = () => {
                     setSubView('balance');
                     window.scrollTo({ top: 0, behavior: 'auto' });
                   }}
-                  className="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 rounded-xl text-xs font-semibold inline-flex items-center justify-center gap-2 transition"
+                  className="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 rounded-xl text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition"
                 >
-                  <span>Full Balance Sheet</span>
-                  <i className="fa-solid fa-arrow-right ae-icon-polished" />
+                  <span className="truncate">Full Balance Sheet</span>
+                  <i className="fa-solid fa-arrow-right ae-icon-polished shrink-0" />
                 </button>
               </div>
             </div>
@@ -345,7 +345,7 @@ export const MaterialsTab: React.FC = () => {
 
           <div id="materials-recent-list">
             {paginatedItems.length === 0 ? (
-              <div className="col-span-full py-10 text-center text-slate-400">
+              <div className="mat-empty-card col-span-full py-10 text-center text-slate-400">
                 <i className="fa-solid fa-boxes-stacked text-4xl mb-3 text-slate-600 ae-icon-polished" />
                 <p className="font-medium text-sm">
                   {materials.length === 0

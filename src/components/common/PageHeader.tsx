@@ -1,8 +1,8 @@
 import React from 'react';
-import { useApp } from '../../context/AppContext';
+import { useNavigation } from '../../context/AppContext';
 
-export const PageHeader: React.FC = () => {
-  const { pageHeader } = useApp();
+export const PageHeader: React.FC = React.memo(() => {
+  const { pageHeader } = useNavigation();
 
   return (
     <div className="saas-page-head no-print">
@@ -23,4 +23,5 @@ export const PageHeader: React.FC = () => {
       </div>
     </div>
   );
-};
+});
+PageHeader.displayName = 'PageHeader';
