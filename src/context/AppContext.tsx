@@ -10,33 +10,18 @@ import React, {
 import { PAGE_META, STORAGE_KEYS } from '../constants/defaults';
 import { prefetchTabChunk } from '../constants/tabLoaders';
 import {
-  authenticateLockedSite,
-  checkGoogleRedirectOwner,
-  checkSiteStatus,
-  clearSiteSessionProof,
   deleteLogDoc,
   deleteMachineryDocAndSyncLogs,
   deleteMaterialDoc,
   deleteMilestoneDoc,
-  getCompanySecurityMeta,
-  hashMasterCode,
-  hashSiteCode,
+  getOrCreateCloudSite,
   initFirebaseApp,
   isFirebaseReady,
-  normalizeAccessCode,
-  registerNewSiteWithCode,
-  resetCompanyCodesViaOwner,
-  rotateSiteAccessCode,
   saveLogDoc,
   saveMachineryDocAndSyncLogs,
   saveMaterialDoc,
   saveMilestoneDoc,
-  setupCompanySecurity,
-  signInOwnerWithGoogle,
-  signOutOwnerGoogleIfActive,
   subscribeToSiteCollections,
-  syncSiteSessionProof,
-  upgradeLegacySiteAccess,
 } from '../services/firebase';
 import {
   clearDailyDraft,
@@ -60,8 +45,6 @@ import {
   upsertStoredSite,
 } from '../services/storage';
 import type {
-  AuthRole,
-  CompanySecurityMeta,
   DailyLogRecord,
   MachineryRecord,
   MaterialEntry,
@@ -83,40 +66,12 @@ export interface LightboxState {
   index: number;
 }
 
-export interface SecurityStatusState {
-  loaded: boolean;
-  configured: boolean;
-  meta: CompanySecurityMeta | null;
-  error: string | null;
-}
-
-export type LoginAttemptResult =
-  | { ok: true }
-  | { ok: false; action: 'error'; error: string }
-  | { ok: false; action: 'first_setup'; siteName: string; username: string }
-  | {
-      ok: false;
-      action: 'register_new';
-      siteId: string;
-      siteName: string;
-      username: string;
-    }
-  | {
-      ok: false;
-      action: 'upgrade_legacy';
-      site: SiteRecord;
-      username: string;
-    };
-
 interface AppContextValue {
   theme: ThemeMode;
   toggleTheme: () => void;
   sitesList: SiteRecord[];
   activeSite: SiteRecord | null;
   currentUser: string | null;
-  authRole: AuthRole;
-  securityStatus: SecurityStatusState;
-  refreshSecurityMeta: () => Promise<void>;
   activeTab: TabKey;
   switchTab: (tab: TabKey) => void;
   pageHeader: PageHeaderInfo;
@@ -142,38 +97,7 @@ interface AppContextValue {
   updateLightboxImages: (images: string[], index: number) => void;
   canInstallPWA: boolean;
   installPWA: () => Promise<void>;
-  loginWithAccessCode: (
-    siteName: string,
-    username: string,
-    accessCode: string
-  ) => Promise<LoginAttemptResult>;
-  completeFirstTimeSetup: (params: {
-    ownerEmail: string;
-    masterCode: string;
-    setupCode: string;
-  }) => Promise<string | null>;
-  completeNewSiteRegistration: (params: {
-    siteName: string;
-    supervisorName: string;
-    setupCode: string;
-    siteAccessCode: string;
-  }) => Promise<string | null>;
-  completeLegacySiteUpgrade: (params: {
-    site: SiteRecord;
-    username: string;
-    setupOrMasterCode: string;
-    newSiteAccessCode: string;
-  }) => Promise<string | null>;
-  verifyOwnerGoogle: () => Promise<
-    | { ok: true; email: string }
-    | { ok: false; redirectStarted?: boolean; error: string }
-  >;
-  checkPendingGoogleOwner: () => Promise<string | null>;
-  completeOwnerCodeReset: (params: {
-    newMasterCode: string;
-    newSetupCode: string;
-  }) => Promise<string | null>;
-  resetCurrentSiteCode: (newSiteCode: string) => Promise<string | null>;
+  login: (siteName: string, username: string) => Promise<string | null>;
   logout: () => void;
   clearDeviceMemory: () => void;
   saveDailyLogEntry: (
@@ -241,18 +165,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   );
   const [activeSite, setActiveSite] = useState<SiteRecord | null>(null);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
-  const [authRole, setAuthRole] = useState<AuthRole>('local');
-  const [sessionKeyHash, setSessionKeyHash] = useState<string>('');
   const [activeTab, setActiveTab] = useState<TabKey>('entry');
   const [pageHeaderOverride, setPageHeaderOverride] =
     useState<PageHeaderInfo | null>(null);
-
-  const [securityStatus, setSecurityStatus] = useState<SecurityStatusState>({
-    loaded: false,
-    configured: false,
-    meta: null,
-    error: null,
-  });
 
   const [isOnline, setIsOnline] = useState<boolean>(() =>
     typeof navigator === 'undefined' ? true : navigator.onLine !== false
@@ -285,7 +200,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     useState<BeforeInstallPromptEvent | null>(null);
 
   const unsubscribeRef = useRef<(() => void) | null>(null);
-  const listenerGenerationRef = useRef<number>(0);
   const dirtyFormsRef = useRef<Set<string>>(new Set());
   const savingFormsRef = useRef<Set<string>>(new Set());
   const imageReadsInFlightRef = useRef<number>(0);
@@ -298,7 +212,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     toastTimerRef.current = window.setTimeout(() => {
       setToastVisible(false);
-    }, 3400);
+    }, 3200);
   }, []);
 
   // Apply theme to document root
@@ -324,58 +238,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, []);
 
-  const refreshSecurityMeta = useCallback(async () => {
-    if (!isFirebaseReady() || !navigator.onLine) return;
-    const res = await getCompanySecurityMeta();
-    if (res.ok) {
-      setSecurityStatus({
-        loaded: true,
-        configured: res.configured,
-        meta: res.meta,
-        error: null,
-      });
-    } else {
-      const errCode = res.error?.code || '';
-      const msg =
-        errCode === 'auth/operation-not-allowed'
-          ? 'Enable Anonymous Authentication in Firebase Console (Authentication -> Sign-in method -> Anonymous).'
-          : res.error?.message || null;
-      setSecurityStatus((prev) => ({
-        loaded: true,
-        configured: prev.configured,
-        meta: prev.meta,
-        error: msg,
-      }));
-    }
-  }, []);
-
-  const forceSecurityLogout = useCallback(
-    (reason: string) => {
-      listenerGenerationRef.current += 1;
-      if (unsubscribeRef.current) {
-        unsubscribeRef.current();
-        unsubscribeRef.current = null;
-      }
-      clearStoredSession();
-      setActiveSite(null);
-      setCurrentUser(null);
-      setAuthRole('local');
-      setSessionKeyHash('');
-      setEditingLogId(null);
-      setViewingLogId(null);
-      setPageHeaderOverride(null);
-      setActiveTab('entry');
-      setLogs([]);
-      setMachinery([]);
-      setMilestones([]);
-      setMaterials([]);
-      dirtyFormsRef.current.clear();
-      savingFormsRef.current.clear();
-      showToast(reason);
-    },
-    [showToast]
-  );
-
   // Initialize Firebase + restore stored session once
   useEffect(() => {
     const { initialized } = initFirebaseApp();
@@ -386,83 +248,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const session = getStoredSession();
     if (session) {
-      // If online with Firebase ready and an old legacy unverified session has no keyHash, prompt re-login securely
-      if (initialized && navigator.onLine && !session.keyHash) {
-        clearStoredSession();
-        showToast(
-          'Security lock enabled! Please enter your Site Access Code once to verify.'
-        );
-      } else {
-        setActiveSite(session.site);
-        setCurrentUser(session.user);
-        setAuthRole(session.role || 'local');
-        setSessionKeyHash(session.keyHash || '');
-        setLogs(getSiteLogs(session.site.id));
-        setMachinery(getSiteMachinery(session.site.id));
-        setMilestones(getSiteMilestones(session.site.id));
-        setMaterials(getSiteMaterials(session.site.id));
-        if (session.tab) {
-          setActiveTab(session.tab);
-        }
+      setActiveSite(session.site);
+      setCurrentUser(session.user);
+      setLogs(getSiteLogs(session.site.id));
+      setMachinery(getSiteMachinery(session.site.id));
+      setMilestones(getSiteMilestones(session.site.id));
+      setMaterials(getSiteMaterials(session.site.id));
+      if (session.tab) {
+        setActiveTab(session.tab);
       }
     }
-
-    if (initialized && navigator.onLine) {
-      void getCompanySecurityMeta().then((res) => {
-        if (res.ok) {
-          setSecurityStatus({
-            loaded: true,
-            configured: res.configured,
-            meta: res.meta,
-            error: null,
-          });
-        } else {
-          const errCode = res.error?.code || '';
-          setSecurityStatus({
-            loaded: true,
-            configured: false,
-            meta: null,
-            error:
-              errCode === 'auth/operation-not-allowed'
-                ? 'Enable Anonymous Authentication in Firebase Console (Authentication -> Sign-in method -> Anonymous).'
-                : res.error?.message || null,
-          });
-        }
-      });
-    }
-  }, [showToast]);
+  }, []);
 
   // Subscribe to site Firestore collections when activeSite & Firebase are ready
   const attachListeners = useCallback(
-    async (siteId: string, keyHash: string, role: AuthRole) => {
-      const gen = ++listenerGenerationRef.current;
+    (siteId: string) => {
       if (unsubscribeRef.current) {
         unsubscribeRef.current();
         unsubscribeRef.current = null;
       }
       if (!isFirebaseReady()) return;
-
-      if (!keyHash && navigator.onLine) {
-        forceSecurityLogout(
-          'Security verification required. Please sign in with your Access Code.'
-        );
-        return;
-      }
-
-      setSyncStatus({ text: 'Verifying secure session…', state: 'syncing' });
-
-      if (keyHash && navigator.onLine) {
-        const synced = await syncSiteSessionProof(siteId, keyHash, role);
-        if (gen !== listenerGenerationRef.current) return;
-        if (!synced) {
-          forceSecurityLogout(
-            'Access Code expired or changed by Owner. Please sign in again.'
-          );
-          return;
-        }
-      }
-
-      if (gen !== listenerGenerationRef.current) return;
 
       setSyncStatus({ text: 'Connecting to Firebase…', state: 'syncing' });
       const { unsubscribeAll } = subscribeToSiteCollections(siteId, {
@@ -484,12 +289,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           console.error('Firestore realtime listener error:', err);
           if (err && err.code === 'permission-denied') {
             setSyncStatus({
-              text: 'Access Revoked / Sign In Needed',
+              text: 'Firebase Permission Denied',
               state: 'error',
             });
-            forceSecurityLogout(
-              'Site Access Code was changed or session expired. Please sign in again.'
-            );
           } else {
             setSyncStatus({
               text: 'Firebase Reconnecting…',
@@ -513,30 +315,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
       unsubscribeRef.current = unsubscribeAll;
     },
-    [forceSecurityLogout]
+    []
   );
 
   useEffect(() => {
     if (activeSite && isCloudMode) {
-      void attachListeners(activeSite.id, sessionKeyHash, authRole);
+      attachListeners(activeSite.id);
     }
     return () => {
-      listenerGenerationRef.current += 1;
       if (unsubscribeRef.current) {
         unsubscribeRef.current();
         unsubscribeRef.current = null;
       }
     };
-  }, [activeSite, isCloudMode, sessionKeyHash, authRole, attachListeners]);
+  }, [activeSite, isCloudMode, attachListeners]);
 
   // Network online/offline listeners
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
-      void refreshSecurityMeta();
       if (activeSite && isFirebaseReady()) {
         setSyncStatus({ text: 'Reconnecting…', state: 'syncing' });
-        void attachListeners(activeSite.id, sessionKeyHash, authRole);
+        attachListeners(activeSite.id);
       }
     };
     const handleOffline = () => {
@@ -554,14 +354,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [
-    activeSite,
-    isCloudMode,
-    sessionKeyHash,
-    authRole,
-    attachListeners,
-    refreshSecurityMeta,
-  ]);
+  }, [activeSite, isCloudMode, attachListeners]);
 
   // PWA beforeinstallprompt & appinstalled
   useEffect(() => {
@@ -597,25 +390,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [deferredInstallPrompt, showToast]);
 
-  // Lock body scroll only when fullscreen lightbox is open
+  // Lock body scroll only when fullscreen lightbox is open (backdrop blocks touch-scroll without synchronous reflow on drawer toggle)
   useEffect(() => {
     document.body.style.overflow = lightboxState ? 'hidden' : '';
   }, [lightboxState]);
 
-  // Persist active session whenever site/user/tab/role/keyHash changes
+  // Persist active session whenever site/user/tab changes (deferred off main tap path)
   useEffect(() => {
     if (activeSite && currentUser) {
       scheduleIdleWrite(() => {
         saveStoredSession({
           site: activeSite,
           user: currentUser,
-          role: authRole,
-          keyHash: sessionKeyHash,
           tab: activeTab,
         });
       });
     }
-  }, [activeSite, currentUser, authRole, sessionKeyHash, activeTab]);
+  }, [activeSite, currentUser, activeTab]);
 
   const prefetchTab = useCallback((tab: TabKey) => {
     prefetchTabChunk(tab);
@@ -641,394 +432,105 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  const finalizeLoginSession = useCallback(
-    (
-      site: SiteRecord,
-      username: string,
-      role: AuthRole,
-      keyHash: string,
-      cloudActive: boolean
-    ) => {
-      const updatedSites = upsertStoredSite(site);
+  const login = useCallback(
+    async (siteNameRaw: string, usernameRaw: string): Promise<string | null> => {
+      const siteNameInput = siteNameRaw.trim();
+      const usernameInput = usernameRaw.trim();
+      if (!siteNameInput || !usernameInput) {
+        return 'Please enter both Site Name and Supervisor Name.';
+      }
+
+      const cleanSiteId = makeSiteId(siteNameInput);
+      let matchedSite: SiteRecord | null = null;
+
+      if (isFirebaseReady() && navigator.onLine) {
+        const res = await getOrCreateCloudSite(
+          cleanSiteId,
+          siteNameInput,
+          usernameInput
+        );
+        if (res.ok) {
+          if (
+            res.exists &&
+            res.site.supervisor &&
+            normalizeLoginText(res.site.supervisor) !==
+              normalizeLoginText(usernameInput)
+          ) {
+            return 'Access Denied! Incorrect Supervisor Name for this site.';
+          }
+          matchedSite = res.site;
+          setIsCloudMode(true);
+        } else {
+          console.warn(
+            'Cloud lookup failed or permission denied, resorting to local storage mode:',
+            res.error
+          );
+          setIsCloudMode(false);
+          setSyncStatus({ text: 'Local Storage Active', state: 'local' });
+        }
+      }
+
+      if (!matchedSite) {
+        const localSites = getSitesList();
+        const foundSite = localSites.find(
+          (s) => normalizeLoginText(s.name) === normalizeLoginText(siteNameInput)
+        );
+        if (foundSite) {
+          if (
+            foundSite.supervisor &&
+            normalizeLoginText(foundSite.supervisor) !==
+              normalizeLoginText(usernameInput)
+          ) {
+            return 'Access Denied! Incorrect Supervisor Name for this site.';
+          }
+          matchedSite = foundSite;
+        } else {
+          matchedSite = {
+            id: cleanSiteId,
+            name: siteNameInput,
+            supervisor: usernameInput,
+          };
+        }
+      }
+
+      const updatedSites = upsertStoredSite(matchedSite);
       setSitesList(updatedSites);
 
-      setLogs(getSiteLogs(site.id));
-      setMachinery(getSiteMachinery(site.id));
-      setMilestones(getSiteMilestones(site.id));
-      setMaterials(getSiteMaterials(site.id));
+      setLogs(getSiteLogs(matchedSite.id));
+      setMachinery(getSiteMachinery(matchedSite.id));
+      setMilestones(getSiteMilestones(matchedSite.id));
+      setMaterials(getSiteMaterials(matchedSite.id));
 
       setEditingLogId(null);
       setViewingLogId(null);
       setPageHeaderOverride(null);
       setActiveTab('entry');
-      setIsCloudMode(cloudActive);
-      setAuthRole(role);
-      setSessionKeyHash(keyHash);
-      setActiveSite(site);
-      setCurrentUser(username);
+      setActiveSite(matchedSite);
+      setCurrentUser(usernameInput);
 
       saveStoredSession({
-        site,
-        user: username,
-        role,
-        keyHash,
+        site: matchedSite,
+        user: usernameInput,
         tab: 'entry',
       });
 
-      const roleLabel =
-        role === 'master' || role === 'owner'
-          ? 'Owner / Master Access'
-          : 'Site Supervisor';
-      showToast(`Welcome ${username}! (${roleLabel}) — ${site.name}`);
-    },
-    [showToast]
-  );
-
-  const loginWithAccessCode = useCallback(
-    async (
-      siteNameRaw: string,
-      usernameRaw: string,
-      accessCodeRaw: string
-    ): Promise<LoginAttemptResult> => {
-      const siteNameInput = siteNameRaw.trim();
-      const usernameInput = usernameRaw.trim();
-      const accessCodeInput = normalizeAccessCode(accessCodeRaw);
-
-      if (!siteNameInput || !usernameInput) {
-        return {
-          ok: false,
-          action: 'error',
-          error: 'Please enter both Site Name and Your / Supervisor Name.',
-        };
-      }
-
-      const cleanSiteId = makeSiteId(siteNameInput);
-
-      if (isFirebaseReady() && navigator.onLine) {
-        // Check if Company Security Lock has been initialized by the Owner
-        let configured = securityStatus.configured;
-        if (!securityStatus.loaded || !configured) {
-          const metaRes = await getCompanySecurityMeta();
-          if (!metaRes.ok) {
-            const code = metaRes.error?.code || '';
-            return {
-              ok: false,
-              action: 'error',
-              error:
-                code === 'auth/operation-not-allowed'
-                  ? 'Enable Anonymous Authentication in Firebase Console (Authentication -> Sign-in method -> Anonymous).'
-                  : metaRes.error?.message ||
-                    'Unable to reach Firebase authentication.',
-            };
-          }
-          setSecurityStatus({
-            loaded: true,
-            configured: metaRes.configured,
-            meta: metaRes.meta,
-            error: null,
-          });
-          configured = metaRes.configured;
-        }
-
-        if (!configured) {
-          return {
-            ok: false,
-            action: 'first_setup',
-            siteName: siteNameInput,
-            username: usernameInput,
-          };
-        }
-
-        const siteStatus = await checkSiteStatus(cleanSiteId);
-        if (!siteStatus.ok) {
-          return { ok: false, action: 'error', error: siteStatus.error };
-        }
-
-        if (siteStatus.state.status === 'new') {
-          return {
-            ok: false,
-            action: 'register_new',
-            siteId: cleanSiteId,
-            siteName: siteNameInput,
-            username: usernameInput,
-          };
-        }
-
-        if (siteStatus.state.status === 'legacy') {
-          return {
-            ok: false,
-            action: 'upgrade_legacy',
-            site: siteStatus.state.site,
-            username: usernameInput,
-          };
-        }
-
-        // Site is locked -> verify Master Passcode or Site Access Code
-        if (!accessCodeInput) {
-          return {
-            ok: false,
-            action: 'error',
-            error: 'Please enter the Site Access Code or Master Passcode.',
-          };
-        }
-
-        const authRes = await authenticateLockedSite({
-          siteId: cleanSiteId,
-          username: usernameInput,
-          accessCode: accessCodeInput,
-        });
-        if (!authRes.ok) {
-          return { ok: false, action: 'error', error: authRes.error };
-        }
-
-        finalizeLoginSession(
-          authRes.site,
-          usernameInput,
-          authRes.role,
-          authRes.keyHash,
-          true
-        );
-        return { ok: true };
-      }
-
-      // Offline fallback: only allow previously cached sites on this device
-      const localSites = getSitesList();
-      const foundSite = localSites.find(
-        (s) =>
-          s.id === cleanSiteId ||
-          normalizeLoginText(s.name) === normalizeLoginText(siteNameInput)
-      );
-
-      if (!foundSite) {
-        return {
-          ok: false,
-          action: 'error',
-          error:
-            'Offline Mode: New sites require an internet connection + Company Setup Code for verification.',
-        };
-      }
-
-      if (
-        foundSite.supervisor &&
-        normalizeLoginText(foundSite.supervisor) !==
-          normalizeLoginText(usernameInput)
-      ) {
-        return {
-          ok: false,
-          action: 'error',
-          error: 'Access Denied! Incorrect Supervisor Name for this saved site.',
-        };
-      }
-
-      if (!accessCodeInput) {
-        return {
-          ok: false,
-          action: 'error',
-          error: 'Please enter your Site Access Code.',
-        };
-      }
-
-      // Compute keyHash locally so if device regains connection, listeners sync if code matches
-      const offlineKeyHash =
-        accessCodeInput.length >= 6
-          ? await hashSiteCode(foundSite.id, accessCodeInput).catch(() =>
-              hashMasterCode(accessCodeInput)
-            )
-          : await hashSiteCode(foundSite.id, accessCodeInput);
-
-      setSyncStatus({ text: 'Offline Device Mode', state: 'local' });
-      finalizeLoginSession(foundSite, usernameInput, 'local', offlineKeyHash, false);
-      return { ok: true };
-    },
-    [securityStatus, finalizeLoginSession]
-  );
-
-  const completeFirstTimeSetup = useCallback(
-    async (params: {
-      ownerEmail: string;
-      masterCode: string;
-      setupCode: string;
-    }): Promise<string | null> => {
-      const res = await setupCompanySecurity(params);
-      if (!res.ok) return res.error;
-
-      setSecurityStatus({
-        loaded: true,
-        configured: true,
-        meta: {
-          initialized: true,
-          ownerEmail: params.ownerEmail.trim().toLowerCase(),
-          updatedAt: new Date().toISOString(),
-        },
-        error: null,
-      });
-      showToast(
-        'Company Security Lock activated! Master Passcode & Setup Code saved.'
-      );
+      showToast(`Welcome ${usernameInput}! Logged into ${matchedSite.name}`);
       return null;
     },
     [showToast]
-  );
-
-  const completeNewSiteRegistration = useCallback(
-    async (params: {
-      siteName: string;
-      supervisorName: string;
-      setupCode: string;
-      siteAccessCode: string;
-    }): Promise<string | null> => {
-      const siteId = makeSiteId(params.siteName.trim());
-      const res = await registerNewSiteWithCode({
-        siteId,
-        siteName: params.siteName.trim(),
-        supervisorName: params.supervisorName.trim(),
-        setupCode: params.setupCode,
-        siteAccessCode: params.siteAccessCode,
-      });
-      if (!res.ok) return res.error;
-
-      finalizeLoginSession(
-        res.site,
-        params.supervisorName.trim(),
-        res.role,
-        res.keyHash,
-        true
-      );
-      return null;
-    },
-    [finalizeLoginSession]
-  );
-
-  const completeLegacySiteUpgrade = useCallback(
-    async (params: {
-      site: SiteRecord;
-      username: string;
-      setupOrMasterCode: string;
-      newSiteAccessCode: string;
-    }): Promise<string | null> => {
-      const res = await upgradeLegacySiteAccess(params);
-      if (!res.ok) return res.error;
-
-      finalizeLoginSession(
-        res.site,
-        params.username.trim(),
-        res.role,
-        res.keyHash,
-        true
-      );
-      return null;
-    },
-    [finalizeLoginSession]
-  );
-
-  const verifyOwnerGoogle = useCallback(async (): Promise<
-    | { ok: true; email: string }
-    | { ok: false; redirectStarted?: boolean; error: string }
-  > => {
-    const res = await signInOwnerWithGoogle();
-    if (!res.ok) return res;
-
-    let ownerEmail = securityStatus.meta?.ownerEmail || '';
-    if (!ownerEmail) {
-      const metaRes = await getCompanySecurityMeta();
-      if (metaRes.ok && metaRes.meta?.ownerEmail) {
-        ownerEmail = metaRes.meta.ownerEmail;
-        setSecurityStatus({
-          loaded: true,
-          configured: metaRes.configured,
-          meta: metaRes.meta,
-          error: null,
-        });
-      }
-    }
-
-    if (
-      ownerEmail &&
-      res.email.trim().toLowerCase() !== ownerEmail.trim().toLowerCase()
-    ) {
-      await signOutOwnerGoogleIfActive();
-      return {
-        ok: false,
-        error: `Google account "${res.email}" does not match the registered Owner Email.`,
-      };
-    }
-
-    return { ok: true, email: res.email };
-  }, [securityStatus.meta]);
-
-  const checkPendingGoogleOwner = useCallback(async (): Promise<string | null> => {
-    const { email } = await checkGoogleRedirectOwner();
-    if (!email) return null;
-
-    let ownerEmail = securityStatus.meta?.ownerEmail || '';
-    if (!ownerEmail) {
-      const metaRes = await getCompanySecurityMeta();
-      if (metaRes.ok && metaRes.meta?.ownerEmail) {
-        ownerEmail = metaRes.meta.ownerEmail;
-      }
-    }
-
-    if (
-      ownerEmail &&
-      email.trim().toLowerCase() !== ownerEmail.trim().toLowerCase()
-    ) {
-      await signOutOwnerGoogleIfActive();
-      return null;
-    }
-    return email;
-  }, [securityStatus.meta]);
-
-  const completeOwnerCodeReset = useCallback(
-    async (params: {
-      newMasterCode: string;
-      newSetupCode: string;
-    }): Promise<string | null> => {
-      const res = await resetCompanyCodesViaOwner(params);
-      if (!res.ok) return res.error;
-      await signOutOwnerGoogleIfActive();
-      showToast(
-        'Master Passcode & Company Setup Code updated! Old codes are revoked.'
-      );
-      return null;
-    },
-    [showToast]
-  );
-
-  const resetCurrentSiteCode = useCallback(
-    async (newSiteCode: string): Promise<string | null> => {
-      if (!activeSite) return 'No active site selected.';
-      if (authRole !== 'master' && authRole !== 'owner') {
-        return 'Only Owner / Project Head (logged in with Master Passcode) can reset a Site Access Code.';
-      }
-      const res = await rotateSiteAccessCode({
-        siteId: activeSite.id,
-        newSiteCode,
-      });
-      if (!res.ok) return res.error;
-      showToast(
-        `Site Access Code for ${activeSite.name} updated! Old supervisor access revoked.`
-      );
-      return null;
-    },
-    [activeSite, authRole, showToast]
   );
 
   const logout = useCallback(() => {
-    listenerGenerationRef.current += 1;
     if (unsubscribeRef.current) {
       unsubscribeRef.current();
       unsubscribeRef.current = null;
     }
     if (activeSite) {
       clearDailyDraft(activeSite.id);
-      void clearSiteSessionProof(activeSite.id);
     }
-    void signOutOwnerGoogleIfActive();
     clearStoredSession();
     setActiveSite(null);
     setCurrentUser(null);
-    setAuthRole('local');
-    setSessionKeyHash('');
     setEditingLogId(null);
     setViewingLogId(null);
     setPageHeaderOverride(null);
@@ -1404,7 +906,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           : 'Saved locally (offline). Will sync to cloud when online.'
       );
 
-      if (isCloudMode && isFirebaseReady()) {
+      if (isFirebaseReady()) {
         setFormSaving('material-form', true);
         if (online) {
           setSyncStatus({
@@ -1427,7 +929,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
           });
       }
     },
-    [activeSite, isCloudMode, materials, setFormSaving, showToast]
+    [activeSite, materials, setFormSaving, showToast]
   );
 
   const deleteMaterialEntry = useCallback(
@@ -1448,7 +950,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       saveSiteMaterials(activeSite.id, updated);
       showToast('Material entry deleted successfully.');
 
-      if (isCloudMode && isFirebaseReady()) {
+      if (isFirebaseReady()) {
         const online =
           typeof navigator === 'undefined' ? true : navigator.onLine !== false;
         if (online) {
@@ -1467,7 +969,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }
     },
-    [activeSite, isCloudMode, materials, showToast]
+    [activeSite, materials, showToast]
   );
 
   const openLightbox = useCallback((images: string[], index = 0) => {
@@ -1505,9 +1007,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       sitesList,
       activeSite,
       currentUser,
-      authRole,
-      securityStatus,
-      refreshSecurityMeta,
       activeTab,
       switchTab,
       pageHeader,
@@ -1533,14 +1032,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       updateLightboxImages,
       canInstallPWA: Boolean(deferredInstallPrompt),
       installPWA,
-      loginWithAccessCode,
-      completeFirstTimeSetup,
-      completeNewSiteRegistration,
-      completeLegacySiteUpgrade,
-      verifyOwnerGoogle,
-      checkPendingGoogleOwner,
-      completeOwnerCodeReset,
-      resetCurrentSiteCode,
+      login,
       logout,
       clearDeviceMemory,
       saveDailyLogEntry,
@@ -1562,9 +1054,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       sitesList,
       activeSite,
       currentUser,
-      authRole,
-      securityStatus,
-      refreshSecurityMeta,
       activeTab,
       switchTab,
       pageHeader,
@@ -1587,14 +1076,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       updateLightboxImages,
       deferredInstallPrompt,
       installPWA,
-      loginWithAccessCode,
-      completeFirstTimeSetup,
-      completeNewSiteRegistration,
-      completeLegacySiteUpgrade,
-      verifyOwnerGoogle,
-      checkPendingGoogleOwner,
-      completeOwnerCodeReset,
-      resetCurrentSiteCode,
+      login,
       logout,
       clearDeviceMemory,
       saveDailyLogEntry,
