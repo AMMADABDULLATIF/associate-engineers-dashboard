@@ -1,7 +1,7 @@
 import type { LaborTradeDefinition, TabKey } from '../types';
 
 export const BUILT_IN_FIREBASE_CONFIG = {
-  apiKey: ['AIzaSyC_9cE', '4jY5lX_6pN', 'c904338184145855832'].join(''),
+  apiKey: ['AIzaSyDFYJC9Z9MFDNpWb5uzoovxgN8zeE1uCFA'].join(''),
   authDomain: 'associate-engineers.firebaseapp.com',
   projectId: 'associate-engineers',
   storageBucket: 'associate-engineers.firebasestorage.app',
