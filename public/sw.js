@@ -1,5 +1,5 @@
 /* ASSOCIATE ENGINEERS PWA Service Worker — Offline First Shell, Vite Chunk Cache & CDN Asset Cache */
-const CACHE_NAME = 'associate-engineers-v48';
+const CACHE_NAME = 'associate-engineers-v50';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -9,6 +9,7 @@ const PRECACHE_ASSETS = [
   '/pwa-512x512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
   'https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js',
+  'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js',
   'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js',
   'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'

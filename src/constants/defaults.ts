@@ -1,13 +1,19 @@
 import type { LaborTradeDefinition, TabKey } from '../types';
 
 export const BUILT_IN_FIREBASE_CONFIG = {
-  apiKey: ['AIzaSyC_9cE', '4jY5lX_6pN', 'c904338184145855832'].join(''),
+  apiKey:
+    import.meta.env.VITE_FIREBASE_API_KEY ||
+    'AIzaSyDFYJC9Z9MFDNpWb5uzoovxgN8zeE1uCFA',
   authDomain: 'associate-engineers.firebaseapp.com',
   projectId: 'associate-engineers',
   storageBucket: 'associate-engineers.firebasestorage.app',
   messagingSenderId: '904338184145',
   appId: '1:904338184145:web:6c2a24628d186f5f9e0a6e',
 };
+
+// Optional reCAPTCHA v3 Site Key for Firebase App Check (set via VITE_FIREBASE_APP_CHECK_SITE_KEY or paste here)
+export const FIREBASE_APP_CHECK_SITE_KEY =
+  import.meta.env.VITE_FIREBASE_APP_CHECK_SITE_KEY || '';
 
 export const STORAGE_KEYS = {
   SITES: 'AE_SITES_LIST_V2',

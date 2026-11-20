@@ -10,11 +10,21 @@ export type TabKey =
   | 'analytics'
   | 'materials';
 
+export type AuthRole = 'supervisor' | 'master' | 'owner' | 'local';
+
+export interface CompanySecurityMeta {
+  initialized: boolean;
+  ownerEmail: string;
+  updatedAt?: string;
+}
+
 export interface SiteRecord {
   id: string;
   name: string;
   supervisor: string;
   location?: string;
+  accessLocked?: boolean;
+  setupProofHash?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -22,6 +32,8 @@ export interface SiteRecord {
 export interface StoredUserSession {
   site: SiteRecord;
   user: string;
+  role?: AuthRole;
+  keyHash?: string;
   tab?: TabKey;
 }
 
